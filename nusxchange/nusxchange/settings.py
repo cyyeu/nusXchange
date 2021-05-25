@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-pp4!u2iw5*x%8h_yv(xho0s3a0qrr!da^)mq_$%(d5hy9p3eey
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['nusxchange.herokuapp.com','127.0.0.1']
 
 
 # Application definition
