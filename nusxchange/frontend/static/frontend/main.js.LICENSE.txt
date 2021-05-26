@@ -56,6 +56,8 @@
 
 /*! export Listing [provided] [no usage info] [missing usage info prevents renaming] -> ./src/views/Listing/Listing.js .default */
 
+/*! export Login [provided] [no usage info] [missing usage info prevents renaming] -> ./src/views/Login/Login.js .default */
+
 /*! export Memo [provided] [no usage info] [missing usage info prevents renaming] */
 
 /*! export Memo [provided] [no usage info] [provision prevents renaming (no use info)] -> ./node_modules/react-is/cjs/react-is.production.min.js .Memo */
@@ -111,6 +113,8 @@
 /*! export SheetsManager [provided] [no usage info] [missing usage info prevents renaming] */
 
 /*! export SheetsRegistry [provided] [no usage info] [missing usage info prevents renaming] */
+
+/*! export Signup [provided] [no usage info] [missing usage info prevents renaming] -> ./src/views/Signup/Signup.js .default */
 
 /*! export StaticRouter [provided] [no usage info] [missing usage info prevents renaming] */
 
@@ -222,11 +226,15 @@
 
 /*! export default [provided] [no usage info] [missing usage info prevents renaming] -> ./src/views/Listing/Listing.js .default */
 
+/*! export default [provided] [no usage info] [missing usage info prevents renaming] -> ./src/views/Login/Login.js .default */
+
 /*! export default [provided] [no usage info] [missing usage info prevents renaming] -> ./src/views/Profile/Profile.js .default */
 
 /*! export default [provided] [no usage info] [missing usage info prevents renaming] -> ./src/views/Search/Search.js .default */
 
 /*! export default [provided] [no usage info] [missing usage info prevents renaming] -> ./src/views/Settings/Settings.js .default */
+
+/*! export default [provided] [no usage info] [missing usage info prevents renaming] -> ./src/views/Signup/Signup.js .default */
 
 /*! export default [provided] [no usage info] [missing usage info prevents renaming] -> ./src/views/Summarizer/Summarizer.js .default */
 
@@ -640,8 +648,20 @@
   !*** ./src/components/NavBar.js ***!
   \**********************************/
 
+/*!**********************************!*\
+  !*** ./src/views/Login/Login.js ***!
+  \**********************************/
+
+/*!**********************************!*\
+  !*** ./src/views/Login/index.js ***!
+  \**********************************/
+
 /*!***********************************!*\
   !*** ./src/views/Search/index.js ***!
+  \***********************************/
+
+/*!***********************************!*\
+  !*** ./src/views/Signup/index.js ***!
   \***********************************/
 
 /*!************************************!*\
@@ -654,6 +674,10 @@
 
 /*!************************************!*\
   !*** ./src/views/Search/Search.js ***!
+  \************************************/
+
+/*!************************************!*\
+  !*** ./src/views/Signup/Signup.js ***!
   \************************************/
 
 /*!*************************************!*\
