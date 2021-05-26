@@ -11,8 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-import django_heroku
-import dj_database_url
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,6 +26,8 @@ SECRET_KEY = 'django-insecure-pp4!u2iw5*x%8h_yv(xho0s3a0qrr!da^)mq_$%(d5hy9p3eey
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+APPEND_SLASH=False
+
 ALLOWED_HOSTS = ['localhost', 'nusxchange.herokuapp.com','127.0.0.1']
 
 
@@ -39,14 +40,28 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-		'whitenoise.runserver_nostatic',
-		'rest_framework',
-		'api.apps.ApiConfig',
-		'frontend.apps.FrontendConfig'
+
+    'whitenoise.runserver_nostatic',
+    'rest_framework',
+    'api.apps.ApiConfig',
+    'frontend.apps.FrontendConfig',
+    'rest_framework.authtoken', 
+    'rest_auth', 
+    'django.contrib.sites', 
+    'allauth', 
+    'allauth.account', 
+    'allauth.socialaccount', 
+    'rest_auth.registration', 
+    'corsheaders', 
 
 ]
 
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000'
+]
+
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -136,4 +151,29 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-django_heroku.settings(locals())
+AUTH_USER_MODEL = 'api.UserProfile'
+
+# Django All Auth config
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+AUTHENTICATION_BACKENDS = (
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+)
+
+SITE_ID = 1
+
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_SESSION_REMEMBER = True
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_UNIQUE_EMAIL = True
+
+# Rest Framework config
+REST_FRAMEWORK = {
+    'DATETIME_FORMAT': "%m/%d/%Y %I:%M%P",
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
+
