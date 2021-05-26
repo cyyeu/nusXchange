@@ -10,30 +10,11 @@ import { Theme } from './Theme'
 
 const App = () => {
   return (
-    <Router>
-      <Switch>
-        <Route path='/' exact>
-          <Home />
-        </Route>
-        <Route path='/search'>
-          <Search />
-        </Route>
-        <Route path='/listing'>
-          <Listing />
-        </Route>
-        <Route path='/profile'>
-          <Profile />
-        </Route>
-        <Route path='/settings'>
-          <Settings />
-        </Route>
-        <Route path='/summarizer'>
-          <Summarizer />
-        </Route>
-        {/* 404 */}
-        {/* <Route component={NotFound} /> */}
-      </Switch>
-    </Router>
+    <React.StrictMode>
+      <ThemeProvider theme={Theme}>
+        <Landing />
+      </ThemeProvider>
+    </React.StrictMode>
   )
 }
 
