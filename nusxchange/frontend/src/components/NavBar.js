@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Link } from "react-router-dom";
 import {
   AppBar,
   Toolbar,
@@ -6,6 +7,7 @@ import {
   Typography,
   Button,
   ButtonGroup,
+  Icon,
 } from '@material-ui/core'
 import { AccountCircle, Chat } from '@material-ui/icons'
 import styled from 'styled-components'
@@ -23,11 +25,13 @@ const renderIcons = () => {
   )
 }
 
+
+
 const renderAuthButtons = () => {
   return (
     <ButtonGroup color='secondary' size='small'>
-      <Button> Sign up </Button>
-      <Button> Log in</Button>
+      <Button variant = "outlined" component={Link} to = '/signup'> Sign up </Button>
+      <Button variant = "outlined" component={Link} to = '/login'> Log in</Button>
     </ButtonGroup>
   )
 }
@@ -40,8 +44,8 @@ const NavBar = () => {
         <LogoWrapper>
           <Logo src='../static/logo.png' alt='logo' />
         </LogoWrapper>
-        <CustomButton to='/'>tutorXchange</CustomButton>
-        <CustomButton to='/summarizer'>Summarizer</CustomButton>
+        <CustomButton component={Link} to='/'>tutorXchange</CustomButton>
+        <CustomButton component={Link} to='/summarizer'>Summarizer</CustomButton>
         {auth ? renderIcons() : renderAuthButtons()}
       </CustomToolbar>
     </AppBar>

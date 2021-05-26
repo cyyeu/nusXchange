@@ -1,5 +1,6 @@
 import React from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+
 import {
   Home,
   Listing,
@@ -8,6 +9,8 @@ import {
   Settings,
   Summarizer,
   CreateListing,
+  Signup,
+  Login,
 } from './views'
 import { NavBar } from './components'
 
@@ -36,6 +39,12 @@ const Landing = () => {
         </Route>
         <Route path='/create'>
           <CreateListing />
+        </Route>
+        <Route path='/signup'>
+          <Signup />
+        </Route>
+        <Route path='/login'>
+          <Login />
         </Route>
         {/* 404 */}
         {/* <Route component={NotFound} /> */}

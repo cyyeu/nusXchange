@@ -8,5 +8,11 @@ urlpatterns = [
 	path('search', index),
 	path('settings', index),
 	path('summarizer', index),
+<<<<<<< HEAD
 	path('create', index),
+=======
+	path('signup', index),
+	path('login', index),
+
+>>>>>>> origin/master
 ]
