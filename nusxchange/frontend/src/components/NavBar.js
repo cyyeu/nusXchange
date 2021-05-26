@@ -49,7 +49,7 @@ const NavBar = () => {
 }
 
 const CustomToolbar = styled(Toolbar)`
-  min-height: 36px;
+  min-height: 60px;
 `
 const Logo = styled.img`
   height: 20px;

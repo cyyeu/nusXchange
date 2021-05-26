@@ -8,5 +8,5 @@ urlpatterns = [
 	path('search', index),
 	path('settings', index),
 	path('summarizer', index),
-
+	path('create', index),
 ]

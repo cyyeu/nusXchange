@@ -1,6 +1,14 @@
 import React from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
-import { Home, Listing, Profile, Search, Settings, Summarizer } from './views'
+import {
+  Home,
+  Listing,
+  Profile,
+  Search,
+  Settings,
+  Summarizer,
+  CreateListing,
+} from './views'
 import { NavBar } from './components'
 
 const Landing = () => {
@@ -25,6 +33,9 @@ const Landing = () => {
         </Route>
         <Route path='/summarizer'>
           <Summarizer />
+        </Route>
+        <Route path='/create'>
+          <CreateListing />
         </Route>
         {/* 404 */}
         {/* <Route component={NotFound} /> */}
