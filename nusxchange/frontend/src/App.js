@@ -2,6 +2,8 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { Home, Listing, Profile, Search, Settings, Summarizer } from './views'
+import {Login, Signup, Logout} from './views/auth/';
+
 const App = () => {
   return (
     <Router>
@@ -24,6 +26,9 @@ const App = () => {
         <Route path='/summarizer'>
           <Summarizer />
         </Route>
+        <Route path = '/login' component = {Login} exact />
+        <Route path = '/signup' component = {Signup} exact />
+        <Route path = '/logout' component = {Logout} exact />
         {/* 404 */}
         {/* <Route component={NotFound} /> */}
       </Switch>
