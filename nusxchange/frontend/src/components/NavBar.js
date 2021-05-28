@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom'
 import {
   AppBar,
   Toolbar,
@@ -25,13 +25,17 @@ const renderIcons = () => {
   )
 }
 
-
-
 const renderAuthButtons = () => {
   return (
     <ButtonGroup color='secondary' size='small'>
-      <Button variant = "outlined" component={Link} to = '/signup'> Sign up </Button>
-      <Button variant = "outlined" component={Link} to = '/login'> Log in</Button>
+      <Button variant='outlined' component={Link} to='/signup'>
+        {' '}
+        Sign up{' '}
+      </Button>
+      <Button variant='outlined' component={Link} to='/login'>
+        {' '}
+        Log in
+      </Button>
     </ButtonGroup>
   )
 }
@@ -42,10 +46,17 @@ const NavBar = () => {
     <AppBar position='sticky'>
       <CustomToolbar>
         <LogoWrapper>
-          <Logo src='../static/logo.png' alt='logo' />
+          <Link to='/'>
+            <Logo src='../static/logo.png' alt='logo' />
+          </Link>
         </LogoWrapper>
-        <CustomButton component={Link} to='/'>tutorXchange</CustomButton>
-        <CustomButton component={Link} to='/summarizer'>Summarizer</CustomButton>
+
+        <CustomButton component={Link} to='/'>
+          tutorXchange
+        </CustomButton>
+        <CustomButton component={Link} to='/summarizer'>
+          Summarizer
+        </CustomButton>
         {auth ? renderIcons() : renderAuthButtons()}
       </CustomToolbar>
     </AppBar>
