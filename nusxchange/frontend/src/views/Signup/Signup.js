@@ -1,7 +1,9 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {Avatar, Button, CssBaseline, TextField, Link, Grid, Box, Typography, Container } from '@material-ui/core/';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { makeStyles } from '@material-ui/core/styles';
+import { useHistory } from 'react-router-dom'
+import {useForm} from "react-hook-form";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -28,16 +30,24 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Signup() {
   const classes = useStyles();
+  const history = useHistory();
+
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [errors, setErrors] = useState(false);
+  const [loading, setLoading] = useState(true);
+
 
   const handleSubmit = e => {
     e.preventDefault();
 
-    const user = {
+    const payload = {
+      username:firstName + " " + lastName,
+      first_name: firstName,
+      last_name: lastName,
       email: email,
       password1: password,
       password2: confirmPassword,
@@ -48,23 +58,23 @@ export default function Signup() {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(user)
+      body: JSON.stringify(payload)
     })
     .then(res => res.json())
     .then(data => {
       if (data.key) {
         localStorage.clear();
         localStorage.setItem('token', data.key);
-        window.location.replace('http://localhost:3000/dashboard');
+        history.push('/profile');
       } else {
         setEmail('');
-        setPassword1('');
-        setPassword2('');
+        setPassword('');
+        setConfirmPassword('');
         localStorage.clear();
         setErrors(true);
       }
     });
-};
+  };
 
 
 
@@ -75,10 +85,12 @@ export default function Signup() {
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
-        <Typography component="h2" variant="h4">
-          Sign Up
-        </Typography>
-        <form className={classes.form} onSubmit = {handleSubmit}>
+        
+          <Typography component="h2" variant="h4" >
+            Sign Up
+          </Typography>
+        
+        <form className={classes.form} id = "signup" method = "POST" onSubmit = {handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
@@ -90,8 +102,9 @@ export default function Signup() {
                 id="firstName"
                 label="First Name"
                 autoFocus
-                onBlur = {e => setFirstName(e.target.value)}
-                onChange = {e => setFirstName(e.target.value)}
+                value = {firstName}
+                onBlur={e => setFirstName(e.target.value)} 
+                onChange={e => setFirstName(e.target.value)} 
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -103,8 +116,9 @@ export default function Signup() {
                 label="Last Name"
                 name="lastName"
                 autoComplete="lname"
-                onBlur = {e => setLastName(e.target.value)}
-                onChange = {e => setLastName(e.target.value)}
+                value = {lastName}
+                onBlur={e => setLastName(e.target.value)} 
+                onChange={e => setLastName(e.target.value)} 
               />
             </Grid>
             <Grid item xs={12}>
@@ -116,8 +130,9 @@ export default function Signup() {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
-                onBlur = {e => setEmail(e.target.value)}
-                onChange = {e => setEmail(e.target.value)}
+                value = {email}
+                onBlur={e => setEmail(e.target.value)} 
+                onChange={e => setEmail(e.target.value)} 
               />
             </Grid>
             <Grid item xs={12}>
@@ -130,8 +145,9 @@ export default function Signup() {
                 type="password"
                 id="password"
                 autoComplete="none"
-                onBlur = {e => setPassword(e.target.value)}
-                onChange = {e => setPassword(e.target.value)}
+                value = {password}
+                onBlur={e => setPassword(e.target.value)} 
+                onChange={e => setPassword(e.target.value)} 
               />
             </Grid>
             <Grid item xs={12}>
@@ -144,8 +160,9 @@ export default function Signup() {
                 type="password"
                 id="password"
                 autoComplete="none"
-                onBlur = {e => setConfirmPassword(e.target.value)}
-                onChange = {e => setConfirmPassword(e.target.value)}
+                value = {confirmPassword}
+                onBlur={e => setConfirmPassword(e.target.value)} 
+                onChange={e => setConfirmPassword(e.target.value)} 
               />
             </Grid>
           </Grid>
@@ -155,7 +172,7 @@ export default function Signup() {
             variant="contained"
             color="primary"
             className={classes.submit}
-            
+            form = "signup"
           >
             Sign Up
           </Button>
