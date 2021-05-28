@@ -5,7 +5,7 @@ import { Typography } from '@material-ui/core'
 export default () => {
   return (
     <Layout>
-      <Typography variant='h1' color='secondary'>
+      <Typography variant='h1' color='secondary' align='center'>
         Coming soon.
       </Typography>
     </Layout>
