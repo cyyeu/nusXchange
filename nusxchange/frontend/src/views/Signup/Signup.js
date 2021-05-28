@@ -37,7 +37,7 @@ export default function Signup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [errors, setErrors] = useState(false);
+  const [ , setErrors] = useState(false);
   const [loading, setLoading] = useState(true);
 
 
@@ -45,12 +45,11 @@ export default function Signup() {
     e.preventDefault();
 
     const payload = {
-      username:firstName + " " + lastName,
-      first_name: firstName,
-      last_name: lastName,
       email: email,
       password1: password,
-      password2: confirmPassword,
+      password2: password,
+      first_name: firstName,
+      last_name: lastName,
     };
 
     fetch('http://127.0.0.1:8000/api/auth/register/', {
@@ -69,7 +68,6 @@ export default function Signup() {
       } else {
         setEmail('');
         setPassword('');
-        setConfirmPassword('');
         localStorage.clear();
         setErrors(true);
       }
