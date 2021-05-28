@@ -9,8 +9,7 @@
 # testing
 /coverage
 
-# production
-/build
+
 
 # misc
 .DS_Store
@@ -31,6 +30,4 @@ yarn-error.log*
 __pycache__/
 local_settings.py
 db.sqlite3
-nusxchange/frontend/src/App.js
-*main.js*
 *migrations* 
