@@ -1,7 +1,9 @@
 import React from 'react';
+import {useForm, Controller} from 'react-hook-form'  
 import {Avatar, Button, CssBaseline, TextField, Link, Grid, Box, Typography, Container,FormControlLabel, Checkbox} from '@material-ui/core/';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { makeStyles } from '@material-ui/core/styles';
+
 
 
 
@@ -29,13 +31,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Login() {
   const classes = useStyles();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleSubmit = e => {
-    e.preventDefault();
-    console.log(email, password);
-  };
+  const {handleSubmit, control, errors: fieldsErrors, reset} = useForm()
 
   return (
     <Container component="main" maxWidth="xs">
@@ -44,36 +40,54 @@ export default function Login() {
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
-        <Typography component="h1" variant="h4">
+        <Typography component="h1" variant="h5">
           Login to nusXchange
         </Typography>
-        <form className={classes.form} onSubmit = {handleSubmit}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
-            autoFocus
-            onChange = {e => setEmail(e.target.value)}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            onChange = {e => setPassword(e.target.value)}
-          />
+        <form className={classes.form} onSubmit={handleSubmit((data)=> alert(JSON.stringify(data)))}>
+        <Controller
+              name="email"
+              as={
+                <TextField
+                  id="email"
+                  labelWidth={40}
+                  helperText={fieldsErrors.email ? fieldsErrors.email.message : null}
+                  variant="outlined"
+                  label="Email"
+                  error={fieldsErrors.email}
+                />
+              }
+              control={control}
+              defaultValue=""
+              rules={{
+                required: 'Required',
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                  message: 'invalid email address'
+                }
+              }}
+            />
+            <Controller
+              name="password"
+              as={
+                <TextField
+                  id="password"
+                  type="password"
+                  labelWidth={70}
+                  helperText={fieldsErrors.password ? fieldsErrors.password.message : null}
+                  variant="outlined"
+                  label="Password"
+                  error={fieldsErrors.password}
+                />
+              }
+              control={control}
+              defaultValue=""
+              rules={{
+                required: 'Required'
+              }}
+            />
           <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
+            control={
+              <Controller as={Checkbox} control={control} name="remember" color="primary" defaultValue={false}/>}
             label="Remember me"
           />
           <Button
@@ -83,7 +97,7 @@ export default function Login() {
             color="primary"
             className={classes.submit}
           >
-            Log In
+            Sign In
           </Button>
           <Grid container>
             <Grid item xs>
@@ -92,15 +106,13 @@ export default function Login() {
               </Link>
             </Grid>
             <Grid item>
-              <Link href="/signup" variant="body2">
+              <Link href="#" variant="body2">
                 {"Don't have an account? Sign Up"}
               </Link>
             </Grid>
           </Grid>
         </form>
       </div>
-      <Box mt={8}>
-      </Box>
     </Container>
   );
 }
