@@ -19,7 +19,7 @@ const Home = () => {
 
   return (
     <Layout>
-      <Grid container wrap='wrap' direction='column' spacing={5}>
+      <Grid container wrap='wrap' direction='column' spacing={8}>
         <Grid item xs={12}>
           <Typography variant='h2' color='secondary' noWrap>
             How can we help you today?
