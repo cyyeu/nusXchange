@@ -33,3 +33,4 @@ local_settings.py
 db.sqlite3
 nusxchange/frontend/src/App.js
 *main.js*
+*migrations* 
