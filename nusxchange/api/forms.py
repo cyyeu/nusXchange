@@ -5,9 +5,9 @@ from .models import UserProfile
 
 
 class UserProfileCreationForm(UserCreationForm):
-    class Meta:
+    class Meta(UserCreationForm.Meta):
         model = UserProfile
-        fields = ('first_name','last_name','email' )
+        fields = 'first_name', 'last_name',"email", "password"
 
 
 class UserProfileChangeForm(UserChangeForm):

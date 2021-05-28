@@ -6,10 +6,22 @@ from .forms import UserProfileChangeForm, UserProfileCreationForm
 from .models import UserProfile
 
 # Register your models here.
-class UserProfileAdmin(UserAdmin):    
+
+
+class UserProfileAdmin(UserAdmin):
     add_form = UserProfileCreationForm
     form = UserProfileChangeForm
     model = UserProfile
-    list_display = ['first_name','last_name','email',]
-    
+    list_display = ['first_name', 'last_name', 'email',]
+    add_fieldsets = (
+        (
+            None,
+            {
+                "classes": ("wide",),
+                "fields": ('first_name', 'last_name',"email", "password"),
+            },
+        ),
+    )
+
+
 admin.site.register(UserProfile, UserProfileAdmin)
