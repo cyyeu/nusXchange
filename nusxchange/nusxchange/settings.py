@@ -154,6 +154,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'api.UserProfile'
 
+REST_AUTH_SERIALIZERS = {
+    'USER_DETAILS_SERIALIZER': 'api.serializers.UserProfileSerializer',
+}
+
 # Django All Auth config
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
