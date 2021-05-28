@@ -1,11 +1,20 @@
-import React from 'react';
-import {useForm, Controller} from 'react-hook-form'  
-import {Avatar, Button, CssBaseline, TextField, Link, Grid, Box, Typography, Container,FormControlLabel, Checkbox} from '@material-ui/core/';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import { makeStyles } from '@material-ui/core/styles';
-
-
-
+import React, { useState } from 'react'
+import {
+  Avatar,
+  Button,
+  CssBaseline,
+  TextField,
+  Link,
+  Grid,
+  Box,
+  Typography,
+  Container,
+  FormControlLabel,
+  Checkbox,
+} from '@material-ui/core/'
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
+import { makeStyles } from '@material-ui/core/styles'
+import { useHistory } from 'react-router-dom'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -25,88 +34,108 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
-}));
-
-
+}))
 
 export default function Login() {
-  const classes = useStyles();
-  const {handleSubmit, control, errors: fieldsErrors, reset} = useForm()
+  const classes = useStyles()
+  const history = useHistory()
+  const initForm = {
+    email: '',
+    password: '',
+    remember: false,
+  }
+  const [form, setForm] = useState(initForm)
+  const handleInputChange = (event) => {
+    const { name, value, checked } = event.target
+    setForm({ ...form, [name]: name === 'remember' ? checked : value })
+  }
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    const payload = {
+      email: form.email,
+      password: form.password,
+    }
 
+    fetch('http://127.0.0.1:8000/api/auth/login/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data)
+        if (data.key) {
+          localStorage.clear()
+          localStorage.setItem('token', data.key)
+          history.push('/profile')
+        } else {
+          setForm(initForm)
+          localStorage.clear()
+        }
+      })
+  }
   return (
-    <Container component="main" maxWidth="xs">
+    <Container component='main' maxWidth='xs'>
       <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
-        <Typography component="h1" variant="h5">
+        <Typography component='h1' variant='h5'>
           Login to nusXchange
         </Typography>
-        <form className={classes.form} onSubmit={handleSubmit((data)=> alert(JSON.stringify(data)))}>
-        <Controller
-              name="email"
-              as={
-                <TextField
-                  id="email"
-                  labelWidth={40}
-                  helperText={fieldsErrors.email ? fieldsErrors.email.message : null}
-                  variant="outlined"
-                  label="Email"
-                  error={fieldsErrors.email}
-                />
-              }
-              control={control}
-              defaultValue=""
-              rules={{
-                required: 'Required',
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                  message: 'invalid email address'
-                }
-              }}
-            />
-            <Controller
-              name="password"
-              as={
-                <TextField
-                  id="password"
-                  type="password"
-                  labelWidth={70}
-                  helperText={fieldsErrors.password ? fieldsErrors.password.message : null}
-                  variant="outlined"
-                  label="Password"
-                  error={fieldsErrors.password}
-                />
-              }
-              control={control}
-              defaultValue=""
-              rules={{
-                required: 'Required'
-              }}
-            />
+        <form className={classes.form} onSubmit={handleSubmit}>
+          <TextField
+            id='email'
+            // helperText
+            fullWidth
+            variant='outlined'
+            label='Email'
+            // error
+            name='email'
+            onChange={handleInputChange}
+          />
+          <TextField
+            id='password'
+            type='password'
+            // helperText
+            fullWidth
+            variant='outlined'
+            label='Password'
+            // error
+            name='password'
+            onChange={handleInputChange}
+          />
           <FormControlLabel
             control={
-              <Controller as={Checkbox} control={control} name="remember" color="primary" defaultValue={false}/>}
-            label="Remember me"
+              <Checkbox
+                checked={form.remember}
+                onChange={handleInputChange}
+                name='remember'
+              />
+            }
+            label='Remember me'
           />
           <Button
-            type="submit"
+            type='submit'
             fullWidth
-            variant="contained"
-            color="primary"
+            variant='contained'
+            color='primary'
             className={classes.submit}
+            onClick={handleSubmit}
           >
             Sign In
           </Button>
           <Grid container>
             <Grid item xs>
-              <Link href="#" variant="body2">
+              <Link href='#' variant='body2'>
                 Forgot password?
               </Link>
             </Grid>
             <Grid item>
-              <Link href="#" variant="body2">
+              <Link href='#' variant='body2'>
                 {"Don't have an account? Sign Up"}
               </Link>
             </Grid>
@@ -114,5 +143,5 @@ export default function Login() {
         </form>
       </div>
     </Container>
-  );
+  )
 }

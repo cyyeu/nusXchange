@@ -14,6 +14,7 @@ const Home = () => {
     console.log(search)
   }
   const handleSubmit = () => {
+    e.preventDefault()
     history.push('/search')
   }
 
