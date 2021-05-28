@@ -1,11 +1,10 @@
-import React, { createContext } from 'react'
+import React from 'react'
 import ReactDOM from 'react-dom'
 
 import Landing from './Landing'
 import { ThemeProvider } from '@material-ui/core/styles'
 import { Theme } from './Theme'
-
-export const Context = createContext()
+import Context from './contexts/Context'
 const App = () => {
   return (
     <React.StrictMode>
