@@ -41,18 +41,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     'whitenoise.runserver_nostatic',
     'rest_framework',
     'api.apps.ApiConfig',
     'frontend.apps.FrontendConfig',
     'rest_framework.authtoken', 
-    'rest_auth', 
+    'dj_rest_auth',
+		
     'django.contrib.sites', 
     'allauth', 
     'allauth.account', 
+		'dj_rest_auth.registration',
     'allauth.socialaccount', 
-    'rest_auth.registration', 
     'corsheaders', 
 
 ]
@@ -158,6 +158,9 @@ REST_AUTH_REGISTER_SERIALIZERS = {
     'REGISTER_SERIALIZER': 'api.serializers.UserProfileSerializer',
 }
 
+REST_AUTH_SERIALIZERS = {
+    'USER_DETAILS_SERIALIZER': 'api.serializers.CustomUserDetailsSerializer',
+}
 # Django All Auth config
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -165,6 +168,8 @@ AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
 )
+
+ACCOUNT_ADAPTER = 'api.adapter.CustomAccountAdapter'
 
 SITE_ID = 1
 
