@@ -10,6 +10,6 @@ class UserProfileAdmin(UserAdmin):
     add_form = UserProfileCreationForm
     form = UserProfileChangeForm
     model = UserProfile
-    list_display = ['email','phone']
+    list_display = ['first_name','last_name','email',]
     
 admin.site.register(UserProfile, UserProfileAdmin)
