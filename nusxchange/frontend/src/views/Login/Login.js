@@ -39,7 +39,6 @@ const useStyles = makeStyles((theme) => ({
 export default function Login() {
   const classes = useStyles()
   const history = useHistory()
-  const context = useContext()
   const initForm = {
     email: '',
     password: '',
@@ -70,7 +69,6 @@ export default function Login() {
         if (data.key) {
           localStorage.clear()
           localStorage.setItem('token', data.key)
-          context.user
           history.push('/profile')
         } else {
           setForm(initForm)
