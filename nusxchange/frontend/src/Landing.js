@@ -12,6 +12,7 @@ import {
   Signup,
   Login,
 } from './views'
+import Temp from './views/Temp'
 import { NavBar } from './components'
 
 const Landing = () => {
@@ -23,22 +24,22 @@ const Landing = () => {
           <Home />
         </Route>
         <Route path='/search'>
-          <Search />
+          <Temp />
         </Route>
         <Route path='/listing'>
-          <Listing />
+          <Temp />
         </Route>
         <Route path='/profile'>
-          <Profile />
+          <Temp />
         </Route>
         <Route path='/settings'>
-          <Settings />
+          <Temp />
         </Route>
         <Route path='/summarizer'>
-          <Summarizer />
+          <Temp />
         </Route>
         <Route path='/create'>
-          <CreateListing />
+          <Temp />
         </Route>
         <Route path='/signup'>
           <Signup />
