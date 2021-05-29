@@ -15,6 +15,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import { useHistory } from 'react-router-dom'
 import validator from 'validator'
 import { UserContext } from '../../contexts/UserContext'
+import { CopyrightTwoTone } from '@material-ui/icons'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -40,25 +41,45 @@ export default function Signup() {
   const classes = useStyles()
   const history = useHistory()
   const { dispatch } = useContext(UserContext)
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [errors, setErrors] = useState('')
+  const initForm = {
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  }
+  const initErrors = {
+    email: '',
+    password: '',
+    confirmPassword: '',
+  }
+  const [form, setForm] = useState(initForm)
+  const [errors, setErrors] = useState(initErrors)
+  const handleFormChange = (e) => {
+    const { name, value } = e.target
+    setForm({ ...form, [name]: value })
+    if (name === 'email') {
+      validateEmail(value)
+    } else if (name === 'password') {
+      validatePassword(value)
+      validateConfirmPassword(value, form.confirmPassword)
+    } else if (name === 'confirmPassword') {
+      validateConfirmPassword(form.password, value)
+    }
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault()
 
     const payload = {
-      email: email,
-      password1: password,
-      password2: password,
-      first_name: firstName,
-      last_name: lastName,
+      email: form.email,
+      password1: form.password,
+      password2: form.password,
+      first_name: form.firstName,
+      last_name: form.lastName,
     }
 
-    fetch('http://localhost:8000/api/auth/register', {
+    fetch('api/auth/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -76,26 +97,33 @@ export default function Signup() {
           history.push('/profile')
         })
       } else if (!res.ok) {
-        setFirstName('')
-        setLastName('')
-        setEmail('')
-        setPassword('')
-        localStorage.clear()
         res.json().then((data) => {
-          alert(data.email)
+          if (data.email) {
+            setErrors({ ...errors, email: data.email })
+          }
+          if (data.password1) {
+            setErrors({ ...errors, password: data.password1 })
+          }
         })
       }
     })
   }
 
   function validateEmail(email) {
-    let regex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/
-    return regex.test(email) ? '' : 'Invalid Email.'
+    if (validator.isEmail(email)) {
+      setErrors((prevErrors) => {
+        return { ...prevErrors, email: '' }
+      })
+    } else {
+      setErrors((prevErrors) => {
+        return { ...prevErrors, email: 'Invalid email' }
+      })
+    }
   }
 
-  function validatePassword() {
+  function validatePassword(pw) {
     if (
-      validator.isStrongPassword(password, {
+      validator.isStrongPassword(pw, {
         minLength: 8,
         minLowercase: 1,
         minUppercase: 0,
@@ -103,14 +131,43 @@ export default function Signup() {
         minSymbols: 0,
       })
     ) {
-      setErrors('')
-      console.log(password, 'jethroisdad')
+      setErrors((prevErrors) => {
+        return { ...prevErrors, password: '' }
+      })
     } else {
-      setErrors('Password not Strong.')
-      console.log(password, 'cysmallkkj')
+      setErrors((prevErrors) => {
+        return { ...prevErrors, password: 'Password not strong' }
+      })
     }
   }
 
+  const validateConfirmPassword = (pw, confirmPw) => {
+    if (pw === confirmPw) {
+      setErrors((prevErrors) => {
+        return { ...prevErrors, confirmPassword: '' }
+      })
+    } else {
+      setErrors((prevErrors) => {
+        return {
+          ...prevErrors,
+          confirmPassword: 'Password fields do not match',
+        }
+      })
+    }
+  }
+
+  const isSignUpDisabled = () => {
+    return (
+      errors.email !== '' ||
+      errors.password !== '' ||
+      errors.confirmPassword !== '' ||
+      form.firstName === '' ||
+      form.lastName === '' ||
+      form.password === '' ||
+      form.confirmPassword === '' ||
+      form.email === ''
+    )
+  }
   return (
     <Container component='main' maxWidth='xs'>
       <CssBaseline />
@@ -138,9 +195,8 @@ export default function Signup() {
                 id='firstName'
                 label='First Name'
                 autoFocus
-                value={firstName}
-                onBlur={(e) => setFirstName(e.target.value)}
-                onChange={(e) => setFirstName(e.target.value)}
+                value={form.firstName}
+                onChange={handleFormChange}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -152,9 +208,8 @@ export default function Signup() {
                 label='Last Name'
                 name='lastName'
                 autoComplete='lname'
-                value={lastName}
-                onBlur={(e) => setLastName(e.target.value)}
-                onChange={(e) => setLastName(e.target.value)}
+                value={form.lastName}
+                onChange={handleFormChange}
               />
             </Grid>
             <Grid item xs={12}>
@@ -166,11 +221,10 @@ export default function Signup() {
                 label='Email Address'
                 name='email'
                 autoComplete='email'
-                value={email}
-                onBlur={(e) => setEmail(e.target.value)}
-                onChange={(e) => setEmail(e.target.value)}
-                error={validateEmail(email) !== ''}
-                helperText={validateEmail(email)}
+                value={form.email}
+                onChange={handleFormChange}
+                error={errors.email !== ''}
+                helperText={errors.email}
               />
             </Grid>
             <Grid item xs={12}>
@@ -183,11 +237,10 @@ export default function Signup() {
                 type='password'
                 id='password'
                 autoComplete='none'
-                value={password}
-                onBlur={validatePassword}
-                onChange={(e) => setPassword(e.target.value)}
-                error={errors !== ''}
-                helperText={errors}
+                value={form.password}
+                onChange={handleFormChange}
+                error={errors.password !== ''}
+                helperText={errors.password}
               />
             </Grid>
             <Grid item xs={12}>
@@ -195,20 +248,15 @@ export default function Signup() {
                 variant='outlined'
                 required
                 fullWidth
-                name='password'
+                name='confirmPassword'
                 label='Confirm Password'
                 type='password'
-                id='password'
+                id='confirmPassword'
                 autoComplete='none'
-                value={confirmPassword}
-                onBlur={(e) => setConfirmPassword(e.target.value)}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                error={confirmPassword !== password}
-                helperText={
-                  confirmPassword !== password
-                    ? 'Password fields do not match.'
-                    : ''
-                }
+                value={form.confirmPassword}
+                onChange={handleFormChange}
+                error={errors.confirmPassword !== ''}
+                helperText={errors.confirmPassword}
               />
             </Grid>
           </Grid>
@@ -219,9 +267,7 @@ export default function Signup() {
             color='primary'
             className={classes.submit}
             form='signup'
-            disabled={
-              validateEmail(email) || errors || confirmPassword !== password
-            }
+            disabled={isSignUpDisabled()}
           >
             Sign Up
           </Button>
