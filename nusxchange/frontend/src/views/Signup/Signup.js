@@ -13,7 +13,8 @@ import {
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import { makeStyles } from '@material-ui/core/styles'
 import { useHistory } from 'react-router-dom'
-import { useForm } from 'react-hook-form'
+import validator from "validator"
+
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -44,8 +45,8 @@ export default function Signup() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [, setErrors] = useState(false)
-  const [loading, setLoading] = useState(true)
+  const [errors, setErrors] = useState("")
+  
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -72,13 +73,38 @@ export default function Signup() {
           localStorage.setItem('token', data.key)
           history.push('/profile')
         } else {
+          setFirstName("")
+          setLastName("")
           setEmail('')
           setPassword('')
           localStorage.clear()
-          setErrors(true)
         }
       })
   }
+
+  function validateEmail(email) {
+    let regex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+    return regex.test(email) ? "" : "Invalid Email.";
+  }
+
+
+
+  function validatePassword() {
+    if (validator.isStrongPassword(password,{
+       minLength: 8,
+       minLowercase: 1,
+       minUppercase: 0,
+       minNumbers: 1,
+       minSymbols: 0,})) {
+      setErrors("");
+      console.log(password, "jethroisdad");
+    } else {
+      setErrors("Password not Strong.");
+      console.log(password, "cysmallkkj");
+    }
+  }
+
+
 
   return (
     <Container component='main' maxWidth='xs'>
@@ -112,6 +138,7 @@ export default function Signup() {
                 value={firstName}
                 onBlur={(e) => setFirstName(e.target.value)}
                 onChange={(e) => setFirstName(e.target.value)}
+                
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -140,6 +167,8 @@ export default function Signup() {
                 value={email}
                 onBlur={(e) => setEmail(e.target.value)}
                 onChange={(e) => setEmail(e.target.value)}
+                error = {validateEmail(email) !== ""}
+                helperText = {validateEmail(email)}
               />
             </Grid>
             <Grid item xs={12}>
@@ -153,8 +182,10 @@ export default function Signup() {
                 id='password'
                 autoComplete='none'
                 value={password}
-                onBlur={(e) => setPassword(e.target.value)}
+                onBlur={validatePassword}
                 onChange={(e) => setPassword(e.target.value)}
+                error = {errors !== ""}
+                helperText = {errors}
               />
             </Grid>
             <Grid item xs={12}>
@@ -170,6 +201,8 @@ export default function Signup() {
                 value={confirmPassword}
                 onBlur={(e) => setConfirmPassword(e.target.value)}
                 onChange={(e) => setConfirmPassword(e.target.value)}
+                error = {confirmPassword !== password}
+                helperText = {confirmPassword !== password ? "Password fields do not match." : ""}
               />
             </Grid>
           </Grid>
