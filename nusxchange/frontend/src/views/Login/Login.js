@@ -15,6 +15,7 @@ import {
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import { makeStyles } from '@material-ui/core/styles'
 import { useHistory } from 'react-router-dom'
+import { UserContext } from '../../contexts/UserContext'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -39,6 +40,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Login() {
   const classes = useStyles()
   const history = useHistory()
+  const { dispatch } = useContext(UserContext)
   const initForm = {
     email: '',
     password: '',
@@ -65,10 +67,14 @@ export default function Login() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data)
         if (data.key) {
-          localStorage.clear()
-          localStorage.setItem('token', data.key)
+          dispatch({
+            type: 'LOGIN',
+            payload: {
+              token: data.key,
+              rememberMe: form.remember,
+            },
+          })
           history.push('/profile')
         } else {
           setForm(initForm)
@@ -87,37 +93,45 @@ export default function Login() {
           Login to nusXchange
         </Typography>
         <form className={classes.form} onSubmit={handleSubmit}>
-          <TextField
-            id='email'
-            // helperText
-            fullWidth
-            variant='outlined'
-            label='Email'
-            // error
-            name='email'
-            onChange={handleInputChange}
-          />
-          <TextField
-            id='password'
-            type='password'
-            // helperText
-            fullWidth
-            variant='outlined'
-            label='Password'
-            // error
-            name='password'
-            onChange={handleInputChange}
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={form.remember}
+          <Grid container direction='column' spacing={1}>
+            <Grid item xs={12}>
+              <TextField
+                id='email'
+                // helperText
+                fullWidth
+                variant='outlined'
+                label='Email'
+                // error
+                name='email'
                 onChange={handleInputChange}
-                name='remember'
               />
-            }
-            label='Remember me'
-          />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                id='password'
+                type='password'
+                // helperText
+                fullWidth
+                variant='outlined'
+                label='Password'
+                // error
+                name='password'
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={form.remember}
+                    onChange={handleInputChange}
+                    name='remember'
+                  />
+                }
+                label='Remember me'
+              />
+            </Grid>
+          </Grid>
           <Button
             type='submit'
             fullWidth

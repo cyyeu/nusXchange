@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import {
   AppBar,
@@ -8,40 +8,54 @@ import {
   Button,
   ButtonGroup,
   Icon,
+  MenuItem,
 } from '@material-ui/core'
 import { AccountCircle, Chat } from '@material-ui/icons'
 import styled from 'styled-components'
+import { UserContext } from '../contexts/UserContext'
 
-const renderIcons = () => {
-  return (
-    <>
-      <IconButton color='inherit'>
-        <Chat />
-      </IconButton>
-      <IconButton color='inherit'>
-        <AccountCircle />
-      </IconButton>
-    </>
-  )
-}
-
-const renderAuthButtons = () => {
-  return (
-    <ButtonGroup color='secondary' size='small'>
-      <Button variant='outlined' component={Link} to='/signup'>
-        {' '}
-        Sign up{' '}
-      </Button>
-      <Button variant='outlined' component={Link} to='/login'>
-        {' '}
-        Log in
-      </Button>
-    </ButtonGroup>
-  )
-}
 const NavBar = () => {
+  const { state } = useContext(UserContext)
   const [auth, setAuth] = useState(false)
+  useEffect(() => {
+    if (state.isAuthenticated || localStorage.token) {
+      setAuth(true)
+    } else {
+      setAuth(false)
+    }
+  }, [state])
 
+  const handleProfileMenuOpen = () => {}
+
+  const renderIcons = () => {
+    return (
+      <>
+        <IconButton color='inherit'>
+          <Chat />
+        </IconButton>
+        <MenuItem onClick={handleProfileMenuOpen}>
+          <IconButton color='inherit'>
+            <AccountCircle />
+          </IconButton>
+        </MenuItem>
+      </>
+    )
+  }
+
+  const renderAuthButtons = () => {
+    return (
+      <ButtonGroup color='secondary' size='small'>
+        <Button variant='outlined' component={Link} to='/signup'>
+          {' '}
+          Sign up{' '}
+        </Button>
+        <Button variant='outlined' component={Link} to='/login'>
+          {' '}
+          Log in
+        </Button>
+      </ButtonGroup>
+    )
+  }
   return (
     <AppBar position='sticky'>
       <CustomToolbar>
