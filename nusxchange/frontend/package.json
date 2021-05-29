@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+<<<<<<< HEAD
   "proxy": "http://localhost:8000/",
+=======
+  "proxy": "http://localhost:8000",
+>>>>>>> master
   "scripts": {
     "dev": "webpack --mode development --watch",
     "build": "webpack --mode production"
