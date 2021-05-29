@@ -13,10 +13,13 @@ import {
 import { AccountCircle, Chat } from '@material-ui/icons'
 import styled from 'styled-components'
 import { UserContext } from '../contexts/UserContext'
+import { Menu } from '@material-ui/core'
 
 const NavBar = () => {
-  const { state } = useContext(UserContext)
+  const { state, dispatch } = useContext(UserContext)
   const [auth, setAuth] = useState(false)
+  const [anchorEl, setAnchorEl] = useState(null)
+
   useEffect(() => {
     if (state.isAuthenticated || localStorage.token) {
       setAuth(true)
@@ -25,7 +28,20 @@ const NavBar = () => {
     }
   }, [state])
 
-  const handleProfileMenuOpen = () => {}
+  const handleMenuOpen = (e) => {
+    setAnchorEl(e.currentTarget)
+  }
+
+  const handleMenuClose = () => {
+    setAnchorEl(null)
+  }
+
+  const handleLogout = () => {
+    handleMenuClose()
+    dispatch({
+      type: 'LOGOUT',
+    })
+  }
 
   const renderIcons = () => {
     return (
@@ -33,11 +49,31 @@ const NavBar = () => {
         <IconButton color='inherit'>
           <Chat />
         </IconButton>
-        <MenuItem onClick={handleProfileMenuOpen}>
-          <IconButton color='inherit'>
-            <AccountCircle />
-          </IconButton>
-        </MenuItem>
+        <IconButton color='inherit' onClick={handleMenuOpen}>
+          <AccountCircle />
+        </IconButton>
+        <Menu
+          id='profile-menu'
+          anchorEl={anchorEl}
+          getContentAnchorEl={null}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          transformOrigin={{ vertical: 'top', horizontal: 'center' }}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+        >
+          <MenuItem onClick={handleMenuClose} component={Link} to='/profile'>
+            {' '}
+            Profile{' '}
+          </MenuItem>
+          <MenuItem onClick={handleMenuClose} component={Link} to='/settings'>
+            {' '}
+            Settings{' '}
+          </MenuItem>
+          <MenuItem onClick={handleLogout} component={Link} to='/'>
+            {' '}
+            Logout{' '}
+          </MenuItem>
+        </Menu>
       </>
     )
   }

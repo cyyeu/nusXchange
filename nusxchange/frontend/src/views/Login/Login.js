@@ -93,7 +93,6 @@ export default function Login() {
           Login to nusXchange
         </Typography>
         <form className={classes.form} onSubmit={handleSubmit}>
-<<<<<<< HEAD
           <Grid container direction='column' spacing={1}>
             <Grid item xs={12}>
               <TextField
@@ -117,35 +116,6 @@ export default function Login() {
                 label='Password'
                 // error
                 name='password'
-=======
-          <TextField
-            id='email'
-            // helperText
-            fullWidth
-            variant='outlined'
-            label='Email'
-            // error
-            name='email'
-            onChange={handleInputChange}
-            required
-          />
-          <TextField
-            id='password'
-            type='password'
-            // helperText
-            fullWidth
-            variant='outlined'
-            label='Password'
-            // error
-            name='password'
-            onChange={handleInputChange}
-            required
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={form.remember}
->>>>>>> 07465b11ef5486ad0412b839153be3c81de5e478
                 onChange={handleInputChange}
               />
             </Grid>
