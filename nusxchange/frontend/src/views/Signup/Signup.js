@@ -66,18 +66,19 @@ export default function Signup() {
       },
       body: JSON.stringify(payload),
     })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.key) {
-          localStorage.clear()
-          localStorage.setItem('token', data.key)
-          history.push('/profile')
-        } else {
+      .then((res) => {
+        if (res.ok) {
+          res.json().then((data) => {
+            localStorage.clear()
+            localStorage.setItem('token', data.key)
+            history.push('/profile')});
+        } else if (!res.ok) {
           setFirstName("")
           setLastName("")
           setEmail('')
           setPassword('')
           localStorage.clear()
+          res.json().then(data => {alert(data.email)})
         }
       })
   }
@@ -86,7 +87,6 @@ export default function Signup() {
     let regex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
     return regex.test(email) ? "" : "Invalid Email.";
   }
-
 
 
   function validatePassword() {
@@ -104,8 +104,6 @@ export default function Signup() {
     }
   }
 
-
-
   return (
     <Container component='main' maxWidth='xs'>
       <CssBaseline />
@@ -113,11 +111,9 @@ export default function Signup() {
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
-
         <Typography component='h2' variant='h4'>
           Sign Up
         </Typography>
-
         <form
           className={classes.form}
           id='signup'
@@ -138,7 +134,6 @@ export default function Signup() {
                 value={firstName}
                 onBlur={(e) => setFirstName(e.target.value)}
                 onChange={(e) => setFirstName(e.target.value)}
-                
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -213,6 +208,7 @@ export default function Signup() {
             color='primary'
             className={classes.submit}
             form='signup'
+            disabled = {validateEmail(email) || errors  || confirmPassword !== password  }
           >
             Sign Up
           </Button>

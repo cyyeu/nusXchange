@@ -96,6 +96,7 @@ export default function Login() {
             // error
             name='email'
             onChange={handleInputChange}
+            required
           />
           <TextField
             id='password'
@@ -107,6 +108,7 @@ export default function Login() {
             // error
             name='password'
             onChange={handleInputChange}
+            required
           />
           <FormControlLabel
             control={
