@@ -12,6 +12,7 @@ import {
   FormControlLabel,
   Checkbox,
 } from '@material-ui/core/'
+import { Alert } from '@material-ui/lab'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import { makeStyles } from '@material-ui/core/styles'
 import { useHistory } from 'react-router-dom'
@@ -47,6 +48,7 @@ export default function Login() {
     remember: false,
   }
   const [form, setForm] = useState(initForm)
+  const [isInvalidLogin, setIsInvalidLogin] = useState(false)
   const handleInputChange = (event) => {
     const { name, value, checked } = event.target
     setForm({ ...form, [name]: name === 'remember' ? checked : value })
@@ -64,10 +66,9 @@ export default function Login() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(payload),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.key) {
+    }).then((res) => {
+      if (res.ok) {
+        res.json().then((data) => {
           dispatch({
             type: 'LOGIN',
             payload: {
@@ -76,11 +77,12 @@ export default function Login() {
             },
           })
           history.push('/profile')
-        } else {
-          setForm(initForm)
-          localStorage.clear()
-        }
-      })
+        })
+      } else {
+        setIsInvalidLogin(true)
+        setForm(initForm)
+      }
+    })
   }
   return (
     <Container component='main' maxWidth='xs'>
@@ -132,6 +134,11 @@ export default function Login() {
               />
             </Grid>
           </Grid>
+          {isInvalidLogin && (
+            <Alert severity='error' variant='outlined'>
+              Invalid email or password!
+            </Alert>
+          )}
           <Button
             type='submit'
             fullWidth
