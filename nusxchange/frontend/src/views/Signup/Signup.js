@@ -58,7 +58,7 @@ export default function Signup() {
       last_name: lastName,
     }
 
-    fetch('http://localhost:8000/api/auth/register', {
+    fetch('api/auth/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

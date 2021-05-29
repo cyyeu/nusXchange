@@ -60,7 +60,7 @@ export default function Login() {
       password: form.password,
     }
 
-    fetch('http://localhost:8000/api/auth/login/', {
+    fetch('/api/auth/login/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
