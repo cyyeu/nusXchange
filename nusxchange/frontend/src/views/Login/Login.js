@@ -12,9 +12,11 @@ import {
   FormControlLabel,
   Checkbox,
 } from '@material-ui/core/'
+import { Alert } from '@material-ui/lab'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import { makeStyles } from '@material-ui/core/styles'
 import { useHistory } from 'react-router-dom'
+import { UserContext } from '../../contexts/UserContext'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -39,12 +41,14 @@ const useStyles = makeStyles((theme) => ({
 export default function Login() {
   const classes = useStyles()
   const history = useHistory()
+  const { dispatch } = useContext(UserContext)
   const initForm = {
     email: '',
     password: '',
     remember: false,
   }
   const [form, setForm] = useState(initForm)
+  const [isInvalidLogin, setIsInvalidLogin] = useState(false)
   const handleInputChange = (event) => {
     const { name, value, checked } = event.target
     setForm({ ...form, [name]: name === 'remember' ? checked : value })
@@ -56,25 +60,29 @@ export default function Login() {
       password: form.password,
     }
 
-    fetch('http://127.0.0.1:8000/api/auth/login/', {
+    fetch('http://localhost:8000/api/auth/login/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(payload),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data)
-        if (data.key) {
-          localStorage.clear()
-          localStorage.setItem('token', data.key)
+    }).then((res) => {
+      if (res.ok) {
+        res.json().then((data) => {
+          dispatch({
+            type: 'LOGIN',
+            payload: {
+              token: data.key,
+              rememberMe: form.remember,
+            },
+          })
           history.push('/profile')
-        } else {
-          setForm(initForm)
-          localStorage.clear()
-        }
-      })
+        })
+      } else {
+        setIsInvalidLogin(true)
+        setForm(initForm)
+      }
+    })
   }
   return (
     <Container component='main' maxWidth='xs'>
@@ -87,37 +95,50 @@ export default function Login() {
           Login to nusXchange
         </Typography>
         <form className={classes.form} onSubmit={handleSubmit}>
-          <TextField
-            id='email'
-            // helperText
-            fullWidth
-            variant='outlined'
-            label='Email'
-            // error
-            name='email'
-            onChange={handleInputChange}
-          />
-          <TextField
-            id='password'
-            type='password'
-            // helperText
-            fullWidth
-            variant='outlined'
-            label='Password'
-            // error
-            name='password'
-            onChange={handleInputChange}
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={form.remember}
+          <Grid container direction='column' spacing={1}>
+            <Grid item xs={12}>
+              <TextField
+                id='email'
+                // helperText
+                fullWidth
+                variant='outlined'
+                label='Email'
+                // error
+                name='email'
                 onChange={handleInputChange}
-                name='remember'
               />
-            }
-            label='Remember me'
-          />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                id='password'
+                type='password'
+                // helperText
+                fullWidth
+                variant='outlined'
+                label='Password'
+                // error
+                name='password'
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={form.remember}
+                    onChange={handleInputChange}
+                    name='remember'
+                  />
+                }
+                label='Remember me'
+              />
+            </Grid>
+          </Grid>
+          {isInvalidLogin && (
+            <Alert severity='error' variant='outlined'>
+              Invalid email or password!
+            </Alert>
+          )}
           <Button
             type='submit'
             fullWidth
@@ -135,7 +156,7 @@ export default function Login() {
               </Link>
             </Grid>
             <Grid item>
-              <Link href='#' variant='body2'>
+              <Link href='/signup' variant='body2'>
                 {"Don't have an account? Sign Up"}
               </Link>
             </Grid>

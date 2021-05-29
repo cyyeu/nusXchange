@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useContext } from 'react'
 import {
   Avatar,
   Button,
@@ -13,7 +13,8 @@ import {
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import { makeStyles } from '@material-ui/core/styles'
 import { useHistory } from 'react-router-dom'
-import { useForm } from 'react-hook-form'
+import validator from 'validator'
+import { UserContext } from '../../contexts/UserContext'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -38,14 +39,13 @@ const useStyles = makeStyles((theme) => ({
 export default function Signup() {
   const classes = useStyles()
   const history = useHistory()
-
+  const { dispatch } = useContext(UserContext)
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [, setErrors] = useState(false)
-  const [loading, setLoading] = useState(true)
+  const [errors, setErrors] = useState('')
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -58,26 +58,57 @@ export default function Signup() {
       last_name: lastName,
     }
 
-    fetch('http://127.0.0.1:8000/api/auth/register', {
+    fetch('http://localhost:8000/api/auth/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(payload),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.key) {
-          localStorage.clear()
-          localStorage.setItem('token', data.key)
+    }).then((res) => {
+      if (res.ok) {
+        res.json().then((data) => {
+          dispatch({
+            type: 'LOGIN',
+            payload: {
+              token: data.key,
+            },
+          })
           history.push('/profile')
-        } else {
-          setEmail('')
-          setPassword('')
-          localStorage.clear()
-          setErrors(true)
-        }
+        })
+      } else if (!res.ok) {
+        setFirstName('')
+        setLastName('')
+        setEmail('')
+        setPassword('')
+        localStorage.clear()
+        res.json().then((data) => {
+          alert(data.email)
+        })
+      }
+    })
+  }
+
+  function validateEmail(email) {
+    let regex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/
+    return regex.test(email) ? '' : 'Invalid Email.'
+  }
+
+  function validatePassword() {
+    if (
+      validator.isStrongPassword(password, {
+        minLength: 8,
+        minLowercase: 1,
+        minUppercase: 0,
+        minNumbers: 1,
+        minSymbols: 0,
       })
+    ) {
+      setErrors('')
+      console.log(password, 'jethroisdad')
+    } else {
+      setErrors('Password not Strong.')
+      console.log(password, 'cysmallkkj')
+    }
   }
 
   return (
@@ -87,11 +118,9 @@ export default function Signup() {
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
-
         <Typography component='h2' variant='h4'>
           Sign Up
         </Typography>
-
         <form
           className={classes.form}
           id='signup'
@@ -140,6 +169,8 @@ export default function Signup() {
                 value={email}
                 onBlur={(e) => setEmail(e.target.value)}
                 onChange={(e) => setEmail(e.target.value)}
+                error={validateEmail(email) !== ''}
+                helperText={validateEmail(email)}
               />
             </Grid>
             <Grid item xs={12}>
@@ -153,8 +184,10 @@ export default function Signup() {
                 id='password'
                 autoComplete='none'
                 value={password}
-                onBlur={(e) => setPassword(e.target.value)}
+                onBlur={validatePassword}
                 onChange={(e) => setPassword(e.target.value)}
+                error={errors !== ''}
+                helperText={errors}
               />
             </Grid>
             <Grid item xs={12}>
@@ -170,6 +203,12 @@ export default function Signup() {
                 value={confirmPassword}
                 onBlur={(e) => setConfirmPassword(e.target.value)}
                 onChange={(e) => setConfirmPassword(e.target.value)}
+                error={confirmPassword !== password}
+                helperText={
+                  confirmPassword !== password
+                    ? 'Password fields do not match.'
+                    : ''
+                }
               />
             </Grid>
           </Grid>
@@ -180,6 +219,9 @@ export default function Signup() {
             color='primary'
             className={classes.submit}
             form='signup'
+            disabled={
+              validateEmail(email) || errors || confirmPassword !== password
+            }
           >
             Sign Up
           </Button>
