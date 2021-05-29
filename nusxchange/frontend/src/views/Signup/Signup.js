@@ -79,7 +79,7 @@ export default function Signup() {
       last_name: form.lastName,
     }
 
-    fetch('api/auth/register', {
+    fetch('/api/auth/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
