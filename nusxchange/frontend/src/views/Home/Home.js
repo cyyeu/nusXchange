@@ -11,10 +11,8 @@ const Home = () => {
   const handleSearch = (e) => {
     e.preventDefault()
     setSearch(e.target.value)
-    console.log(search)
   }
   const handleSubmit = () => {
-    e.preventDefault()
     history.push('/search')
   }
 
