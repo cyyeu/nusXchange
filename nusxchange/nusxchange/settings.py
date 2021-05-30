@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import django_heroku
+import dj-database-url
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -187,4 +188,5 @@ REST_FRAMEWORK = {
     ],
 }
 django_heroku.settings(locals())
+DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
 
