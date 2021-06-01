@@ -11,7 +11,6 @@ dj-rest-auth==2.1.5
 Django==3.2.2
 django-allauth==0.44.0
 django-cors-headers==3.7.0
-django-heroku==0.3.1
 django-rest-auth==0.9.5
 djangorestframework==3.12.4
 filelock==3.0.12

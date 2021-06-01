@@ -81,6 +81,7 @@ export default function Login() {
       } else {
         setIsInvalidLogin(true)
         setForm(initForm)
+        res.json().catch((e) => console.log(e))
       }
     })
   }
