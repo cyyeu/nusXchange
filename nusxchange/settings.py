@@ -11,9 +11,6 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-import django_heroku
-import dj_database_url
-
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,7 +27,7 @@ DEBUG = True
 
 APPEND_SLASH=False
 
-ALLOWED_HOSTS = ['localhost', 'nusxchange.herokuapp.com','127.0.0.1']
+ALLOWED_HOSTS = ['localhost', 'nusxchange.herokuapp.com','127.0.0.1', '0.0.0.0']
 
 
 # Application definition
@@ -63,7 +60,9 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 MIDDLEWARE = [
+	
     'corsheaders.middleware.CorsMiddleware',
+		'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -187,6 +186,5 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ],
 }
-django_heroku.settings(locals())
-DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
+
 

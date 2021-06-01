@@ -1,1 +1,1 @@
-web: sh -c 'cd ./nusxchange/ && gunicorn nusxchange.wsgi'
+web: gunicorn nusxchange.wsgi
