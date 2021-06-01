@@ -16,6 +16,10 @@ const Home = () => {
     history.push('/search')
   }
 
+  const handleCreateClick = () => {
+    history.push('/create')
+  }
+
   return (
     <Layout>
       <Grid container wrap='wrap' direction='column' spacing={8}>
@@ -46,7 +50,7 @@ const Home = () => {
             color='primary'
             align='center'
             size='large'
-            href='/create'
+            onClick={handleCreateClick}
           >
             Create a listing
           </CustomButton>
