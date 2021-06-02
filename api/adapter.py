@@ -6,7 +6,9 @@ class CustomAccountAdapter(DefaultAccountAdapter):
     def save_user(self, request, user, form, commit=False):
         user = super().save_user(request, user, form, commit)
         data = form.cleaned_data
-        user.reg_no = data.get('first_name')
-        user.department = data.get('last_name')
+        user.first_name = data.get('first_name')
+        user.last_name = data.get('last_name')
+        user.user_bio = data.get('user_bio')
+        user.user_xp = data.get('user_xp')
         user.save()
         return user
