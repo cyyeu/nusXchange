@@ -1,16 +1,13 @@
 import React from 'react'
 import { Grid } from '@material-ui/core'
 import styled from 'styled-components'
-
+import Sidebar from './components/Sidebar'
+import Main from './Main'
 const Profile = () => {
   return (
-    <CustomGrid container justify='center' spacing={2}>
-      <Grid item container justify='center' xs={3}>
-        test
-      </Grid>
-      <Grid item container justify='center' xs={7}>
-        test
-      </Grid>
+    <CustomGrid container justify='center' alignItems='flex-start' spacing={3}>
+      <Sidebar />
+      <Main />
     </CustomGrid>
   )
 }
