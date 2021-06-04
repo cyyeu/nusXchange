@@ -33,7 +33,7 @@ const Landing = () => {
           <Profile />
         </Route>
         <Route path='/settings'>
-          <Temp />
+          <Settings />
         </Route>
         <Route path='/summarizer'>
           <Temp />

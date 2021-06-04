@@ -1,7 +1,9 @@
 import React from 'react'
-
+import VerticalTabs from './components/VerticalTabs'
 const Settings = () => {
-  return <h1>Settings</h1>
+  return (
+    <VerticalTabs />
+  )
 }
 
 export default Settings
