@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 
 from .forms import UserProfileChangeForm, UserProfileCreationForm
-from .models import UserProfile
+from .models import UserProfile, Listing
 
 # Register your models here.
 
@@ -25,3 +25,4 @@ class UserProfileAdmin(UserAdmin):
 
 
 admin.site.register(UserProfile, UserProfileAdmin)
+admin.site.register(Listing)

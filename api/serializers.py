@@ -1,9 +1,10 @@
 
+from django.db.models import fields
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 from dj_rest_auth.registration.serializers import RegisterSerializer
 from rest_framework import serializers
-from .models import UserProfile
+from .models import UserProfile, Listing 
 
 from allauth.account.adapter import get_adapter
 from allauth.account.utils import setup_user_email
@@ -29,4 +30,10 @@ class CustomUserDetailsSerializer(UserDetailsSerializer):
 	class Meta(UserDetailsSerializer.Meta):
 			fields = UserDetailsSerializer.Meta.fields + \
 					('first_name', 'last_name', 'user_bio','user_xp','email')
-			read_only_fields = ("username",'email')		
+			read_only_fields = ("username",'email')
+class ListingSerializer(serializers.ModelSerializer):
+	user = CustomUserDetailsSerializer(read_only=True)
+	class Meta:
+		model = Listing
+		fields = ('id', 'user', 'modCode', 'description', 'date_created', 'availDates', 'price')
+
