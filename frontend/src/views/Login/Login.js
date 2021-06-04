@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext } from "react";
 import {
   Avatar,
   Button,
@@ -11,114 +11,114 @@ import {
   Container,
   FormControlLabel,
   Checkbox,
-} from '@material-ui/core/'
-import { Alert } from '@material-ui/lab'
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
-import { makeStyles } from '@material-ui/core/styles'
-import { useHistory } from 'react-router-dom'
-import { UserContext } from '../../contexts/UserContext'
+} from "@material-ui/core/";
+import { Alert } from "@material-ui/lab";
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import { makeStyles } from "@material-ui/core/styles";
+import { useHistory } from "react-router-dom";
+import { UserContext } from "../../contexts/UserContext";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
   },
   avatar: {
     margin: theme.spacing(1),
     backgroundColor: theme.palette.secondary.main,
   },
   form: {
-    width: '100%', // Fix IE 11 issue.
+    width: "100%", // Fix IE 11 issue.
     marginTop: theme.spacing(1),
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
-}))
+}));
 
 export default function Login() {
-  const classes = useStyles()
-  const history = useHistory()
-  const { dispatch } = useContext(UserContext)
+  const classes = useStyles();
+  const history = useHistory();
+  const { dispatch } = useContext(UserContext);
   const initForm = {
-    email: '',
-    password: '',
+    email: "",
+    password: "",
     remember: false,
-  }
-  const [form, setForm] = useState(initForm)
-  const [isInvalidLogin, setIsInvalidLogin] = useState(false)
+  };
+  const [form, setForm] = useState(initForm);
+  const [isInvalidLogin, setIsInvalidLogin] = useState(false);
   const handleInputChange = (event) => {
-    const { name, value, checked } = event.target
-    setForm({ ...form, [name]: name === 'remember' ? checked : value })
-  }
+    const { name, value, checked } = event.target;
+    setForm({ ...form, [name]: name === "remember" ? checked : value });
+  };
   const handleSubmit = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     const payload = {
       email: form.email,
       password: form.password,
-    }
+    };
 
-    fetch('/api/auth/login/', {
-      method: 'POST',
+    fetch("/api/auth/login/", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(payload),
     }).then((res) => {
       if (res.ok) {
         res.json().then((data) => {
           dispatch({
-            type: 'LOGIN',
+            type: "LOGIN",
             payload: {
               token: data.key,
               rememberMe: form.remember,
             },
-          })
-          history.push('/profile')
-        })
+          });
+          history.push("/profile");
+        });
       } else {
-        setIsInvalidLogin(true)
-        setForm(initForm)
-        res.json().catch((e) => console.log(e))
+        setIsInvalidLogin(true);
+        setForm(initForm);
+        res.json().catch((e) => console.log(e));
       }
-    })
-  }
+    });
+  };
   return (
-    <Container component='main' maxWidth='xs'>
+    <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
-        <Typography component='h1' variant='h5'>
+        <Typography component="h1" variant="h5">
           Login to nusXchange
         </Typography>
         <form className={classes.form} onSubmit={handleSubmit}>
-          <Grid container direction='column' spacing={1}>
+          <Grid container direction="column" spacing={1}>
             <Grid item xs={12}>
               <TextField
-                id='email'
+                id="email"
                 // helperText
                 fullWidth
-                variant='outlined'
-                label='Email'
+                variant="outlined"
+                label="Email"
                 // error
-                name='email'
+                name="email"
                 onChange={handleInputChange}
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
-                id='password'
-                type='password'
+                id="password"
+                type="password"
                 // helperText
                 fullWidth
-                variant='outlined'
-                label='Password'
+                variant="outlined"
+                label="Password"
                 // error
-                name='password'
+                name="password"
                 onChange={handleInputChange}
               />
             </Grid>
@@ -128,23 +128,23 @@ export default function Login() {
                   <Checkbox
                     checked={form.remember}
                     onChange={handleInputChange}
-                    name='remember'
+                    name="remember"
                   />
                 }
-                label='Remember me'
+                label="Remember me"
               />
             </Grid>
           </Grid>
           {isInvalidLogin && (
-            <Alert severity='error' variant='outlined'>
+            <Alert severity="error" variant="outlined">
               Invalid email or password!
             </Alert>
           )}
           <Button
-            type='submit'
+            type="submit"
             fullWidth
-            variant='contained'
-            color='primary'
+            variant="contained"
+            color="primary"
             className={classes.submit}
             onClick={handleSubmit}
           >
@@ -152,12 +152,12 @@ export default function Login() {
           </Button>
           <Grid container>
             <Grid item xs>
-              <Link href='#' variant='body2'>
+              <Link href="#" variant="body2">
                 Forgot password?
               </Link>
             </Grid>
             <Grid item>
-              <Link href='/signup' variant='body2'>
+              <Link href="/signup" variant="body2">
                 {"Don't have an account? Sign Up"}
               </Link>
             </Grid>
@@ -165,5 +165,5 @@ export default function Login() {
         </form>
       </div>
     </Container>
-  )
+  );
 }
