@@ -8,11 +8,13 @@ import {
   Typography,
   Container,
   Paper,
+  Snackbar
 } from "@material-ui/core/";
 import { useHistory } from "react-router-dom";
 import { UserContext } from "../../../contexts/UserContext";
 import validator from "validator";
 import Divider from "../../Home/components/Divider";
+import MuiAlert from '@material-ui/lab/Alert';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -34,6 +36,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 export default function EditPassword() {
   const classes = useStyles();
   const history = useHistory();
@@ -48,6 +54,15 @@ export default function EditPassword() {
   };
   const [form, setForm] = useState(initForm);
   const [errors, setErrors] = useState(initErrors);
+  const [open, setOpen] = React.useState(false);
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
@@ -124,7 +139,7 @@ export default function EditPassword() {
       body: JSON.stringify(payload),
     }).then((res) => {
       if (res.ok) {
-        alert("ok");
+        setOpen(true);
       } else {
         console.log(token)
         res.text().then(text => alert(text))
@@ -194,6 +209,19 @@ export default function EditPassword() {
             >
               Change Password
             </Button>
+            <Snackbar
+              open={open}
+              autoHideDuration={6000}
+              onClose={handleClose}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left",
+              }}
+            >
+              <Alert onClose={handleClose} severity="success">
+                Password successfully saved!
+              </Alert>
+            </Snackbar>
           </form>
         </Paper>
       </Container>

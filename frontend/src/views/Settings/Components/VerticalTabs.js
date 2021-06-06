@@ -69,9 +69,10 @@ export default function VerticalTabs() {
         value={value}
         onChange={handleChange}
         className={classes.tabs}
+        
       >
-        <Tab label="Edit Profile" {...a11yProps(0)} />
-        <Tab label="Change Password" {...a11yProps(1)} />
+        <Tab style = {{"textTransform": 'none','fontSize' : 16}} label="Edit Profile" {...a11yProps(0)} />
+        <Tab style = {{"textTransform": 'none','fontSize' : 16}} label="Change Password" {...a11yProps(1)} />
       </Tabs>
       <TabPanel value={value} index={0}>
         <EditProfile />

@@ -3,21 +3,18 @@ import { makeStyles } from "@material-ui/core/styles";
 import {
   Avatar,
   Button,
-  CssBaseline,
   TextField,
-  Link,
   Grid,
   Box,
   Typography,
   Container,
-  FormControlLabel,
-  Checkbox,
   Paper,
+  Snackbar,
 } from "@material-ui/core/";
 import { useHistory } from "react-router-dom";
 import { UserContext } from "../../../contexts/UserContext";
 import Divider from "../../Home/components/Divider";
-
+import MuiAlert from "@material-ui/lab/Alert";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -44,6 +41,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 export default function EditProfile() {
   const classes = useStyles();
   const { state } = useContext(UserContext);
@@ -52,8 +53,8 @@ export default function EditProfile() {
     last_name: "",
     bio: "",
   };
-
   const [form, setForm] = useState(initForm);
+  const [open, setOpen] = React.useState(false);
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
@@ -80,7 +81,7 @@ export default function EditProfile() {
       body: JSON.stringify(payload),
     }).then((res) => {
       if (res.ok) {
-        alert("ok");
+        setOpen(true);
       } else {
         res.text().then((text) => alert(text));
       }
@@ -88,10 +89,15 @@ export default function EditProfile() {
   };
 
   const isDisabled = () => {
-    return (
-      form.first_name === "" ||
-      form.last_name === ""
-    );
+    return form.first_name === "" || form.last_name === "";
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
   };
 
   return (
@@ -104,21 +110,25 @@ export default function EditProfile() {
             </Typography>
           </Box>
           <Divider />
-          <Box  p = {2}>
-            <Avatar src ="/static/avatar2.jpg" className={classes.avatar} variant = "circular"/>
+          <Box p={2}>
+            <Avatar
+              src="/static/avatar2.jpg"
+              className={classes.avatar}
+              variant="circular"
+            />
           </Box>
           <form className={classes.form} onSubmit={handleSubmit} id="change">
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <TextField
-                autoComplete='fname'
-                name='first_name'
-                variant='standard'
-                fullWidth
-                id='firstName'
-                label='First Name'
-                value={form.first_name}
-                onChange={handleFormChange}
+                  autoComplete="fname"
+                  name="first_name"
+                  variant="standard"
+                  fullWidth
+                  id="firstName"
+                  label="First Name"
+                  value={form.first_name}
+                  onChange={handleFormChange}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -143,9 +153,9 @@ export default function EditProfile() {
                   autoComplete="lname"
                   value={form.bio}
                   onChange={handleFormChange}
-                  multiline = {true}
-                  rows = {8}
-                  rowsMax = {12}
+                  multiline={true}
+                  rows={8}
+                  rowsMax={12}
                 />
               </Grid>
             </Grid>
@@ -160,6 +170,19 @@ export default function EditProfile() {
             >
               Save Changes
             </Button>
+            <Snackbar
+              open={open}
+              autoHideDuration={6000}
+              onClose={handleClose}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left",
+              }}
+            >
+              <Alert onClose={handleClose} severity="success">
+                Profile successfully saved!
+              </Alert>
+            </Snackbar>
           </form>
         </Paper>
       </Container>
