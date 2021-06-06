@@ -2,7 +2,7 @@ import React from 'react'
 import { Grid } from '@material-ui/core'
 import styled from 'styled-components'
 import Sidebar from './components/Sidebar'
-import Main from './Main'
+import ProfilePanel from './ProfilePanel'
 const Profile = () => {
   return (
     <CustomGrid container justify='center' alignItems='flex-start' spacing={3}>
