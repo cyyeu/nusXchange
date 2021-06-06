@@ -7,7 +7,7 @@ const Profile = () => {
   return (
     <CustomGrid container justify='center' alignItems='flex-start' spacing={3}>
       <Sidebar />
-      <Main />
+      <ProfilePanel />
     </CustomGrid>
   )
 }
