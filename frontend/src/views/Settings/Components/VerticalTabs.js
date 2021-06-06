@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
     display: 'flex',
-    height : 100,
+    height : 96,
   },
   tabs: {
     borderRight: `1px solid ${theme.palette.divider}`,
@@ -62,8 +62,7 @@ export default function VerticalTabs() {
   };
 
   return (
-    <div className={classes.root} 
-    style = {{marginLeft : 360, paddingTop: 30}}>
+    <div className={classes.root} >
       <Tabs
         orientation="vertical"
         variant="standard"
