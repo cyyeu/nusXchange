@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
     display: 'flex',
-    height : 100,
+    height : 96,
   },
   tabs: {
     borderRight: `1px solid ${theme.palette.divider}`,
@@ -62,17 +62,17 @@ export default function VerticalTabs() {
   };
 
   return (
-    <div className={classes.root} 
-    style = {{marginLeft : 360, paddingTop: 30}}>
+    <div className={classes.root} >
       <Tabs
         orientation="vertical"
         variant="standard"
         value={value}
         onChange={handleChange}
         className={classes.tabs}
+        
       >
-        <Tab label="Edit Profile" {...a11yProps(0)} />
-        <Tab label="Change Password" {...a11yProps(1)} />
+        <Tab style = {{"textTransform": 'none','fontSize' : 16}} label="Edit Profile" {...a11yProps(0)} />
+        <Tab style = {{"textTransform": 'none','fontSize' : 16}} label="Change Password" {...a11yProps(1)} />
       </Tabs>
       <TabPanel value={value} index={0}>
         <EditProfile />
