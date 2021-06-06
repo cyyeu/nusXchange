@@ -105,7 +105,7 @@ export default function EditProfile() {
           </Box>
           <Divider />
           <Box  p = {2}>
-            <Avatar src ="/static/avatar.jpg" className={classes.avatar} variant = "circular"/>
+            <Avatar src ="/static/avatar2.jpg" className={classes.avatar} variant = "circular"/>
           </Box>
           <form className={classes.form} onSubmit={handleSubmit} id="change">
             <Grid container spacing={2}>
