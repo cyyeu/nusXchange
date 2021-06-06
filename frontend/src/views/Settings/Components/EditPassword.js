@@ -15,6 +15,8 @@ import { UserContext } from "../../../contexts/UserContext";
 import validator from "validator";
 import Divider from "../../Home/components/Divider";
 import MuiAlert from '@material-ui/lab/Alert';
+import {AlertTitle} from '@material-ui/lab';
+
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -219,6 +221,7 @@ export default function EditPassword() {
               }}
             >
               <Alert onClose={handleClose} severity="success">
+              <AlertTitle>Success</AlertTitle>
                 Password successfully saved!
               </Alert>
             </Snackbar>

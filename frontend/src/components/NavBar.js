@@ -22,7 +22,9 @@ const NavBar = () => {
 
   useEffect(() => {
     if (state.isAuthenticated || localStorage.token) {
-      state.token = JSON.parse(localStorage.getItem('token'))
+      if (localStorage.token) {
+        state.token = JSON.parse(localStorage.getItem('token'))
+      }
       setAuth(true)
     } else {
       setAuth(false)

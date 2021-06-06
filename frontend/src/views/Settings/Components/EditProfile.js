@@ -15,6 +15,7 @@ import { useHistory } from "react-router-dom";
 import { UserContext } from "../../../contexts/UserContext";
 import Divider from "../../Home/components/Divider";
 import MuiAlert from "@material-ui/lab/Alert";
+import {AlertTitle} from '@material-ui/lab';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -180,6 +181,7 @@ export default function EditProfile() {
               }}
             >
               <Alert onClose={handleClose} severity="success">
+              <AlertTitle>Success</AlertTitle>
                 Profile successfully saved!
               </Alert>
             </Snackbar>
