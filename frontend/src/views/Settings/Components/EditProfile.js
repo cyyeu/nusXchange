@@ -10,12 +10,18 @@ import {
   Container,
   Paper,
   Snackbar,
+  IconButton
 } from "@material-ui/core/";
-import { useHistory } from "react-router-dom";
 import { UserContext } from "../../../contexts/UserContext";
 import Divider from "../../Home/components/Divider";
 import MuiAlert from "@material-ui/lab/Alert";
 import {AlertTitle} from '@material-ui/lab';
+import PhotoCamera from '@material-ui/icons/PhotoCamera';
+
+import {AdvancedImage} from '@cloudinary/react';
+import {Cloudinary} from "@cloudinary/base";
+import {fill} from "@cloudinary/base/actions/resize";
+import {max} from "@cloudinary/base/actions/roundCorners";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -64,15 +70,12 @@ export default function EditProfile() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     var token = "Token " + state.token;
-
     const payload = {
       first_name: form.first_name,
       last_name: form.last_name,
       user_bio: form.bio,
     };
-
     fetch("/api/auth/user/", {
       method: "PATCH",
       headers: {
@@ -89,10 +92,12 @@ export default function EditProfile() {
     });
   };
 
+  //button disable
   const isDisabled = () => {
     return form.first_name === "" || form.last_name === "";
   };
 
+  //handle snackbar closing
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -100,6 +105,20 @@ export default function EditProfile() {
 
     setOpen(false);
   };
+
+  const handleUpload = (e) => {
+
+  }
+
+  //cloudinary instance
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName: 'nusxchange'
+    }
+  });
+
+  const profile_img = cld.image('test_profile'); 
+  profile_img.resize(fill().width(128).height(128)).roundCorners(max());
 
   return (
     <div className={classes.paper}>
@@ -112,11 +131,24 @@ export default function EditProfile() {
           </Box>
           <Divider />
           <Box p={2}>
-            <Avatar
-              src="/static/avatar2.jpg"
-              className={classes.avatar}
-              variant="circular"
+            <AdvancedImage
+              cldImg = {profile_img}
+              
+              //src="/static/avatar2.jpg"
+              //className={classes.avatar}
+              //variant="circular"
             />
+            <input 
+            type = "file"
+            accept = "image/*"
+            onChange = {handleUpload}
+            style={{ display: 'none' }}/>
+            
+            <label htmlFor="icon-button-file">
+              <IconButton color="primary" aria-label="upload picture" component="span">
+                <PhotoCamera />
+              </IconButton>
+            </label> 
           </Box>
           <form className={classes.form} onSubmit={handleSubmit} id="change">
             <Grid container spacing={2}>
