@@ -143,7 +143,7 @@ export default function EditPassword() {
       if (res.ok) {
         setOpen(true);
       } else {
-        console.log(token)
+        //console.log(token)
         res.text().then(text => alert(text))
         
       }

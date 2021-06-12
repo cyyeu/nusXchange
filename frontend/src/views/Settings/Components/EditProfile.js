@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Avatar,
@@ -10,18 +10,19 @@ import {
   Container,
   Paper,
   Snackbar,
-  IconButton
+  IconButton,
 } from "@material-ui/core/";
 import { UserContext } from "../../../contexts/UserContext";
 import Divider from "../../Home/components/Divider";
 import MuiAlert from "@material-ui/lab/Alert";
-import {AlertTitle} from '@material-ui/lab';
-import PhotoCamera from '@material-ui/icons/PhotoCamera';
+import { AlertTitle } from "@material-ui/lab";
+import PhotoCamera from "@material-ui/icons/PhotoCamera";
 
-import {AdvancedImage} from '@cloudinary/react';
-import {Cloudinary} from "@cloudinary/base";
-import {fill} from "@cloudinary/base/actions/resize";
-import {max} from "@cloudinary/base/actions/roundCorners";
+import { AdvancedImage, placeholder } from "@cloudinary/react";
+import { Cloudinary } from "@cloudinary/base";
+import { fill } from "@cloudinary/base/actions/resize";
+import { max } from "@cloudinary/base/actions/roundCorners";
+import { defaultImage } from "@cloudinary/base/actions/delivery";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -61,8 +62,8 @@ export default function EditProfile() {
     bio: "",
   };
   const [form, setForm] = useState(initForm);
-  const [open, setOpen] = React.useState(false);
-
+  const [open, setOpen] = useState(false);
+  const [imageId, setImageId] = useState("placeholder");
   const handleFormChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
@@ -107,17 +108,39 @@ export default function EditProfile() {
   };
 
   const handleUpload = (e) => {
-
-  }
+    e.preventDefault();
+    const url = "https://api.cloudinary.com/v1_1/nusxchange/upload";
+    const formData = new FormData();
+    var file = e.target.files[0];
+    formData.append("file", file);
+    formData.append("upload_preset", "xtgswhai");
+    fetch(url, {
+      method: "POST",
+      body: formData,
+    }).then((res) => {
+      if (res.ok) {
+        setOpen(true);
+        //res.text().then(text => alert(text))
+        res.json().then((data) => {
+        setImageId(data.public_id)  
+        console.log(data.public_id)
+        })
+      } else {
+        //console.log(token)
+        res.text().then(text => alert(text))
+      }
+    });
+  };
 
   //cloudinary instance
   const cld = new Cloudinary({
     cloud: {
-      cloudName: 'nusxchange'
-    }
+      cloudName: "nusxchange",
+    },
   });
-
-  const profile_img = cld.image('test_profile'); 
+  
+  const profile_img = cld.image(imageId);
+  profile_img.delivery(defaultImage("test_profile"));
   profile_img.resize(fill().width(128).height(128)).roundCorners(max());
 
   return (
@@ -132,23 +155,28 @@ export default function EditProfile() {
           <Divider />
           <Box p={2}>
             <AdvancedImage
-              cldImg = {profile_img}
-              
+              cldImg={profile_img}
               //src="/static/avatar2.jpg"
               //className={classes.avatar}
               //variant="circular"
             />
-            <input 
-            type = "file"
-            accept = "image/*"
-            onChange = {handleUpload}
-            style={{ display: 'none' }}/>
-            
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleUpload}
+              style={{ display: "none" }}
+              id="icon-button-file"
+            />
             <label htmlFor="icon-button-file">
-              <IconButton color="primary" aria-label="upload picture" component="span">
+              <IconButton
+                color="primary"
+                aria-label="upload picture"
+                component="span"
+                onChange={handleUpload}
+              >
                 <PhotoCamera />
               </IconButton>
-            </label> 
+            </label>
           </Box>
           <form className={classes.form} onSubmit={handleSubmit} id="change">
             <Grid container spacing={2}>
@@ -213,7 +241,7 @@ export default function EditProfile() {
               }}
             >
               <Alert onClose={handleClose} severity="success">
-              <AlertTitle>Success</AlertTitle>
+                <AlertTitle>Success</AlertTitle>
                 Profile successfully saved!
               </Alert>
             </Snackbar>
