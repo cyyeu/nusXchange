@@ -138,9 +138,9 @@ export default function EditProfile() {
       cloudName: "nusxchange",
     },
   });
-  
-  const profile_img = cld.image(imageId);
-  profile_img.delivery(defaultImage("test_profile"));
+
+  const profile_img = cld.image("default");
+  profile_img.delivery(defaultImage("default"));
   profile_img.resize(fill().width(128).height(128)).roundCorners(max());
 
   return (
@@ -156,9 +156,6 @@ export default function EditProfile() {
           <Box p={2}>
             <AdvancedImage
               cldImg={profile_img}
-              //src="/static/avatar2.jpg"
-              //className={classes.avatar}
-              //variant="circular"
             />
             <input
               type="file"

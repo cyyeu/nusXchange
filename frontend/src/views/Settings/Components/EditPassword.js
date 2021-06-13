@@ -10,7 +10,6 @@ import {
   Paper,
   Snackbar
 } from "@material-ui/core/";
-import { useHistory } from "react-router-dom";
 import { UserContext } from "../../../contexts/UserContext";
 import validator from "validator";
 import Divider from "../../Home/components/Divider";
@@ -29,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   form: {
-    width: "66%", // Fix IE 11 issue.
+    width: "66%",
     marginTop: theme.spacing(1),
     padding: theme.spacing(2),
   },
@@ -44,7 +43,6 @@ function Alert(props) {
 
 export default function EditPassword() {
   const classes = useStyles();
-  const history = useHistory();
   const { state } = useContext(UserContext);
   const initForm = {
     password: "",
@@ -56,7 +54,7 @@ export default function EditPassword() {
   };
   const [form, setForm] = useState(initForm);
   const [errors, setErrors] = useState(initErrors);
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
