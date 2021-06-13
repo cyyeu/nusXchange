@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Avatar,
@@ -10,11 +10,19 @@ import {
   Container,
   Paper,
   Snackbar,
+  IconButton,
 } from "@material-ui/core/";
-import { useHistory } from "react-router-dom";
 import { UserContext } from "../../../contexts/UserContext";
 import Divider from "../../Home/components/Divider";
 import MuiAlert from "@material-ui/lab/Alert";
+import { AlertTitle } from "@material-ui/lab";
+import PhotoCamera from "@material-ui/icons/PhotoCamera";
+
+import { AdvancedImage, placeholder } from "@cloudinary/react";
+import { Cloudinary } from "@cloudinary/base";
+import { fill } from "@cloudinary/base/actions/resize";
+import { max } from "@cloudinary/base/actions/roundCorners";
+import { defaultImage } from "@cloudinary/base/actions/delivery";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -54,8 +62,8 @@ export default function EditProfile() {
     bio: "",
   };
   const [form, setForm] = useState(initForm);
-  const [open, setOpen] = React.useState(false);
-
+  const [open, setOpen] = useState(false);
+  const [imageId, setImageId] = useState("placeholder");
   const handleFormChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
@@ -63,15 +71,12 @@ export default function EditProfile() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     var token = "Token " + state.token;
-
     const payload = {
       first_name: form.first_name,
       last_name: form.last_name,
       user_bio: form.bio,
     };
-
     fetch("/api/auth/user/", {
       method: "PATCH",
       headers: {
@@ -88,10 +93,12 @@ export default function EditProfile() {
     });
   };
 
+  //button disable
   const isDisabled = () => {
     return form.first_name === "" || form.last_name === "";
   };
 
+  //handle snackbar closing
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -99,6 +106,42 @@ export default function EditProfile() {
 
     setOpen(false);
   };
+
+  const handleUpload = (e) => {
+    e.preventDefault();
+    const url = "https://api.cloudinary.com/v1_1/nusxchange/upload";
+    const formData = new FormData();
+    var file = e.target.files[0];
+    formData.append("file", file);
+    formData.append("upload_preset", "xtgswhai");
+    fetch(url, {
+      method: "POST",
+      body: formData,
+    }).then((res) => {
+      if (res.ok) {
+        setOpen(true);
+        //res.text().then(text => alert(text))
+        res.json().then((data) => {
+        setImageId(data.public_id)  
+        console.log(data.public_id)
+        })
+      } else {
+        //console.log(token)
+        res.text().then(text => alert(text))
+      }
+    });
+  };
+
+  //cloudinary instance
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName: "nusxchange",
+    },
+  });
+
+  const profile_img = cld.image("default");
+  profile_img.delivery(defaultImage("default"));
+  profile_img.resize(fill().width(128).height(128)).roundCorners(max());
 
   return (
     <div className={classes.paper}>
@@ -111,11 +154,26 @@ export default function EditProfile() {
           </Box>
           <Divider />
           <Box p={2}>
-            <Avatar
-              src="/static/avatar2.jpg"
-              className={classes.avatar}
-              variant="circular"
+            <AdvancedImage
+              cldImg={profile_img}
             />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleUpload}
+              style={{ display: "none" }}
+              id="icon-button-file"
+            />
+            <label htmlFor="icon-button-file">
+              <IconButton
+                color="primary"
+                aria-label="upload picture"
+                component="span"
+                onChange={handleUpload}
+              >
+                <PhotoCamera />
+              </IconButton>
+            </label>
           </Box>
           <form className={classes.form} onSubmit={handleSubmit} id="change">
             <Grid container spacing={2}>
@@ -172,7 +230,7 @@ export default function EditProfile() {
             </Button>
             <Snackbar
               open={open}
-              autoHideDuration={6000}
+              autoHideDuration={3000}
               onClose={handleClose}
               anchorOrigin={{
                 vertical: "bottom",
@@ -180,6 +238,7 @@ export default function EditProfile() {
               }}
             >
               <Alert onClose={handleClose} severity="success">
+                <AlertTitle>Success</AlertTitle>
                 Profile successfully saved!
               </Alert>
             </Snackbar>

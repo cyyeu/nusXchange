@@ -36,7 +36,7 @@ const Landing = () => {
           <Settings />
         </Route>
         <Route path='/summarizer'>
-          <Temp />
+          <Summarizer />
         </Route>
         <Route path='/create'>
           <Temp />

@@ -1,7 +1,23 @@
 import React from 'react'
 import { Grid } from '@material-ui/core'
-import styled from 'styled-components'
-import { Typography, Avatar, LinearProgress } from '@material-ui/core'
+import { Typography,LinearProgress } from '@material-ui/core'
+
+import { AdvancedImage} from "@cloudinary/react";
+import { Cloudinary } from "@cloudinary/base";
+import { fill } from "@cloudinary/base/actions/resize";
+import { max } from "@cloudinary/base/actions/roundCorners";
+import { defaultImage } from "@cloudinary/base/actions/delivery";
+
+//cloudinary instance and code
+const cld = new Cloudinary({
+  cloud: {
+    cloudName: "nusxchange",
+  },
+});
+
+const profile_img = cld.image("default");
+profile_img.delivery(defaultImage("default"));
+profile_img.resize(fill().width(150).height(150)).roundCorners(max());
 
 const Sidebar = () => {
   return (
@@ -19,7 +35,7 @@ const Sidebar = () => {
         </Typography>
       </Grid>
       <Grid item>
-        <AvatarPlaceholder />
+        <AdvancedImage cldImg = {profile_img} />
       </Grid>
       <Grid item>
         <Typography variant='body2'>Level 5</Typography>
@@ -44,9 +60,5 @@ const Sidebar = () => {
   )
 }
 
-const AvatarPlaceholder = styled(Avatar)`
-  height: 150px;
-  width: 150px;
-`
-
+ 
 export default Sidebar

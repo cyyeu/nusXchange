@@ -72,7 +72,7 @@ export default function VerticalTabs() {
         
       >
         <Tab style = {{"textTransform": 'none','fontSize' : 16}} label="Edit Profile" {...a11yProps(0)} />
-        <Tab style = {{"textTransform": 'none','fontSize' : 16}} label="Change Password" {...a11yProps(1)} />
+        <Tab style = {{"textTransform": 'none','fontSize' : 16}} label="Edit Password" {...a11yProps(1)} />
       </Tabs>
       <TabPanel value={value} index={0}>
         <EditProfile />
