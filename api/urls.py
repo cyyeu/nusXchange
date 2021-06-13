@@ -13,6 +13,7 @@ urlpatterns = [
     # path('password/reset/confirm/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('auth/', include('dj_rest_auth.urls')),
 		path('auth/register', include('dj_rest_auth.registration.urls')),
+		path('password/reset/confirm/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
 		path('viewsets/', include(router.urls)),
 		path('user/<int:pk>', views.UserProfileView.as_view(), name='UserProfileView')
 ]
