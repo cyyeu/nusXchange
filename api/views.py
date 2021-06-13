@@ -1,20 +1,23 @@
+from re import I
 from django.shortcuts import render
-from .models import Listing, UserProfile
+from rest_framework.generics import RetrieveUpdateAPIView
+from .models import Listing, User, UserProfile
 from .serializers import ListingSerializer, UserProfileSerializer
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from rest_framework import serializers, viewsets
+from rest_framework import serializers, viewsets, mixins, generics
+from api.permissions import IsOwnerOrReadOnly
+from django.shortcuts import get_object_or_404
 # Create your views here.
 
 
 
-class UserProfileViewSet(viewsets.ModelViewSet):
+class UserProfileView(generics.RetrieveUpdateAPIView):
 	serializer_class = UserProfileSerializer
-	queryset = UserProfile.objects.all()
+	permission_classes = [IsOwnerOrReadOnly]
 
-class ListingViewSet(viewsets.ModelViewSet):
-	serializer_class = ListingSerializer
-	queryset = Listing.objects.all()
+	def get_queryset(self):
+			return UserProfile.objects.all()
 
 
 
