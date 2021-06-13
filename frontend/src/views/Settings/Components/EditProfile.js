@@ -230,7 +230,7 @@ export default function EditProfile() {
             </Button>
             <Snackbar
               open={open}
-              autoHideDuration={6000}
+              autoHideDuration={3000}
               onClose={handleClose}
               anchorOrigin={{
                 vertical: "bottom",
