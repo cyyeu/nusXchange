@@ -106,10 +106,10 @@ const NavBar = () => {
           </Link>
         </LogoWrapper>
 
-        <CustomButton component={Link} to='/'>
+        <CustomButton style = {{"textTransform": 'none','fontSize' : 16}} component={Link} to='/'>
           tutorXchange
         </CustomButton>
-        <CustomButton component={Link} to='/summarizer'>
+        <CustomButton style = {{"textTransform": 'none','fontSize' : 16}} component={Link} to='/summarizer'>
           Summarizer
         </CustomButton>
         {auth ? renderIcons() : renderAuthButtons()}
