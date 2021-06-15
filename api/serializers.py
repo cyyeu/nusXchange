@@ -1,10 +1,17 @@
+from api.permissions import ListingPermission
 from rest_framework import serializers
-from rest_framework import serializers
+from rest_auth.models import TokenModel
 from .models import UserProfile, Listing, Transaction, Review
 from django.contrib.auth.models import User
 from dj_rest_auth.registration.serializers import RegisterSerializer
 from rest_auth.serializers import UserDetailsSerializer
 
+
+class TokenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TokenModel
+        fields = ('key', 'user_id')  
+	
 ## add first name last name custom sign up
 class CustomRegisterSerializer(RegisterSerializer):
 
@@ -28,7 +35,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
 		read_only_fields = ('xp', 'user')
 	
 	def update(self, instance, validated_data):
-		print("@@@",instance.user.first_name)
 		user_data = validated_data.pop('user', None)
 		if user_data:
 			instance.user.first_name = user_data.get('first_name', instance.user.first_name)
@@ -41,20 +47,30 @@ class UserProfileSerializer(serializers.ModelSerializer):
 # search, create, edit, get, delete
 class ListingSerializer(serializers.ModelSerializer):
 	avg_rating = serializers.SerializerMethodField()
-	is_student = serializers.SerializerMethodField()
 	class Meta:
 		model = Listing
 		fields = "__all__"
-		read_only_fields = ("date_created",)
-		depth = 1
+		read_only_fields = ("date_created", "owner")
 
 	def get_avg_rating(self, obj):
-		transactions = obj.transaction.all()
-		ratings = transactions.ratings.all()
+		reviews = obj.reviews.all()
+		num_reviews = reviews.count()
+		if num_reviews == 0:
+			return 0 
 		total_ratings = 0
-		for rating in ratings:
-			total_ratings += rating.rating
-		return total_ratings / len(ratings) #ratings.count()
+		for review in reviews:
+			total_ratings += review.rating
+		return total_ratings / num_reviews
+
+	def create(self, validated_data):
+		user = None
+		request = self.context.get("request")
+		if request and hasattr(request, "user"):
+				user = request.user
+		print("@@@@@@@@@@@", user.id)
+		user_profile = UserProfile.objects.get(user=user.id)
+		listing = Listing.objects.create(owner=user_profile, **validated_data)
+		return listing
 
 class ReviewSerializer(serializers.ModelSerializer):
 	class Meta:
