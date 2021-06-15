@@ -63,7 +63,9 @@ export default function EditProfile() {
   };
   const [form, setForm] = useState(initForm);
   const [open, setOpen] = useState(false);
+  const [errorSnackbar, setErrorSnackbar] = useState(false);
   const [imageId, setImageId] = useState("placeholder");
+
   const handleFormChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
@@ -88,7 +90,8 @@ export default function EditProfile() {
       if (res.ok) {
         setOpen(true);
       } else {
-        res.text().then((text) => alert(text));
+        
+        setErrorSnackbar(true);
       }
     });
   };
@@ -105,6 +108,7 @@ export default function EditProfile() {
     }
 
     setOpen(false);
+    setErrorSnackbar(false);
   };
 
   const handleUpload = (e) => {
@@ -240,6 +244,20 @@ export default function EditProfile() {
               <Alert onClose={handleClose} severity="success">
                 <AlertTitle>Success</AlertTitle>
                 Profile successfully saved!
+              </Alert>
+            </Snackbar>
+            <Snackbar
+              open={errorSnackbar}
+              autoHideDuration={3000}
+              onClose={handleClose}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left",
+              }}
+            >
+              <Alert onClose={handleClose} severity="error">
+                <AlertTitle>Error</AlertTitle>
+                Error changing profile!
               </Alert>
             </Snackbar>
           </form>

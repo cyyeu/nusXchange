@@ -76,7 +76,7 @@ const Content = () => {
   const [summary, setSummary] = useState("Summarized content goes here.");
   const [openSuccess, setOpenSuccess] = useState(false);
   const [openError, setOpenError] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("testing");
+  const [errorMsg, setErrorMsg] = useState("");
 
   //handle snackbar closing
   const handleClose = (event, reason) => {

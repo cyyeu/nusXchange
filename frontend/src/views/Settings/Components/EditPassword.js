@@ -55,6 +55,7 @@ export default function EditPassword() {
   const [form, setForm] = useState(initForm);
   const [errors, setErrors] = useState(initErrors);
   const [open, setOpen] = useState(false);
+  const [errorSnackbar, setErrorSnackbar] = useState(false);
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -62,6 +63,7 @@ export default function EditPassword() {
     }
 
     setOpen(false);
+    setErrorSnackbar(false);
   };
 
   const handleFormChange = (e) => {
@@ -142,7 +144,7 @@ export default function EditPassword() {
         setOpen(true);
       } else {
         //console.log(token)
-        res.text().then(text => alert(text))
+        setErrorSnackbar(true);
         
       }
     });
@@ -211,7 +213,7 @@ export default function EditPassword() {
             </Button>
             <Snackbar
               open={open}
-              autoHideDuration={6000}
+              autoHideDuration={3000}
               onClose={handleClose}
               anchorOrigin={{
                 vertical: "bottom",
@@ -221,6 +223,20 @@ export default function EditPassword() {
               <Alert onClose={handleClose} severity="success">
               <AlertTitle>Success</AlertTitle>
                 Password successfully saved!
+              </Alert>
+            </Snackbar>
+            <Snackbar
+              open={errorSnackbar}
+              autoHideDuration={3000}
+              onClose={handleClose}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left",
+              }}
+            >
+              <Alert onClose={handleClose} severity="error">
+              <AlertTitle>Error</AlertTitle>
+                Error changing password!
               </Alert>
             </Snackbar>
           </form>
