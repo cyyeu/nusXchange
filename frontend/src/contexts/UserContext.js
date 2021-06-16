@@ -2,7 +2,7 @@ import React, { createContext, useReducer } from 'react'
 
 const initUserData = {
   token: '',
-  isAuthenticated: false,
+  user_id: '',
   rememberMe: false,
 }
 
@@ -15,8 +15,8 @@ const reducer = (state, action) => {
       }
       return {
         ...state,
+        user_id: action.payload.user_id,
         token: action.payload.token,
-        isAuthenticated: true,
       }
     case 'LOGOUT':
       localStorage.clear()

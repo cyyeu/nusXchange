@@ -21,7 +21,7 @@ const NavBar = () => {
   const [anchorEl, setAnchorEl] = useState(null)
 
   useEffect(() => {
-    if (state.isAuthenticated || localStorage.token) {
+    if (state.token || localStorage.token) {
       if (localStorage.token) {
         state.token = JSON.parse(localStorage.getItem('token'))
       }

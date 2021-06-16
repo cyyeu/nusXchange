@@ -92,6 +92,7 @@ export default function Signup() {
             type: 'LOGIN',
             payload: {
               token: data.key,
+              user_id: data.user_id,
             },
           })
           history.push('/profile')

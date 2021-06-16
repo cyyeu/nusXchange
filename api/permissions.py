@@ -12,7 +12,7 @@ class ProfilePermission(permissions.BasePermission):
 		if request.method in permissions.SAFE_METHODS:
 				return True
 		# Write permissions are only allowed to the owner of the snippet.
-		return obj.user == request.user
+		return obj.user.id == request.user.id
 
 # is owner or read only
 class ListingPermission(permissions.BasePermission):
