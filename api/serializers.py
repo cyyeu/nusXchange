@@ -27,8 +27,8 @@ class CustomRegisterSerializer(RegisterSerializer):
 # only to GET or PATCH owner's profile. 
 # returns id, first_name, last_name, bio, email, avatar_id.
 class UserProfileSerializer(serializers.ModelSerializer):
-	first_name = serializers.CharField(source='user.first_name')
-	last_name = serializers.CharField(source='user.last_name')
+	first_name = serializers.CharField(source='user.first_name',allow_blank=True)
+	last_name = serializers.CharField(source='user.last_name',allow_blank=True)
 	class Meta:
 		model = UserProfile
 		fields = "__all__"

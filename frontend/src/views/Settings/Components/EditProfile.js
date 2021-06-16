@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef } from "react";
+import React, { useState, useContext, useEffect}  from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Avatar,
@@ -53,18 +53,39 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-export default function EditProfile() {
+const EditProfile = () => {
   const classes = useStyles();
   const { state } = useContext(UserContext);
   const initForm = {
     first_name: "",
     last_name: "",
     bio: "",
+    avatar_id:"",
   };
+
   const [form, setForm] = useState(initForm);
   const [open, setOpen] = useState(false);
   const [errorSnackbar, setErrorSnackbar] = useState(false);
-  const [imageId, setImageId] = useState("placeholder");
+  const token = "Token " + state.token;
+  const url = `/api/user/${state.user_id}`;
+
+  useEffect(() => {
+    loadData();
+    //console.log(userInfo.first_name);
+  },[]);
+
+  const loadData = () => {
+    fetch(url).then(response=>response.json())
+    .then(data => {
+      setForm({
+        ...form,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        bio: data.bio,
+        avatar_id:data.avatar_id,
+      })
+    });
+  }
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
@@ -73,13 +94,12 @@ export default function EditProfile() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    var token = "Token " + state.token;
-    var url = `/api/user/${state.user_id}`;
+
     const payload = {
       first_name: form.first_name,
       last_name: form.last_name,
       bio: form.bio,
-      avatar_id: imageId,
+      avatar_id: form.avatar_id,
     };
     fetch(url, {
       method: "PATCH",
@@ -105,19 +125,19 @@ export default function EditProfile() {
     if (reason === "clickaway") {
       return;
     }
-
     setOpen(false);
     setErrorSnackbar(false);
   };
 
+  //handle upload to cloudinary API and update backend with Id
   const handleUpload = (e) => {
     e.preventDefault();
-    const url = "https://api.cloudinary.com/v1_1/nusxchange/upload";
+    const cldUrl = "https://api.cloudinary.com/v1_1/nusxchange/upload";
     const formData = new FormData();
     var file = e.target.files[0];
     formData.append("file", file);
     formData.append("upload_preset", "xtgswhai");
-    fetch(url, {
+    fetch(cldUrl, {
       method: "POST",
       body: formData,
     }).then((res) => {
@@ -125,8 +145,16 @@ export default function EditProfile() {
         setOpen(true);
         //res.text().then(text => alert(text))
         res.json().then((data) => {
-          setImageId(data.public_id);
-          console.log(data.public_id);
+          setForm({...form,avatar_id:data.public_id});
+          var data = {avatar_id:data.public_id}
+          fetch(url, {
+            method: "PATCH",
+            headers: {
+              Authorization: token,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data)
+          })
         });
       } else {
         //console.log(token)
@@ -142,8 +170,8 @@ export default function EditProfile() {
     },
   });
 
-  const profile_img = cld.image("default");
-  profile_img.delivery(defaultImage("default"));
+  const profile_img = form.avatar_id === "" ?  cld.image("default"): cld.image(form.avatar_id) ;
+  //profile_img.delivery(defaultImage("default"));
   profile_img.resize(fill().width(128).height(128)).roundCorners(max());
 
   return (
@@ -262,3 +290,5 @@ export default function EditProfile() {
     </div>
   );
 }
+
+export default EditProfile;

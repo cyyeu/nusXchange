@@ -41,7 +41,7 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-export default function EditPassword() {
+const EditPassword= () => {
   const classes = useStyles();
   const { state } = useContext(UserContext);
   const initForm = {
@@ -245,3 +245,4 @@ export default function EditPassword() {
     </div>
   );
 }
+export default EditPassword;
