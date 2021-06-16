@@ -14,7 +14,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import { makeStyles } from '@material-ui/core/styles'
 import { useHistory } from 'react-router-dom'
 import validator from 'validator'
-import { UserContext } from '../../contexts/UserContext'
+import { useUserContext } from '../../contexts/UserContext'
 import { CopyrightTwoTone } from '@material-ui/icons'
 
 const useStyles = makeStyles((theme) => ({
@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Signup() {
   const classes = useStyles()
   const history = useHistory()
-  const { dispatch } = useContext(UserContext)
+  const { dispatch } = useUserContext()
   const initForm = {
     firstName: '',
     lastName: '',

@@ -1,27 +1,43 @@
-import React, { createContext, useReducer } from 'react'
+import React, { createContext, useReducer, useEffect, useContext } from 'react'
 
 const initUserData = {
-  token: '',
-  user_id: '',
-  rememberMe: false,
+  token: localStorage.getItem('token')
+    ? JSON.parse(localStorage.getItem('token'))
+    : '',
+  user_id: localStorage.getItem('user_id')
+    ? JSON.parse(localStorage.getItem('user_id'))
+    : '',
+  isAuthenticated: localStorage.getItem('token') ? true : false,
 }
 
-const reducer = (state, action) => {
+const reducer = (state = initUserData, action) => {
   switch (action.type) {
     case 'LOGIN':
-      if (action.payload.token && action.payload.rememberMe) {
-        localStorage.clear()
-        localStorage.setItem('token', JSON.stringify(action.payload.token))
-      }
+      localStorage.clear()
+      localStorage.setItem('token', JSON.stringify(action.payload.token))
+      localStorage.setItem('user_id', JSON.stringify(action.payload.user_id))
       return {
         ...state,
         user_id: action.payload.user_id,
         token: action.payload.token,
+        isAuthenticated: true,
       }
     case 'LOGOUT':
       localStorage.clear()
+      fetch('/api/auth/logout/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Token ${state.token}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((status) => console.log(status))
+        .catch((e) => console.log(e))
       return {
-        ...initUserData,
+        token: '',
+        user_id: '',
+        isAuthenticated: false,
       }
     default:
       return state
@@ -29,7 +45,7 @@ const reducer = (state, action) => {
 }
 
 const UserContext = createContext()
-
+const useUserContext = () => useContext(UserContext)
 const UserContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initUserData)
   return (
@@ -39,4 +55,4 @@ const UserContextProvider = ({ children }) => {
   )
 }
 
-export { UserContext, UserContextProvider }
+export { useUserContext, UserContextProvider }

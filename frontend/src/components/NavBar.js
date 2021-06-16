@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, StaticRouter } from 'react-router-dom'
 import {
   AppBar,
   Toolbar,
@@ -12,25 +12,16 @@ import {
 } from '@material-ui/core'
 import { AccountCircle, Chat } from '@material-ui/icons'
 import styled from 'styled-components'
-import { UserContext } from '../contexts/UserContext'
+import { useUserContext } from '../contexts/UserContext'
 import { Menu } from '@material-ui/core'
 
 const NavBar = () => {
-  const { state, dispatch } = useContext(UserContext)
-  const [auth, setAuth] = useState(false)
+  const { state, dispatch } = useUserContext()
   const [anchorEl, setAnchorEl] = useState(null)
-
+  const [auth, setAuth] = useState(state.isAuthenticated)
   useEffect(() => {
-    if (state.token || localStorage.token) {
-      if (localStorage.token) {
-        state.token = JSON.parse(localStorage.getItem('token'))
-      }
-      setAuth(true)
-    } else {
-      setAuth(false)
-    }
+    setAuth(state.isAuthenticated)
   }, [state])
-
   const handleMenuOpen = (e) => {
     setAnchorEl(e.currentTarget)
   }

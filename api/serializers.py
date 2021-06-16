@@ -33,6 +33,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
 		model = UserProfile
 		fields = "__all__"
 		read_only_fields = ('xp', 'user')
+		extra_kwargs = {
+			'bio': {"required": False , "allow_blank": True},
+			'first_name': {"required": False , "allow_blank": True},
+			'last_name': {"required": False , "allow_blank": True}
+		}
 	
 	def update(self, instance, validated_data):
 		user_data = validated_data.pop('user', None)
@@ -52,6 +57,9 @@ class ListingSerializer(serializers.ModelSerializer):
 		model = Listing
 		fields = "__all__"
 		read_only_fields = ("date_created", "owner")
+		extra_kwargs = {
+			'description': {"required": False , "allow_blank": True},
+		}
 
 	def get_avg_rating(self, obj):
 		reviews = obj.reviews.all()
@@ -74,6 +82,7 @@ class ListingSerializer(serializers.ModelSerializer):
 		return listing
 
 class ReviewSerializer(serializers.ModelSerializer):
+
 	class Meta:
 		model = Review
 		fields = "__all__"

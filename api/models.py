@@ -50,7 +50,7 @@ class Listing(models.Model):
 		on_delete=models.CASCADE
 	) 
 	mod_code = models.CharField(max_length=8, blank=False) 
-	description = models.CharField(max_length=500)
+	description = models.CharField(max_length=500, null = True, default='')
 	date_created = models.DateTimeField(default=timezone.now)
 	avail_dates = ArrayField(models.DateField(), default=list, null=True, blank=True )
 	price =  models.PositiveIntegerField(default=0, blank=True)

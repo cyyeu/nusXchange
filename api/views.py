@@ -22,5 +22,13 @@ class ListingViewSet(viewsets.ModelViewSet):
 	permission_classes = [ListingPermission, IsAuthenticatedOrReadOnly]
 
 	def get_queryset(self):
-		return Listing.objects.all()
+		user = self.request.GET.get('user')
+		mod_code = self.request.GET.get('mod_code')
+		if user:
+			return Listing.objects.filter(owner=user)
+		elif mod_code:
+			return Listing.objects.filter(mod_code__icontains=mod_code)
+		else:
+			return Listing.objects.all()
+	
 
