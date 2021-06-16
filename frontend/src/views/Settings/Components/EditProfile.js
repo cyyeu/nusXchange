@@ -77,7 +77,7 @@ export default function EditProfile() {
     const payload = {
       first_name: form.first_name,
       last_name: form.last_name,
-      user_bio: form.bio,
+      bio: form.bio,
     };
     fetch("/api/auth/user/", {
       method: "PATCH",
