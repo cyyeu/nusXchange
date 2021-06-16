@@ -39,6 +39,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 		if user_data:
 			instance.user.first_name = user_data.get('first_name', instance.user.first_name)
 			instance.user.last_name = user_data.get('last_name', instance.user.first_name)	
+			instance.user.save()
 		instance = super().update(instance, validated_data)
 		return instance
 
