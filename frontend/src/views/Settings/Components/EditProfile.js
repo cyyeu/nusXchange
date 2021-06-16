@@ -74,12 +74,14 @@ export default function EditProfile() {
   const handleSubmit = (e) => {
     e.preventDefault();
     var token = "Token " + state.token;
+    var url = `/api/user/${state.user_id}`;
     const payload = {
       first_name: form.first_name,
       last_name: form.last_name,
       bio: form.bio,
+      avatar_id: imageId,
     };
-    fetch("/api/auth/user/", {
+    fetch(url, {
       method: "PATCH",
       headers: {
         Authorization: token,
@@ -90,16 +92,13 @@ export default function EditProfile() {
       if (res.ok) {
         setOpen(true);
       } else {
-        
         setErrorSnackbar(true);
+        res.text().then((text) => alert(text));
       }
     });
   };
 
-  //button disable
-  const isDisabled = () => {
-    return form.first_name === "" || form.last_name === "";
-  };
+
 
   //handle snackbar closing
   const handleClose = (event, reason) => {
@@ -126,12 +125,12 @@ export default function EditProfile() {
         setOpen(true);
         //res.text().then(text => alert(text))
         res.json().then((data) => {
-        setImageId(data.public_id)  
-        console.log(data.public_id)
-        })
+          setImageId(data.public_id);
+          console.log(data.public_id);
+        });
       } else {
         //console.log(token)
-        res.text().then(text => alert(text))
+        res.text().then((text) => alert(text));
       }
     });
   };
@@ -158,9 +157,7 @@ export default function EditProfile() {
           </Box>
           <Divider />
           <Box p={2}>
-            <AdvancedImage
-              cldImg={profile_img}
-            />
+            <AdvancedImage cldImg={profile_img} />
             <input
               type="file"
               accept="image/*"
@@ -228,7 +225,6 @@ export default function EditProfile() {
               color="primary"
               className={classes.submit}
               form="change"
-              disabled={isDisabled()}
             >
               Save Changes
             </Button>
