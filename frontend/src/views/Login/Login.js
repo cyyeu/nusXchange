@@ -16,7 +16,7 @@ import { Alert } from '@material-ui/lab'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import { makeStyles } from '@material-ui/core/styles'
 import { useHistory } from 'react-router-dom'
-import { UserContext } from '../../contexts/UserContext'
+import { useUserContext } from '../../contexts/UserContext'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -41,17 +41,16 @@ const useStyles = makeStyles((theme) => ({
 export default function Login() {
   const classes = useStyles()
   const history = useHistory()
-  const { dispatch } = useContext(UserContext)
+  const { dispatch } = useUserContext()
   const initForm = {
     email: '',
     password: '',
-    remember: false,
   }
   const [form, setForm] = useState(initForm)
   const [isInvalidLogin, setIsInvalidLogin] = useState(false)
   const handleInputChange = (event) => {
-    const { name, value, checked } = event.target
-    setForm({ ...form, [name]: name === 'remember' ? checked : value })
+    const { name, value } = event.target
+    setForm({ ...form, [name]: value })
   }
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -73,7 +72,6 @@ export default function Login() {
             type: 'LOGIN',
             payload: {
               token: data.key,
-              rememberMe: form.remember,
               user_id: data.user_id,
             },
           })
@@ -121,18 +119,6 @@ export default function Login() {
                 // error
                 name='password'
                 onChange={handleInputChange}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={form.remember}
-                    onChange={handleInputChange}
-                    name='remember'
-                  />
-                }
-                label='Remember me'
               />
             </Grid>
           </Grid>
