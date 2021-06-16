@@ -17,7 +17,6 @@ import Divider from "../../Home/components/Divider";
 import MuiAlert from "@material-ui/lab/Alert";
 import { AlertTitle } from "@material-ui/lab";
 import PhotoCamera from "@material-ui/icons/PhotoCamera";
-
 import { AdvancedImage, placeholder } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/base";
 import { fill } from "@cloudinary/base/actions/resize";
@@ -71,7 +70,6 @@ const EditProfile = () => {
 
   useEffect(() => {
     loadData();
-    //console.log(userInfo.first_name);
   },[]);
 
   const loadData = () => {
@@ -171,7 +169,7 @@ const EditProfile = () => {
   });
 
   const profile_img = form.avatar_id === "" ?  cld.image("default"): cld.image(form.avatar_id) ;
-  //profile_img.delivery(defaultImage("default"));
+  profile_img.delivery(defaultImage("default"));
   profile_img.resize(fill().width(128).height(128)).roundCorners(max());
 
   return (
