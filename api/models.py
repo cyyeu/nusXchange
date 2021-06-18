@@ -22,9 +22,9 @@ class UserProfile(models.Model):
 		on_delete=models.CASCADE, 
 		primary_key=True
 	)
-	bio = models.CharField(max_length = 255, null = True, default='')
-	xp = models.IntegerField(default = 0,null = True)
-	avatar_id = models.CharField(max_length = 255, null = True, default='', blank=True )
+	bio = models.CharField(max_length = 255, blank=True, default='')
+	xp = models.IntegerField(default = 0, blank=True)
+	avatar_id = models.CharField(max_length = 255, default='', blank=True )
 	def __str__(self):
 		return self.user.email
 # auto create user profile upon registering with dj-rest-auth
@@ -50,9 +50,9 @@ class Listing(models.Model):
 		on_delete=models.CASCADE
 	) 
 	mod_code = models.CharField(max_length=8, blank=False) 
-	description = models.CharField(max_length=500, null = True, default='')
+	description = models.CharField(max_length=500, default='', blank=True)
 	date_created = models.DateTimeField(default=timezone.now)
-	avail_dates = ArrayField(models.DateField(), default=list, null=True, blank=True )
+	avail_dates = ArrayField(models.DateField(), default=list, blank=True )
 	price =  models.PositiveIntegerField(default=0, blank=True)
 
 	def __str__(self):
@@ -96,14 +96,14 @@ class Review(models.Model):
 	)
 
 	date = models.DateTimeField(default=timezone.now)
-	description = models.CharField(max_length=400)
+	description = models.CharField(blank=True, default='', max_length=400)
 	rating = models.PositiveSmallIntegerField(
 		validators=[
 			MaxValueValidator(5),
 			MinValueValidator(1)
 		]
 	)
-	exp_gained = models.IntegerField(default=0, null=True, blank=True )
+	exp_gained = models.IntegerField(default=0, blank=True )
 
 	def __str__(self):
 		return "Tutor:  %s\n - Student: %s - Rating: %s" % (self.tutor, self.student, self.rating)
