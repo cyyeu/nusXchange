@@ -6,6 +6,7 @@ from .models import UserProfile, Listing, Transaction, Review
 from django.contrib.auth.models import User
 from dj_rest_auth.registration.serializers import RegisterSerializer
 from rest_auth.serializers import UserDetailsSerializer
+from django.db.models import F
 
 
 class TokenSerializer(serializers.ModelSerializer):
@@ -45,7 +46,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 		if user_data:
 			instance.user.first_name = user_data.get('first_name', instance.user.first_name)
 			instance.user.last_name = user_data.get('last_name', instance.user.first_name)	
-			instance.user.save()
+			instance.user.save(update_fields=['first_name', 'last_name'])
 		instance = super().update(instance, validated_data)
 		return instance
 
@@ -99,8 +100,7 @@ class TransactionSerializer(serializers.ModelSerializer):
 				raise serializers.ValidationError({"message": "cant create duplicate transaction!"})
 		except Transaction.DoesNotExist:
 			pass
-		user_profile = UserProfile.objects.get(pk=user.id)
-		tx = Transaction.objects.create(student=user_profile, **validated_data)
+		tx = Transaction.objects.create(student=user.userprofile, **validated_data)
 		return tx
 
 	
@@ -119,12 +119,18 @@ class ReviewSerializer(serializers.ModelSerializer):
 		read_only_fields = ('id', 'tutor', 'date', 'exp_gained')
 
 	def create(self, validated_data):
-		print(validated_data)
-
 		listing = validated_data.get('listing')
-		xp = calculate_xp(listing.mod_code, validated_data.get('rating'))
-		listing.owner.xp += xp
-		listing.owner.save()
 
+		xp = calculate_xp(listing.mod_code, validated_data.get('rating'))
+		listing.owner.xp = F('xp') + xp
+		listing.owner.save()
+		try: 
+			tx = listing.transactions.get(student=validated_data.get('student'))
+		except Transaction.DoesNotExist:
+			raise serializers.ValidationError({"message": "transaction not found!"})
+		if tx.gave_review:
+			raise serializers.ValidationError({"message": "review has already been given before!"})
+		tx.gave_review = True
+		tx.save(update_fields=['gave_review'])
 		review = Review.objects.create(tutor=listing.owner, exp_gained=xp, **validated_data)
 		return review
