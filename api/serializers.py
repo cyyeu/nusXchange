@@ -120,10 +120,6 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 	def create(self, validated_data):
 		listing = validated_data.get('listing')
-
-		xp = calculate_xp(listing.mod_code, validated_data.get('rating'))
-		listing.owner.xp = F('xp') + xp
-		listing.owner.save()
 		try: 
 			tx = listing.transactions.get(student=validated_data.get('student'))
 		except Transaction.DoesNotExist:
@@ -132,6 +128,10 @@ class ReviewSerializer(serializers.ModelSerializer):
 			raise serializers.ValidationError({"message": "review has already been given before!"})
 		if not tx.is_approved:
 			raise serializers.ValidationError({"message": "you are not approved to be a student yet!"})
+
+		xp = calculate_xp(listing.mod_code, validated_data.get('rating'))
+		listing.owner.xp = F('xp') + xp
+		listing.owner.save()
 		tx.gave_review = True
 		tx.save(update_fields=['gave_review'])
 		review = Review.objects.create(tutor=listing.owner, exp_gained=xp, **validated_data)
