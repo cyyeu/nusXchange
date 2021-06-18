@@ -7,8 +7,8 @@ from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 router.register(r'listings', views.ListingViewSet, basename='listing')
-
-
+router.register(r'transactions', views.TransactionViewSet, basename='viewset')
+router.register(r'reviews', views.ReviewVewSet, basename='review')
 
 urlpatterns = [
     path('auth/', include('dj_rest_auth.urls')),

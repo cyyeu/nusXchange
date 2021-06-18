@@ -59,7 +59,7 @@ class Listing(models.Model):
 		return "%s - %s - %s" % (self.pk, self.owner,self.mod_code)
 
 class Transaction(models.Model):
-	student = models.OneToOneField(
+	student = models.ForeignKey(
 		UserProfile, 
 		related_name="student",
 		on_delete=models.CASCADE

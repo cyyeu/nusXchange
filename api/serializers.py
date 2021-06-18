@@ -1,3 +1,4 @@
+from api.utils import calculate_xp
 from api.permissions import ListingPermission
 from rest_framework import serializers
 from rest_auth.models import TokenModel
@@ -76,21 +77,55 @@ class ListingSerializer(serializers.ModelSerializer):
 		request = self.context.get("request")
 		if request and hasattr(request, "user"):
 				user = request.user
-		print("@@@@@@@@@@@", user.id)
 		user_profile = UserProfile.objects.get(user=user.id)
 		listing = Listing.objects.create(owner=user_profile, **validated_data)
 		return listing
 
-class ReviewSerializer(serializers.ModelSerializer):
 
-	class Meta:
-		model = Review
-		fields = "__all__"
-
-# to check if student can leave rating, and request/accept students
 class TransactionSerializer(serializers.ModelSerializer):
-
+	student = UserProfileSerializer(read_only=True)
 	class Meta:
 		model = Transaction
 		fields = "__all__"
+		read_only_fields = ('student', 'gave_review', 'is_accepted')
 
+	def create(self, validated_data):
+		user = None
+		request = self.context.get("request")
+		if request and hasattr(request, "user"):
+				user = request.user
+		try:
+			transaction = Transaction.objects.filter(listing=validated_data.get('listing', None)).filter(student=user.id)
+			if transaction.exists():
+				raise serializers.ValidationError({"message": "cant create duplicate transaction!"})
+		except Transaction.DoesNotExist:
+			pass
+		user_profile = UserProfile.objects.get(pk=user.id)
+		tx = Transaction.objects.create(student=user_profile, **validated_data)
+		return tx
+
+	
+
+class TutorSerializer(serializers.ModelSerializer):
+	tutor = UserProfileSerializer(source='listing.owner', read_only=True)
+	class Meta:
+		model = Transaction
+		fields = ('tutor', 'listing', 'gave_review', 'is_accepted')
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Review
+		fields = "__all__"
+		read_only_fields = ('id', 'tutor', 'date', 'exp_gained')
+
+	def create(self, validated_data):
+		print(validated_data)
+
+		listing = validated_data.get('listing')
+		xp = calculate_xp(listing.mod_code, validated_data.get('rating'))
+		listing.owner.xp += xp
+		listing.owner.save()
+		
+		review = Review.objects.create(tutor=listing.owner, exp_gained=xp, **validated_data)
+		return review

@@ -171,7 +171,7 @@ const EditProfile = () => {
 
   const profile_img =
     form.avatar_id === '' ? cld.image('default') : cld.image(form.avatar_id)
-  //profile_img.delivery(defaultImage("default"));
+  profile_img.delivery(defaultImage('default'))
   profile_img.resize(fill().width(128).height(128)).roundCorners(max())
 
   return (

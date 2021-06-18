@@ -242,4 +242,3 @@ export default function EditPassword() {
     </div>
   )
 }
-export default EditPassword;
