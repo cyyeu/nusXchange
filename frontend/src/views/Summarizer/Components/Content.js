@@ -11,10 +11,12 @@ import {
   Snackbar,
   Divider,
   IconButton,
+  Modal,
 } from "@material-ui/core/";
 import CloudUploadOutlinedIcon from "@material-ui/icons/CloudUploadOutlined";
 import MuiAlert from "@material-ui/lab/Alert";
 import { AlertTitle } from "@material-ui/lab";
+import Info from "./info";
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -151,11 +153,16 @@ const Content = () => {
       <Paper elevation={5}>
         <Grid container direction="column">
           <Grid item container alignItems="flex-start" xs={12} direction="row">
-            <Grid item xs={6}>
+            <Grid item container xs={6}>
               <Box ml={1} pt={3}>
                 <Typography variant="h4" color="secondary">
                   Summarizer
                 </Typography>
+              </Box>
+              <Box  pt={3}>
+                <Grid item xs={2}>
+                  <Info />
+                </Grid>
               </Box>
             </Grid>
             <Grid item xs={6}>
@@ -182,6 +189,7 @@ const Content = () => {
                       size="small"
                       color="secondary"
                       helperText="Recommended: 500"
+                      required
                     />
                   </Grid>
                   <Grid item xs={4}>
@@ -195,6 +203,7 @@ const Content = () => {
                       size="small"
                       color="secondary"
                       helperText="Recommended: 40"
+                      required
                     />
                   </Grid>
                   <Grid item xs={4}>
@@ -208,6 +217,7 @@ const Content = () => {
                       size="small"
                       color="secondary"
                       helperText="Recommended: 10"
+                      required
                     />
                   </Grid>
                 </Grid>
