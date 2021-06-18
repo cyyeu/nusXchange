@@ -57,7 +57,7 @@ class TransactionViewSet(viewsets.ModelViewSet):
 			return Response({"message": "transaction does not exist"}, status=status.HTTP_400_BAD_REQUEST)
 
 		transaction.is_approved = True
-		transaction.save()
+		transaction.save(update_fields=['is_approved'])
 		return Response({"message": "approved student (" + str(transaction.student) + ")"}, status=status.HTTP_200_OK)
 		
 
