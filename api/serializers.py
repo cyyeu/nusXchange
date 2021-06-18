@@ -77,8 +77,7 @@ class ListingSerializer(serializers.ModelSerializer):
 		request = self.context.get("request")
 		if request and hasattr(request, "user"):
 				user = request.user
-		user_profile = UserProfile.objects.get(user=user.id)
-		listing = Listing.objects.create(owner=user_profile, **validated_data)
+		listing = Listing.objects.create(owner=user.userprofile, **validated_data)
 		return listing
 
 
@@ -126,6 +125,6 @@ class ReviewSerializer(serializers.ModelSerializer):
 		xp = calculate_xp(listing.mod_code, validated_data.get('rating'))
 		listing.owner.xp += xp
 		listing.owner.save()
-		
+
 		review = Review.objects.create(tutor=listing.owner, exp_gained=xp, **validated_data)
 		return review

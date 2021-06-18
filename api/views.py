@@ -69,7 +69,6 @@ class TransactionViewSet(viewsets.ModelViewSet):
 		#listings = Listing.objects.filter(owner=pk)
 		#print(listings)
 		transactions = Transaction.objects.filter(listing__owner=pk)
-		print(transactions)
 		requested = transactions.filter(is_accepted=False)
 		accepted = transactions.filter(is_accepted=True)
 		requested_serializer = TransactionSerializer(requested, many=True)
@@ -90,8 +89,6 @@ class TransactionViewSet(viewsets.ModelViewSet):
 		accepted = transactions.filter(is_accepted=True)
 		requested_serializer = TutorSerializer(requested,many=True)
 		accepted_serializer = TutorSerializer(accepted,many=True)
-		print(requested_serializer.data)
-		print(accepted_serializer.data)
 		return Response({
 			"requested": requested_serializer.data,
 			"accepted": accepted_serializer.data
@@ -101,7 +98,6 @@ class TransactionViewSet(viewsets.ModelViewSet):
 	def status(self, request, pk=None):
 		# pk here is listing id
 		listing = get_object_or_404(Listing, id=pk)
-		print("@@@@@ listing", listing)
 		user = request.user.id
 		if listing.owner.pk == user:
 			return Response ({
