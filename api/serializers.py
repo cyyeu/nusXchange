@@ -130,6 +130,8 @@ class ReviewSerializer(serializers.ModelSerializer):
 			raise serializers.ValidationError({"message": "transaction not found!"})
 		if tx.gave_review:
 			raise serializers.ValidationError({"message": "review has already been given before!"})
+		if not tx.is_approved:
+			raise serializers.ValidationError({"message": "you are not approved to be a student yet!"})
 		tx.gave_review = True
 		tx.save(update_fields=['gave_review'])
 		review = Review.objects.create(tutor=listing.owner, exp_gained=xp, **validated_data)
