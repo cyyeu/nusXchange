@@ -94,6 +94,8 @@ class TransactionSerializer(serializers.ModelSerializer):
 		request = self.context.get("request")
 		if request and hasattr(request, "user"):
 				user = request.user
+		if user.id == validated_data.get('listing').owner.pk:
+			raise serializers.ValidationError({"message": "cant create transaction with yourself!"})
 		try:
 			transaction = Transaction.objects.filter(listing=validated_data.get('listing', None)).filter(student=user.id)
 			if transaction.exists():
@@ -120,6 +122,8 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 	def create(self, validated_data):
 		listing = validated_data.get('listing')
+		if listing.owner.pk == validated_data.get('student').pk:
+			raise serializers.ValidationError({"message": "cant give yourself review!"})
 		try: 
 			tx = listing.transactions.get(student=validated_data.get('student'))
 		except Transaction.DoesNotExist:
