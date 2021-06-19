@@ -105,7 +105,7 @@ class TransactionViewSet(viewsets.ModelViewSet):
 			})
 
 		try:
-			transaction = listing.transactions.get(student=pk)
+			transaction = listing.transactions.get(student=user)
 		except Transaction.DoesNotExist:
 			return Response({"user_type": ""})
 
