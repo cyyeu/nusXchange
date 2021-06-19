@@ -55,10 +55,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
 # search, create, edit, get, delete
 class ListingSerializer(serializers.ModelSerializer):
 	avg_rating = serializers.SerializerMethodField()
+	owner = UserProfileSerializer(read_only=True)
 	class Meta:
 		model = Listing
 		fields = "__all__"
-		read_only_fields = ("date_created", "owner")
+		read_only_fields = ("date_created",)
 		extra_kwargs = {
 			'description': {"required": False , "allow_blank": True},
 		}

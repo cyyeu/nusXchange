@@ -7,7 +7,7 @@ from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 router.register(r'listings', views.ListingViewSet, basename='listing')
-router.register(r'transactions', views.TransactionViewSet, basename='viewset')
+router.register(r'tx', views.TransactionViewSet, basename='transaction')
 router.register(r'reviews', views.ReviewVewSet, basename='review')
 
 urlpatterns = [
