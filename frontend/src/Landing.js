@@ -23,8 +23,8 @@ const Landing = () => {
         <Route path='/' exact>
           <Home />
         </Route>
-        <Route path='/search'>
-          <Temp />
+        <Route path='/search/:search'>
+          <Search />
         </Route>
         <Route path='/listing'>
           <Temp />
