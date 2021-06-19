@@ -35,15 +35,13 @@ const ProfilePanel = () => {
   }
 
   return (
-    <Grid item container xs={5}>
+    <Grid item container xs={6}>
       <Grid item container xs={12} spacing={1} alignItems='center'>
         <Grid item xs={9}>
-          <Paper square style={{ width: "320px" }}>
             <Tabs value={value} onChange={handleChange} selectionFollowsFocus>
               <Tab label='Listings' />
               <Tab label='Reviews' />
             </Tabs>
-          </Paper>
         </Grid>
         <Grid item>
           <Button variant='outlined' component={Link} to='/settings'>
