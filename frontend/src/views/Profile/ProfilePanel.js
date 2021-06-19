@@ -1,5 +1,5 @@
 import React from 'react'
-import { Grid, Tab, Tabs, Button, Box } from '@material-ui/core'
+import { Grid, Tab, Tabs, Button, Box, Paper } from '@material-ui/core'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
@@ -38,10 +38,12 @@ const ProfilePanel = () => {
     <Grid item container xs={5}>
       <Grid item container xs={12} spacing={1} alignItems='center'>
         <Grid item xs={9}>
-          <Tabs value={value} onChange={handleChange}>
-            <Tab label='Listings' />
-            <Tab label='Reviews' />
-          </Tabs>
+          <Paper square style={{ width: "320px" }}>
+            <Tabs value={value} onChange={handleChange} selectionFollowsFocus>
+              <Tab label='Listings' />
+              <Tab label='Reviews' />
+            </Tabs>
+          </Paper>
         </Grid>
         <Grid item>
           <Button variant='outlined' component={Link} to='/settings'>

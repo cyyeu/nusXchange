@@ -137,7 +137,7 @@ export default function Signup() {
       })
     } else {
       setErrors((prevErrors) => {
-        return { ...prevErrors, password: 'Password not strong' }
+        return { ...prevErrors, password: 'Password not strong.' }
       })
     }
   }

@@ -39,7 +39,7 @@ const Landing = () => {
           <Summarizer />
         </Route>
         <Route path='/create'>
-          <Temp />
+          <CreateListing />
         </Route>
         <Route path='/signup'>
           <Signup />

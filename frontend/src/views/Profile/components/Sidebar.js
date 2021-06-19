@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Grid } from "@material-ui/core";
-import { Typography, LinearProgress } from "@material-ui/core";
-import { UserContext } from "../../../contexts/UserContext";
+import { Typography, LinearProgress, Box } from "@material-ui/core";
+import { useUserContext } from "../../../contexts/UserContext";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/base";
 import { fill } from "@cloudinary/base/actions/resize";
@@ -10,7 +10,7 @@ import { defaultImage } from "@cloudinary/base/actions/delivery";
 
 
 const Sidebar = () => {
-  const { state } = useContext(UserContext);
+  const { state } = useUserContext();
   const token = "Token " + state.token;
   const url = `/api/user/${state.user_id}`;
   const initUserInfo = {
@@ -64,7 +64,9 @@ const Sidebar = () => {
         </Typography>
       </Grid>
       <Grid item>
+        <Box ml = {1}>
         <AdvancedImage cldImg={profile_img} />
+        </Box>
       </Grid>
       <Grid item>
         <Typography variant="body2">Level 5</Typography>
