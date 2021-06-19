@@ -119,7 +119,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Review
 		fields = "__all__"
-		read_only_fields = ('id', 'tutor', 'date', 'exp_gained')
+		read_only_fields = ('id', 'tutor', 'date_created', 'exp_gained')
 
 	def create(self, validated_data):
 		listing = validated_data.get('listing')
