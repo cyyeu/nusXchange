@@ -45,7 +45,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 		user_data = validated_data.pop('user', None)
 		if user_data:
 			instance.user.first_name = user_data.get('first_name', instance.user.first_name)
-			instance.user.last_name = user_data.get('last_name', instance.user.first_name)	
+			instance.user.last_name = user_data.get('last_name', instance.user.last_name)	
 			instance.user.save(update_fields=['first_name', 'last_name'])
 		instance = super().update(instance, validated_data)
 		return instance

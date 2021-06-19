@@ -1,5 +1,3 @@
-from django.db.models.deletion import SET_NULL
-from django.db.models.fields.related import OneToOneField
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.db import models
