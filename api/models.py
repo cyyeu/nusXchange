@@ -93,7 +93,7 @@ class Review(models.Model):
 		null=True
 	)
 
-	date = models.DateTimeField(default=timezone.now)
+	date_created = models.DateTimeField(default=timezone.now)
 	description = models.CharField(blank=True, default='', max_length=400)
 	rating = models.PositiveSmallIntegerField(
 		validators=[

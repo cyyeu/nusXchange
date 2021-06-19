@@ -42,7 +42,7 @@ class TransactionViewSet(viewsets.ModelViewSet):
 			return Transaction.objects.all()
 
 	@action(detail=False)
-	def approve(self, request):
+	def accept(self, request):
 		# pk here is the student id
 		listing_id = self.request.GET.get('listing')
 		student = self.request.GET.get('student')
@@ -56,9 +56,9 @@ class TransactionViewSet(viewsets.ModelViewSet):
 		except Transaction.DoesNotExist:
 			return Response({"message": "transaction does not exist"}, status=status.HTTP_400_BAD_REQUEST)
 
-		transaction.is_approved = True
-		transaction.save(update_fields=['is_approved'])
-		return Response({"message": "approved student (" + str(transaction.student) + ")"}, status=status.HTTP_200_OK)
+		transaction.is_accepted = True
+		transaction.save(update_fields=['is_accepted'])
+		return Response({"message": "accepted student (" + str(transaction.student) + ")"}, status=status.HTTP_200_OK)
 		
 
 	@action(detail=False)
@@ -128,6 +128,8 @@ class ReviewVewSet(viewsets.ViewSet):
 		return Response(serializer.data)
 
 	def create(self, request):
+		if not request.user.id:
+			return Response(status=status.HTTP_401_UNAUTHORIZED)
 		request.data["student"] = request.user.id
 		serializer = ReviewSerializer(data=request.data)
 		if serializer.is_valid():

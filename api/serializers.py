@@ -119,10 +119,13 @@ class ReviewSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Review
 		fields = "__all__"
-		read_only_fields = ('id', 'tutor', 'date', 'exp_gained')
+		read_only_fields = ('id', 'tutor', 'date_created', 'exp_gained')
 
 	def create(self, validated_data):
 		listing = validated_data.get('listing')
+		print(validated_data)
+		if not listing:
+			raise serializers.ValidationError({"message": "please provide a listing id!"})
 		if listing.owner.pk == validated_data.get('student').pk:
 			raise serializers.ValidationError({"message": "cant give yourself review!"})
 		try: 
@@ -131,8 +134,8 @@ class ReviewSerializer(serializers.ModelSerializer):
 			raise serializers.ValidationError({"message": "transaction not found!"})
 		if tx.gave_review:
 			raise serializers.ValidationError({"message": "review has already been given before!"})
-		if not tx.is_approved:
-			raise serializers.ValidationError({"message": "you are not approved to be a student yet!"})
+		if not tx.is_accepted:
+			raise serializers.ValidationError({"message": "you are not accepted to be a student yet!"})
 
 		xp = calculate_xp(listing.mod_code, validated_data.get('rating'))
 		listing.owner.xp = F('xp') + xp
@@ -141,3 +144,8 @@ class ReviewSerializer(serializers.ModelSerializer):
 		tx.save(update_fields=['gave_review'])
 		review = Review.objects.create(tutor=listing.owner, exp_gained=xp, **validated_data)
 		return review
+
+	def to_representation(self, instance):
+			ret = super().to_representation(instance)
+			ret['student'] = UserProfileSerializer(instance.student).data
+			return ret
