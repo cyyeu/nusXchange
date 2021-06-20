@@ -13,7 +13,7 @@ const Home = () => {
     setSearch(e.target.value)
   }
   const handleSubmit = () => {
-    history.push('/search')
+    history.push(`/search/${search}`)
   }
 
   const handleCreateClick = () => {
