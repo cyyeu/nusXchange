@@ -14,7 +14,7 @@ import {
 } from '@material-ui/core'
 import { Search } from '@material-ui/icons'
 import styled from 'styled-components'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -22,9 +22,11 @@ const useStyles = makeStyles((theme) => ({
     minWidth: 120,
   },
 }))
-const SearchBar = ({ search }) => {
+const SearchBar = () => {
+  const { search } = useParams()
   const classes = useStyles()
   const history = useHistory()
+
   const [searchField, setSearchField] = useState('')
   const [sortMethod, setSortMethod] = useState('')
   const [filterMethod, setFilterMethod] = useState('')
@@ -43,7 +45,9 @@ const SearchBar = ({ search }) => {
     setFilterMethod(e.target.value)
   }
   const onSubmit = () => {
-    history.push(`${searchField}`)
+    if (searchField) {
+      history.push(`${searchField}`)
+    }
   }
   return (
     <Grid

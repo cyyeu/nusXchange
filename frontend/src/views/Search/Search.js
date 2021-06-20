@@ -3,14 +3,28 @@ import { Grid } from '@material-ui/core'
 import SearchBar from './components/SearchBar'
 import Results from './components/Results'
 import styled from 'styled-components'
-import { useParams } from 'react-router-dom'
+
 const Search = () => {
-  const { search } = useParams()
   return (
-    <CustomGrid container justify='center'>
-      <SearchBar search={search} />
-      <Results />
-    </CustomGrid>
+    <div
+      style={{
+        overflow: 'scroll',
+        height: '100%',
+        display: 'block',
+        paddingBottom: '10rem',
+      }}
+    >
+      <CustomGrid
+        container
+        alignItems='center'
+        justify='center'
+        direction='column'
+        spacing={3}
+      >
+        <SearchBar />
+        <Results />
+      </CustomGrid>
+    </div>
   )
 }
 
