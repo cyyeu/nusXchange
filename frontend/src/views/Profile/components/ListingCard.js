@@ -41,6 +41,7 @@ const ListingCard = () => {
   }
 
   const price = listingInfo.mod_price === 0 ? "Free" : `${listingInfo.mod_price}/Hr`;
+  
   return (
     <Card className={classes.root} variant="outlined">
       <CardContent>
