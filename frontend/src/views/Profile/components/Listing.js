@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import React, { useState, useEffect } from 'react'
+import { makeStyles } from '@material-ui/core/styles'
 import {
   Button,
   TextField,
@@ -9,62 +9,72 @@ import {
   Container,
   Paper,
   IconButton,
-} from "@material-ui/core/";
-import ListingCard from "./ListingCard";
+} from '@material-ui/core/'
+import ListingCard from './ListingCard'
+import { useParams } from 'react-router-dom'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    display: "flex",
-    flexWrap: "wrap",
-    "& > *": {
+    display: 'flex',
+    flexWrap: 'wrap',
+    '& > *': {
       width: theme.spacing(130),
     },
     marginTop: theme.spacing(-2),
     marginLeft: theme.spacing(-2),
   },
-}));
+}))
 
 const Listing = () => {
-  const classes = useStyles();
+  const classes = useStyles()
+  const { id } = useParams()
+  const [listings, setListings] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
 
-  const CardRow=() => {
+  useEffect(async () => {
+    setIsLoading(true)
+    const res = await fetch(`/api/listings/?user=${id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    const data = await res.json()
+    if (!res.ok) {
+      console.log(data)
+      return
+    }
+    setListings(data)
+    setIsLoading(false)
+  }, [id])
+
+  const renderCards = (listings) => {
     return (
-      <>
-        <Grid item xs={3}>
-          <ListingCard/>
-        </Grid>
-        <Grid item xs={3}>
-          <ListingCard/>
-        </Grid>
-        <Grid item xs={3}>
-          <ListingCard/>
-        </Grid>
-        <Grid item xs={3}>
-          <ListingCard/>
-        </Grid>
-      </>
-    );
-  }
-
-  return (
-    <div className={classes.paper}>
-      <Paper elevation={2}>
-        <Box m = {4}>
-          <Grid container spacing = {4}>
-            <Grid container item xs={12} spacing={2}>
-              <CardRow/>
-            </Grid>
-            <Grid container item xs={12} spacing={2}>
-              <CardRow/>
-            </Grid>
-            <Grid container item xs={12} spacing={2}>
-              <CardRow/>
-            </Grid>
+      <Paper elevation={2} className={classes.paper}>
+        <Box m={4}>
+          <Grid container spacing={2} alignItems='center'>
+            {listings.map((listing, index) => (
+              <ListingCard key={listing.id} listing={listing} />
+            ))}
           </Grid>
         </Box>
       </Paper>
-    </div>
-  );
-};
+    )
+  }
 
-export default Listing;
+  const renderNoResults = () => {
+    return (
+      <Typography variant='h2' align='center' color='secondary'>
+        no listings found.
+      </Typography>
+    )
+  }
+
+  return (
+    <>
+      {isLoading || listings.length ? renderCards(listings) : renderNoResults()}{' '}
+    </>
+  )
+}
+
+export default Listing

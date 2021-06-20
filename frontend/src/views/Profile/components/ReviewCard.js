@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import React from 'react'
+import { makeStyles } from '@material-ui/core/styles'
 import {
   Card,
   CardContent,
@@ -7,14 +7,14 @@ import {
   Typography,
   TextField,
   Grid,
-} from "@material-ui/core/";
-import Rating from "@material-ui/lab/Rating";
-import ExpInfoModal from "./ExpInfoModal";
-import { AdvancedImage } from "@cloudinary/react";
-import { Cloudinary } from "@cloudinary/base";
-import { fill } from "@cloudinary/base/actions/resize";
-import { max } from "@cloudinary/base/actions/roundCorners";
-import { defaultImage } from "@cloudinary/base/actions/delivery";
+} from '@material-ui/core/'
+import Rating from '@material-ui/lab/Rating'
+import ExpInfoModal from './ExpInfoModal'
+import { AdvancedImage } from '@cloudinary/react'
+import { Cloudinary } from '@cloudinary/base'
+import { fill } from '@cloudinary/base/actions/resize'
+import { max } from '@cloudinary/base/actions/roundCorners'
+import { defaultImage } from '@cloudinary/base/actions/delivery'
 
 const useStyles = makeStyles({
   root: {
@@ -31,36 +31,32 @@ const useStyles = makeStyles({
     fontSize: 14,
   },
   descTextField: {
-    "& .MuiInputBase-root.Mui-disabled": {
-      color: "rgba(0, 0, 0, 0.7)",
+    '& .MuiInputBase-root.Mui-disabled': {
+      color: 'rgba(0, 0, 0, 0.7)',
     },
   },
-});
+})
 
-const ReviewCard = () => {
-  const classes = useStyles();
-  const [avatar_id, setAvatar_id] = useState("");
-
-  const initReviewInfo = {
-    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras elit augue, interdum ac dignissim sit amet, condimentum ut nisl. Sed dapibus velit elit, vitae mattis metus finibus mattis. Ut vitae sodales purus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Donec tincidunt odio eget auctor finibus. Integer at eleifend ante. Phasellus volutpat porttitor congue. Maecenas",
-    rating: 4,
-    date_created: "",
-    owner_id:"",
-    exp:500,
-  };
-  const [ReviewInfo,setReviewInfo] = useState(initReviewInfo);
-
-  const renderExp = `${ReviewInfo.exp} experience gained.`;
+const ReviewCard = ({ review }) => {
+  const classes = useStyles()
 
   const cld = new Cloudinary({
     cloud: {
-      cloudName: "nusxchange",
+      cloudName: 'nusxchange',
     },
-  });
+  })
   const profile_img =
-    avatar_id === "" ? cld.image("default") : cld.image(avatar_id);
-  profile_img.delivery(defaultImage("default"));
-  profile_img.resize(fill().width(50).height(50)).roundCorners(max());
+    review.student.avatar_id === ''
+      ? cld.image('default')
+      : cld.image(review.student.avatar_id)
+  profile_img.delivery(defaultImage('default'))
+  profile_img.resize(fill().width(50).height(50)).roundCorners(max())
+
+  // calculate relative days from current time
+  const date = new Date(review.date_created.slice(0, -1))
+  const now = new Date()
+  const diffTime = Math.abs(now - date)
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 
   return (
     <Card className={classes.root} elevation={0}>
@@ -72,27 +68,27 @@ const ReviewCard = () => {
             </Grid>
             <Grid item>
               <Box mt={2}>
-                <Typography className={classes.first_name} color="primary">
-                  Chen Yuan
+                <Typography className={classes.first_name} color='primary'>
+                  {review.student.first_name}
                 </Typography>
               </Box>
             </Grid>
             <Grid item>
               <Box mt={2.2}>
-                <Typography className={classes.date} color="textSecondary">
-                  2 days ago
+                <Typography className={classes.date} color='textSecondary'>
+                  {diffDays} days ago
                 </Typography>
               </Box>
             </Grid>
           </Grid>
           <Grid item container lg={12} spacing={2}>
             <Grid item>
-              <Rating name="read-only" value={ReviewInfo.rating} readOnly />
+              <Rating name='read-only' value={review.rating} readOnly />
             </Grid>
             <Grid item>
               <Box mt={0.4}>
-                <Typography className={classes.exp} color="textSecondary">
-                {renderExp}
+                <Typography className={classes.exp} color='textSecondary'>
+                  {review.exp_gained} experience gained
                 </Typography>
               </Box>
             </Grid>
@@ -108,7 +104,7 @@ const ReviewCard = () => {
               fullWidth
               multiline={true}
               rows={5}
-              value={ReviewInfo.desc}
+              value={review.description}
               InputProps={{ disableUnderline: true }}
               disabled={true}
             />
@@ -116,7 +112,7 @@ const ReviewCard = () => {
         </Grid>
       </CardContent>
     </Card>
-  );
-};
+  )
+}
 
-export default ReviewCard;
+export default ReviewCard

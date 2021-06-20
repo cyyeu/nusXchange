@@ -29,7 +29,7 @@ const Landing = () => {
         <Route path='/listing'>
           <Temp />
         </Route>
-        <Route path='/profile'>
+        <Route path='/profile/:id'>
           <Profile />
         </Route>
         <Route path='/settings'>

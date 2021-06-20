@@ -18,7 +18,9 @@ const Results = () => {
   const classes = useStyles()
   const { search } = useParams()
   const [listings, setListings] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
   useEffect(async () => {
+    setIsLoading(true)
     const res = await fetch(`/api/listings/?mod_code=${search}`, {
       method: 'GET',
       headers: {
@@ -31,6 +33,7 @@ const Results = () => {
       return
     }
     setListings(data)
+    setIsLoading(false)
   }, [search])
   const renderCards = (listings) => {
     return (
@@ -54,7 +57,11 @@ const Results = () => {
     )
   }
 
-  return <>{listings.length ? renderCards(listings) : renderNoResults()} </>
+  return (
+    <>
+      {isLoading || listings.length ? renderCards(listings) : renderNoResults()}
+    </>
+  )
 }
 
 const CustomGrid = styled(Grid)`

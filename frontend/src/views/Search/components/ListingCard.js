@@ -115,14 +115,16 @@ const ListingCard = ({ listing }) => {
               align='left'
               color={listing.price ? 'primary' : 'secondary'}
             >
-              {listing.price ? listing.price : 'Free'}
+              {listing.price ? listing.price + '/hr' : 'Free'}
             </Typography>
           </Box>
           <Box mt={2}>
             <Grid container item xs={12} direction='row'>
               <Grid item xs={1}>
                 <Box mt={0.3}>
-                  <Typography variant='body2'>{listing.avg_rating}</Typography>
+                  <Typography variant='body2'>
+                    {listing.avg_rating.toFixed(2)}
+                  </Typography>
                 </Box>
               </Grid>
               <Grid item>

@@ -3,8 +3,8 @@ from .views import index
 
 urlpatterns = [
 	path('', index),
-	path('listing', index),
-	path('profile', index),
+	path('listing/<id>', index),
+	path('profile/<id>', index),
 	path('search/<search>', index),
 	path('settings', index),
 	path('summarizer', index),

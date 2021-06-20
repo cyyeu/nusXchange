@@ -1,5 +1,5 @@
-import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import React from 'react'
+import { makeStyles } from '@material-ui/core/styles'
 import {
   Button,
   Card,
@@ -10,10 +10,10 @@ import {
   IconButton,
   Divider,
   Grid,
-} from "@material-ui/core/";
-import TelegramIcon from "@material-ui/icons/Telegram";
-import DateRangeIcon from "@material-ui/icons/DateRange";
-import StarBorderOutlinedIcon from "@material-ui/icons/StarBorderOutlined";
+} from '@material-ui/core/'
+import TelegramIcon from '@material-ui/icons/Telegram'
+import DateRangeIcon from '@material-ui/icons/DateRange'
+import StarBorderOutlinedIcon from '@material-ui/icons/StarBorderOutlined'
 
 const useStyles = makeStyles({
   root: {
@@ -26,106 +26,110 @@ const useStyles = makeStyles({
   date: {
     fontSize: 10,
   },
-});
+})
 
-const ListingCard = () => {
-  const classes = useStyles();
+const ListingCard = ({ listing }) => {
+  const classes = useStyles()
 
-  const listingInfo = {
-      mod_code: "",
-      mod_desc: "",
-      rating: "",
-      mod_price: 10,
-      avail_dates:[],
-      date_created:"",
-  }
+  const price = listing.price === 0 ? 'Free' : `${listingInfo.mod_price}/Hr`
+  // calculate relative days from current time
+  const date = new Date(listing.date_created.slice(0, -1))
+  const now = new Date()
+  const diffTime = Math.abs(now - date)
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 
-  const price = listingInfo.mod_price === 0 ? "Free" : `${listingInfo.mod_price}/Hr`;
-  
   return (
-    <Card className={classes.root} variant="outlined">
-      <CardContent>
-        <Grid container item xs={12}>
-          <Grid item container xs={12} sm={6}>
-            <Typography
-              className={classes.mod}
-              color="textSecondary"
-              gutterBottom
+    <Grid item xs={3}>
+      <Card className={classes.root} variant='outlined'>
+        <CardContent>
+          <Grid container item xs={12}>
+            <Grid item container xs={12} sm={6}>
+              <Typography
+                className={classes.mod}
+                color='textSecondary'
+                gutterBottom
+              >
+                {listing.mod_code}
+              </Typography>
+            </Grid>
+            <Grid
+              item
+              container
+              xs={12}
+              sm={6}
+              alignItems='center'
+              justify='flex-end'
             >
-              {listingInfo.mod_code}
-            </Typography>
+              <Typography
+                className={classes.date}
+                color='textSecondary'
+                gutterBottom
+              >
+                {diffDays} days ago
+              </Typography>
+            </Grid>
           </Grid>
-          <Grid
-            item
-            container
-            xs={12}
-            sm={6}
-            alignItems="center"
-            justify="flex-end"
-          >
+          <Divider></Divider>
+          <Box mt={1}>
             <Typography
-              className={classes.date}
-              color="textSecondary"
-              gutterBottom
+              variant='body2'
+              component='p'
+              color='textSecondary'
+              noWrap
             >
-              {listingInfo.date_created}
+              {listing.description}
             </Typography>
-          </Grid>
-        </Grid>
-        <Divider></Divider>
-        <Box mt={1}>
-          <Typography
-            variant="body2"
-            component="p"
-            color="textSecondary"
-            noWrap
-          >
-            {listingInfo.mod_desc}
-          </Typography>
-        </Box>
-        <Box mt={3}>
-          <Typography variant="body1" color="secondary">
-          {price}
-          </Typography>
-        </Box>
-        <Box mt={2}>
-          <Grid container item xs={12} direction="row">
-            <Grid item container xs={12} sm={2}>
-              <Box mt={0.3}>
-                <Typography variant="body2">{listingInfo.rating}</Typography>
+          </Box>
+          <Box mt={3}>
+            <Typography
+              variant='body1'
+              align='left'
+              color={listing.price ? 'primary' : 'secondary'}
+            >
+              {listing.price ? listing.price + '/hr' : 'Free'}
+            </Typography>
+          </Box>
+          <Box mt={2}>
+            <Grid container item xs={12} direction='row'>
+              <Grid item container xs={12} sm={2}>
+                <Box mt={0.3}>
+                  <Typography variant='body2'>
+                    {listing.avg_rating.toFixed(2)}
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid item container xs={12} sm={2}>
+                <StarBorderOutlinedIcon />
+              </Grid>
+            </Grid>
+          </Box>
+        </CardContent>
+        <CardActions>
+          <Grid container item xs={12}>
+            <Grid item container xs={12} sm={6}>
+              <Box mt={-0.1}>
+                <IconButton color='primary' component='span'>
+                  <TelegramIcon />
+                </IconButton>
               </Box>
             </Grid>
-            <Grid item container xs={12} sm={2}>
-              <StarBorderOutlinedIcon />
+            <Grid
+              item
+              container
+              xs={12}
+              sm={6}
+              alignItems='center'
+              justify='flex-end'
+            >
+              <IconButton color='primary' component='span'>
+                <DateRangeIcon />
+              </IconButton>
             </Grid>
           </Grid>
-        </Box>
-      </CardContent>
-      <CardActions>
-        <Grid container item xs={12}>
-          <Grid item container xs={12} sm={6}>
-            <Box mt={-0.1}>
-              <IconButton color="primary" component="span">
-                <TelegramIcon />
-              </IconButton>
-            </Box>
-          </Grid>
-          <Grid
-            item
-            container
-            xs={12}
-            sm={6}
-            alignItems="center"
-            justify="flex-end"
-          >
-            <IconButton color="primary" component="span">
-              <DateRangeIcon />
-            </IconButton>
-          </Grid>
-        </Grid>
-      </CardActions>
-    </Card>
-  );
-};
+        </CardActions>
+      </Card>
+    </Grid>
+  )
+}
 
-export default ListingCard;
+export default ListingCard

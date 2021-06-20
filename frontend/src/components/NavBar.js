@@ -55,7 +55,11 @@ const NavBar = () => {
           open={Boolean(anchorEl)}
           onClose={handleMenuClose}
         >
-          <MenuItem onClick={handleMenuClose} component={Link} to='/profile'>
+          <MenuItem
+            onClick={handleMenuClose}
+            component={Link}
+            to={`/profile/${state.user_id}`}
+          >
             {' '}
             Profile{' '}
           </MenuItem>
