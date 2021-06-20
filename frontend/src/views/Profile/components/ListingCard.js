@@ -30,6 +30,18 @@ const useStyles = makeStyles({
 
 const ListingCard = () => {
   const classes = useStyles();
+
+  const listingInfo = {
+      mod_code: "",
+      mod_desc: "",
+      rating: "",
+      mod_price: 10,
+      avail_dates:[],
+      date_created:"",
+  }
+
+  const price = listingInfo.mod_price === 0 ? "Free" : `${listingInfo.mod_price}/Hr`;
+  
   return (
     <Card className={classes.root} variant="outlined">
       <CardContent>
@@ -40,7 +52,7 @@ const ListingCard = () => {
               color="textSecondary"
               gutterBottom
             >
-              CS1101S
+              {listingInfo.mod_code}
             </Typography>
           </Grid>
           <Grid
@@ -56,7 +68,7 @@ const ListingCard = () => {
               color="textSecondary"
               gutterBottom
             >
-              11 Days ago
+              {listingInfo.date_created}
             </Typography>
           </Grid>
         </Grid>
@@ -68,19 +80,19 @@ const ListingCard = () => {
             color="textSecondary"
             noWrap
           >
-            Module description goes here.
+            {listingInfo.mod_desc}
           </Typography>
         </Box>
         <Box mt={3}>
           <Typography variant="body1" color="secondary">
-            Free
+          {price}
           </Typography>
         </Box>
         <Box mt={2}>
           <Grid container item xs={12} direction="row">
             <Grid item container xs={12} sm={2}>
               <Box mt={0.3}>
-                <Typography variant="body2">4.94</Typography>
+                <Typography variant="body2">{listingInfo.rating}</Typography>
               </Box>
             </Grid>
             <Grid item container xs={12} sm={2}>
