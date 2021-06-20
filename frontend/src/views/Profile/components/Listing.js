@@ -29,7 +29,7 @@ const Listing = () => {
 
   const CardRow=() => {
     return (
-      <React.Fragment>
+      <>
         <Grid item xs={3}>
           <ListingCard/>
         </Grid>
@@ -42,7 +42,7 @@ const Listing = () => {
         <Grid item xs={3}>
           <ListingCard/>
         </Grid>
-      </React.Fragment>
+      </>
     );
   }
 
@@ -51,12 +51,6 @@ const Listing = () => {
       <Paper elevation={2}>
         <Box m = {4}>
           <Grid container spacing = {4}>
-            <Grid container item xs={12} spacing={2}>
-              <CardRow/>
-            </Grid>
-            <Grid container item xs={12} spacing={2}>
-              <CardRow/>
-            </Grid>
             <Grid container item xs={12} spacing={2}>
               <CardRow/>
             </Grid>
