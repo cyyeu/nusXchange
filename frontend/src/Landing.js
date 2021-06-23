@@ -26,8 +26,8 @@ const Landing = () => {
         <Route path='/search/:search'>
           <Search />
         </Route>
-        <Route path='/listing'>
-          <Temp />
+        <Route path='/listing/:id'>
+          <Listing />
         </Route>
         <Route path='/profile/:id'>
           <Profile />
@@ -46,6 +46,9 @@ const Landing = () => {
         </Route>
         <Route path='/login'>
           <Login />
+        </Route>
+        <Route path='/createreview'>
+          <Temp />
         </Route>
         {/* 404 */}
         {/* <Route component={NotFound} /> */}

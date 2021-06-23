@@ -31,7 +31,7 @@ const useStyles = makeStyles({
 const ListingCard = ({ listing }) => {
   const classes = useStyles()
 
-  const price = listing.price === 0 ? 'Free' : `${listingInfo.mod_price}/Hr`
+  const price = listing.price === 0 ? 'Free' : `${listing.mod_price}/Hr`
   // calculate relative days from current time
   const date = new Date(listing.date_created.slice(0, -1))
   const now = new Date()

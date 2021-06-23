@@ -10,8 +10,7 @@ import {
   DialogActions,
 } from "@material-ui/core/";
 import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
-import { Link } from "react-router-dom";
-import { MemoryRouter } from "react-router";
+
 
 export default function Info() {
   const [open, setOpen] = useState(false);
@@ -24,19 +23,11 @@ export default function Info() {
     setOpen(false);
   };
 
-  const LinkBehavior = React.forwardRef((props, ref) => (
-    <Link
-      ref={ref}
-      to={{
-        pathname: "https://pypi.org/project/bert-extractive-summarizer/",
-      }}
-      target="_blank"
-      {...props}
-    />
-  ));
+  const LinkBehavior = () => (
+    window.open("https://pypi.org/project/bert-extractive-summarizer/")
+  );
 
   return (
-    <MemoryRouter>
       <div>
         <IconButton
           variant="outlined"
@@ -60,12 +51,11 @@ export default function Info() {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button component={LinkBehavior} color="primary">
+            <Button onClick={LinkBehavior} color="primary">
               More Info
             </Button>
           </DialogActions>
         </Dialog>
       </div>
-    </MemoryRouter>
   );
 }
