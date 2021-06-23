@@ -1,18 +1,24 @@
 from api.utils import calculate_xp
-from api.permissions import ListingPermission
 from rest_framework import serializers
 from rest_auth.models import TokenModel
 from .models import UserProfile, Listing, Transaction, Review
-from django.contrib.auth.models import User
 from dj_rest_auth.registration.serializers import RegisterSerializer
-from rest_auth.serializers import UserDetailsSerializer
 from django.db.models import F
+from stream_chat import StreamChat
+from django.conf import settings
 
 
 class TokenSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TokenModel
-        fields = ('key', 'user_id')  
+	stream_token = serializers.SerializerMethodField()
+	class Meta:
+			model = TokenModel
+			fields = ('key', 'user_id','stream_token')  
+
+	def get_stream_token(self, obj):
+		client = StreamChat(api_key=settings.STREAM_API_KEY, api_secret=settings.STREAM_API_SECRET)
+		token = client.create_token(str(obj.user.id))
+
+		return token
 	
 ## add first name last name custom sign up
 class CustomRegisterSerializer(RegisterSerializer):

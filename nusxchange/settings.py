@@ -158,6 +158,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Django All Auth config
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+
+STREAM_API_KEY = "6pshcp5ym8m7" # https://getstream.io/dashboard/
+STREAM_API_SECRET = "nzcyqhnphm9g3562rhdj3etc4w52qsaa3entm6t5tv4wd5kg64c7zy8bypznmdxv"
+
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
