@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
     'rest_framework',
     'api.apps.ApiConfig',
-    'frontend.apps.FrontendConfig',
     'rest_framework.authtoken', 
     'dj_rest_auth',
 		
