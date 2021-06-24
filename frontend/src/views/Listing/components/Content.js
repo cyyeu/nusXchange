@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
   },
   price: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: "fontWeightMedium",
   },
   ratingText: {
     fontSize: 18,
@@ -39,8 +39,8 @@ const useStyles = makeStyles((theme) => ({
 const Content = ({ listing }) => {
   const classes = useStyles();
   const dates = listing.avail_dates;
-  const [DateObjects,setDateObjects] = useState([]);
-  
+  const [DateObjects, setDateObjects] = useState([]);
+
   function createDateObjects(dates) {
     var i = 0;
     while (i < dates.length) {
@@ -48,19 +48,14 @@ const Content = ({ listing }) => {
         date: dates[i],
         format: "YYYY-MM-DD",
       });
-      setDateObjects(DateObjects=>[...DateObjects, date]);
-      i++;  
+      setDateObjects((DateObjects) => [...DateObjects, date]);
+      i++;
     }
-    
   }
 
   useEffect(() => {
     createDateObjects(dates);
-  },[]);
-
-
-
-  
+  }, []);
 
   return (
     <div className={classes.page}>
@@ -114,7 +109,10 @@ const Content = ({ listing }) => {
               </Typography>
             </Grid>
             <Grid item>
-              <Calendar type="icon"  value={DateObjects} />
+              <Calendar
+                type="icon"
+                value = {DateObjects}
+              />
             </Grid>
             <Grid item container justify="flex-end">
               <Button

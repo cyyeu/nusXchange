@@ -58,7 +58,7 @@ const Sidebar = ({ owner }) => {
       </Grid>
       <Grid item xs={10}>
         <Typography variant="body2" align="left">
-          {placeholder_bio}
+          {owner.bio}
         </Typography>
       </Grid>
       <Grid item container direction="row" spacing={1}>

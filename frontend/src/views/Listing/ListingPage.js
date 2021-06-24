@@ -51,7 +51,7 @@ const ListingPage = () => {
 }
 
 const CustomGrid = styled(Grid)`
-  margin: 75px auto 0 auto;
-  margin-bottom: 50px;
+  margin: 50px auto 0 auto;
+  margin-bottom: 100px;
 `
 export default ListingPage

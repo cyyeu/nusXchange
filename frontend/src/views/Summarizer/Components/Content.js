@@ -16,7 +16,7 @@ import {
 import CloudUploadOutlinedIcon from "@material-ui/icons/CloudUploadOutlined";
 import MuiAlert from "@material-ui/lab/Alert";
 import { AlertTitle } from "@material-ui/lab";
-import Info from "./info";
+import InfoModal from "./InfoModal";
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
   },
   inputText: {
     width: "95%",
-    marginTop: theme.spacing(0),
+    marginTop: theme.spacing(1),
     marginLeft: theme.spacing(1),
   },
   outputTextField: {
@@ -56,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
   },
   outputText: {
     width: "100%",
-    marginTop: theme.spacing(2),
+    marginTop: theme.spacing(1),
     marginLeft: theme.spacing(1),
   },
   submit: {
@@ -161,7 +161,7 @@ const Content = () => {
               </Box>
               <Box  pt={3}>
                 <Grid item xs={2}>
-                  <Info />
+                  <InfoModal />
                 </Grid>
               </Box>
             </Grid>
@@ -237,7 +237,7 @@ const Content = () => {
                 <TextField
                   name="input_text"
                   id="input_text"
-                  label="Paste or write text here."
+                  placeholder="Paste or write text here."
                   value={form.input_text}
                   onChange={handleFormChange}
                   fullWidth
