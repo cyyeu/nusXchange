@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Button,
@@ -8,20 +8,9 @@ import {
   Typography,
   Container,
   Paper,
-  Snackbar,
   Divider,
-  IconButton,
-  Modal,
 } from "@material-ui/core/";
-import StarIcon from "@material-ui/icons/Star";
-import TelegramIcon from "@material-ui/icons/Telegram";
-import { useHistory } from "react-router-dom";
 import Calendar, { DateObject } from "react-multi-date-picker";
-import { AdvancedImage } from "@cloudinary/react";
-import { Cloudinary } from "@cloudinary/base";
-import { fill } from "@cloudinary/base/actions/resize";
-import { max } from "@cloudinary/base/actions/roundCorners";
-import { defaultImage } from "@cloudinary/base/actions/delivery";
 import Rating from "@material-ui/lab/Rating";
 
 const useStyles = makeStyles((theme) => ({
@@ -47,26 +36,31 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Content = () => {
+const Content = ({ listing }) => {
   const classes = useStyles();
-  const history = useHistory();
-  const [avatar_id, setAvatar_id] = useState("");
-  const bio =
-    "Hi, My name is Chen Yuan! I am a dank CS student and I like to drink beer! HMU for CS related content, not history though.";
-  const desc =
-    "My name is Chen Yuan! I am a dank CS student and I Teach u how to use get A for CS xd ";
+  const dates = listing.avail_dates;
+  const [DateObjects,setDateObjects] = useState([]);
+  
+  function createDateObjects(dates) {
+    var i = 0;
+    while (i < dates.length) {
+      const date = new DateObject({
+        date: dates[i],
+        format: "YYYY-MM-DD",
+      });
+      setDateObjects(DateObjects=>[...DateObjects, date]);
+      i++;  
+    }
+    
+  }
 
-  const cld = new Cloudinary({
-    cloud: {
-      cloudName: "nusxchange",
-    },
-  });
-  const profile_img =
-    avatar_id === "" ? cld.image("default") : cld.image(avatar_id);
-  profile_img.delivery(defaultImage("default"));
-  profile_img.resize(fill().width(150).height(150)).roundCorners(max());
+  useEffect(() => {
+    createDateObjects(dates);
+  },[]);
 
-  const dates = [new DateObject(), new DateObject().add(5, "days")];
+
+
+  
 
   return (
     <div className={classes.page}>
@@ -75,26 +69,24 @@ const Content = () => {
           <Grid container direction="column" spacing={3}>
             <Grid item>
               <Typography variant="h4" color="secondary">
-                CS1101S
+                {listing.mod_code}
               </Typography>
             </Grid>
             <Grid item container direction="row">
+              <Box mt={0.1}>
+                <Grid item>
+                  <Typography className={classes.rating} color="primary">
+                    {listing.avg_rating}
+                  </Typography>
+                </Grid>
+              </Box>
               <Grid item>
-                <Typography className={classes.rating} color="primary">
-                  4.50
-                </Typography>
-              </Grid>
-              <Grid item>
-                <Rating
-                  defaultValue={4.5}
-                  precision={0.5}
-                  readOnly
-                />
+                <Rating value={listing.avg_rating} precision={0.5} readOnly />
               </Grid>
             </Grid>
             <Grid item>
               <Typography className={classes.price} color="primary">
-                10/Hr
+                {listing.price}/Hr
               </Typography>
             </Grid>
             <Grid item>
@@ -111,7 +103,7 @@ const Content = () => {
                 fullWidth
                 multiline={true}
                 rows={10}
-                value={desc}
+                value={listing.description}
                 InputProps={{ disableUnderline: true }}
                 disabled={true}
               />
@@ -122,7 +114,7 @@ const Content = () => {
               </Typography>
             </Grid>
             <Grid item>
-              <Calendar type="icon" value={dates} />
+              <Calendar type="icon"  value={DateObjects} />
             </Grid>
             <Grid item container justify="flex-end">
               <Button

@@ -35,7 +35,7 @@ const ProfilePanel = () => {
   }
 
   return (
-    <Grid item container xs={6}>
+    <Grid item container xs = {8}>
       <Grid item container xs={12} spacing={1} alignItems='center'>
         <Grid item xs={9}>
             <Tabs value={value} onChange={handleChange} selectionFollowsFocus>
@@ -43,7 +43,7 @@ const ProfilePanel = () => {
               <Tab label='Reviews' />
             </Tabs>
         </Grid>
-        <Grid item>
+        <Grid item >
           <Button variant='outlined' component={Link} to='/settings'>
             {' '}
             Edit Profile{' '}
