@@ -11,6 +11,6 @@ urlpatterns = [
 	path('create', index),
 	path('signup', index),
 	path('login', index),
-	path('createreview', index),
+	path('listing/<id>/review', index),
 
 ]

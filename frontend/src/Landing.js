@@ -11,6 +11,7 @@ import {
   CreateListing,
   Signup,
   Login,
+  CreateReview,
 } from './views'
 import Temp from './views/Temp'
 import { NavBar } from './components'
@@ -27,13 +28,16 @@ const Landing = () => {
         <Route path='/' exact component={Home} />
         <Route path='/search/:search' component={Search} />
         <Route path='/listing/:id' component={Listing} />
+        <AuthenticatedRoute
+          path='/listing/:id/review'
+          component={CreateReview}
+        />
         <Route path='/profile/:id' component={Profile} />
         <AuthenticatedRoute path='/settings' component={Settings} />
         <Route path='/summarizer' component={Summarizer} />
         <AuthenticatedRoute path='/create' component={CreateListing} />
         <UnauthenticatedRoute path='/signup' component={Signup} />
         <UnauthenticatedRoute path='/login' component={Login} />
-        <AuthenticatedRoute path='/createreview' component={Temp} />
         {/* 404 */}
         {/* <Route component={NotFound} /> */}
       </Switch>
