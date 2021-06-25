@@ -19,9 +19,10 @@ from django.contrib.auth import login, views as auth_views
 from rest_framework import routers
 
 urlpatterns = [
-	  path('', include('frontend.urls')),
+
     path('admin', admin.site.urls),
     path('api/', include('api.urls')),
+		path('', include('frontend.urls')),
 ]
 
 
