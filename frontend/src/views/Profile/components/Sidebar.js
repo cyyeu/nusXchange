@@ -78,7 +78,7 @@ const Sidebar = () => {
           color='secondary'
         />
         <Typography variant='body2'>
-          {percent * 400} experience points to next level
+          {percent * 200} experience points to next level
         </Typography>
       </Grid>
       <Grid item xs={10}>

@@ -1,7 +1,7 @@
 export const getLevel = (xp) => {
-  return Math.floor(xp / 400) + 1
+  return Math.floor(xp / 200) + 1
 }
 
 export const getXpBarPercentage = (xp) => {
-  return (xp % 400) / 400
+  return (xp % 200) / 200
 }

@@ -12,5 +12,5 @@ urlpatterns = [
 	path('signup', index),
 	path('login', index),
 	path('listing/<id>/review', index),
-
+	path('tutors', index),
 ]

@@ -15,12 +15,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 function doDatesInterSect(dateStringArr, dateObjArr) {
-
   return dateStringArr.some((dateString) =>
     dateObjArr.some((dateObj) => {
-      const diffTime = Math.abs(dateObj.toDate() - new Date(dateString))
-      const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24))
-      return diffDays < 1
+      const date = new Date(dateString)
+      return (
+        date.getDay() === dateObj.weekDay.index &&
+        date.getMonth() === dateObj.month.index &&
+        date.getFullYear() === dateObj.year
+      )
     })
   )
 }

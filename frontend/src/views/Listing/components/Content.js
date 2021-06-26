@@ -72,7 +72,7 @@ const Content = ({ listing }) => {
               <Box mt={0.1}>
                 <Grid item>
                   <Typography className={classes.rating} color='primary'>
-                    {listing.avg_rating}
+                    {listing.avg_rating.toFixed(2)}
                   </Typography>
                 </Grid>
               </Box>
@@ -82,7 +82,7 @@ const Content = ({ listing }) => {
             </Grid>
             <Grid item>
               <Typography className={classes.price} color='primary'>
-                {listing.price}/Hr
+                {listing.price ? '$' + listing.price + '/hr' : 'Free'}
               </Typography>
             </Grid>
             <Grid item>

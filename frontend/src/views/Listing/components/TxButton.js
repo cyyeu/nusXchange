@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from 'react'
 import { useUserContext } from '../../../contexts/UserContext'
 import { useParams, Link, useLocation } from 'react-router-dom'
-import { Button } from '@material-ui/core'
+import {
+  Button,
+  Dialog,
+  Grid,
+  DialogTitle,
+  DialogContent,
+} from '@material-ui/core'
+import Tx from './Tx'
 const TxButton = () => {
   const { state } = useUserContext()
   const [status, setStatus] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [isLoadingStudents, setIsLoadingStudents] = useState(true)
   const [openDialog, setOpenDialog] = useState(false)
-  const [students, setStudents] = useState([])
+  const [txs, setTxs] = useState([])
   const { id } = useParams()
   const location = useLocation()
 
@@ -71,7 +79,25 @@ const TxButton = () => {
   }
 
   const handleOwner = () => {
+    fetchStudents()
     setOpenDialog(!openDialog)
+  }
+  const fetchStudents = async () => {
+    setIsLoadingStudents(true)
+    const res = await fetch(`/api/tx/${id}/students/`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${state.token}`,
+      },
+    })
+    const data = await res.json()
+    if (!res.ok) {
+      console.log(data)
+      return
+    }
+    setTxs(data)
+    setIsLoadingStudents(false)
   }
 
   const renderStudent = () => {
@@ -95,9 +121,9 @@ const TxButton = () => {
           color='primary'
           fullWidth
           component={Link}
-          to={`${location}/review`}
+          to={`${location.pathname}/review`}
         >
-          Give review
+          Leave a review
         </Button>
       )
     } else {
@@ -169,7 +195,12 @@ const TxButton = () => {
       </Button>
     )
   }
-  const StudentsList = () => {}
+
+  const renderStudentList = (txs) => {
+    return txs.map((tx, index) => {
+      return <Tx key={tx.id} tx={tx} />
+    })
+  }
   return (
     <>
       {isLoading
@@ -177,6 +208,20 @@ const TxButton = () => {
         : state.isAuthenticated
         ? renderButton()
         : renderLoginButton()}
+      <Dialog
+        open={openDialog}
+        onClose={handleOwner}
+        scroll='paper'
+        maxWidth='xs'
+        fullWidth
+      >
+        <DialogTitle>Students</DialogTitle>
+        <DialogContent dividers>
+          <Grid container direction='column' spacing={4}>
+            {isLoadingStudents ? 'loading...' : renderStudentList(txs)}
+          </Grid>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }
