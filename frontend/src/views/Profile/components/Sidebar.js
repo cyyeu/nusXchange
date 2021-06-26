@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react'
 import { Grid } from '@material-ui/core'
-import { Typography, LinearProgress, Box } from '@material-ui/core'
+import { Typography, LinearProgress, Box, IconButton } from '@material-ui/core'
 import { useUserContext } from '../../../contexts/UserContext'
 import { AdvancedImage } from '@cloudinary/react'
 import { Cloudinary } from '@cloudinary/base'
@@ -9,6 +9,7 @@ import { max } from '@cloudinary/base/actions/roundCorners'
 import { defaultImage } from '@cloudinary/base/actions/delivery'
 import { useParams } from 'react-router-dom'
 import { getLevel, getXpBarPercentage } from '../../../utils'
+import { Telegram, LinkedIn } from '@material-ui/icons'
 const Sidebar = () => {
   const { state } = useUserContext()
   const { id } = useParams()
@@ -17,6 +18,8 @@ const Sidebar = () => {
     bio: '',
     avatar_id: '',
     xp: '',
+    tg_url: '',
+    linkedin_url: '',
   }
   const [userInfo, setUserInfo] = useState(initUserInfo)
   useEffect(async () => {
@@ -49,6 +52,11 @@ const Sidebar = () => {
   profile_img.resize(fill().width(150).height(150)).roundCorners(max())
   const level = getLevel(userInfo.xp)
   const percent = getXpBarPercentage(userInfo.xp)
+
+  const openWindow = (url) => {
+    url = url.match(/^http[s]?:\/\//) ? url : 'http://' + url
+    window.open(url, '_blank')
+  }
 
   return (
     <Grid
@@ -85,6 +93,20 @@ const Sidebar = () => {
         <Typography variant='body2' align='left'>
           {userInfo.bio}
         </Typography>
+      </Grid>
+      <Grid item container direction='row' spacing={1}>
+        <IconButton
+          onClick={() => openWindow(userInfo.tg_url)}
+          disabled={userInfo.tg_url === ''}
+        >
+          <Telegram />
+        </IconButton>
+        <IconButton
+          onClick={() => openWindow(userInfo.linkedin_url)}
+          disabled={userInfo.linkedin_url === ''}
+        >
+          <LinkedIn />
+        </IconButton>
       </Grid>
     </Grid>
   )

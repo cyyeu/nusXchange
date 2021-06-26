@@ -15,6 +15,7 @@ import { Cloudinary } from '@cloudinary/base'
 import { fill } from '@cloudinary/base/actions/resize'
 import { max } from '@cloudinary/base/actions/roundCorners'
 import { defaultImage } from '@cloudinary/base/actions/delivery'
+import { Link } from 'react-router-dom'
 
 const useStyles = makeStyles({
   root: {
@@ -68,7 +69,12 @@ const ReviewCard = ({ review }) => {
             </Grid>
             <Grid item>
               <Box mt={2}>
-                <Typography className={classes.first_name} color='primary'>
+                <Typography
+                  className={classes.first_name}
+                  component={Link}
+                  to={`/profile/${review.student.user}`}
+                  color='primary'
+                >
                   {review.student.first_name}
                 </Typography>
               </Box>

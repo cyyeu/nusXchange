@@ -61,22 +61,24 @@ class TransactionViewSet(viewsets.ModelViewSet):
 		return Response({"message": "accepted student (" + str(transaction.student) + ")"}, status=status.HTTP_200_OK)
 		
 
-	@action(detail=False)
-	def students(self, request):
-		pk = request.user.id
-		if not pk:
+	@action(detail=True)
+	def students(self, request, pk=None):
+		user = request.user.id
+		listing = get_object_or_404(Listing, id=pk)
+		if user != listing.owner.pk:
 			return Response(status=status.HTTP_401_UNAUTHORIZED)
-		#listings = Listing.objects.filter(owner=pk)
-		#print(listings)
-		transactions = Transaction.objects.filter(listing__owner=pk)
-		requested = transactions.filter(is_accepted=False)
-		accepted = transactions.filter(is_accepted=True)
-		requested_serializer = TransactionSerializer(requested, many=True)
-		accepted_serializer = TransactionSerializer(accepted, many=True)
-		return Response({
-			"requested": requested_serializer.data,
-			"accepted": accepted_serializer.data
-		})
+		transactions = listing.transactions.all()
+		# requested = transactions.filter(is_accepted=False)
+		# accepted = transactions.filter(is_accepted=True)
+		# requested_serializer = TransactionSerializer(requested, many=True)
+		# accepted_serializer = TransactionSerializer(accepted, many=True)
+		tx_serializer = TransactionSerializer(transactions, many=True)
+		return Response( tx_serializer.data
+		# 	{
+		# # 	"requested": requested_serializer.data,
+		# # 	"accepted": accepted_serializer.data
+		# }
+		)
 	
 
 	@action(detail=False)
@@ -84,15 +86,21 @@ class TransactionViewSet(viewsets.ModelViewSet):
 		pk = request.user.id
 		if not pk:
 			return Response(status=status.HTTP_401_UNAUTHORIZED)
+		print(pk)
 		transactions = Transaction.objects.filter(student=pk)
-		requested = transactions.filter(is_accepted=False)
-		accepted = transactions.filter(is_accepted=True)
-		requested_serializer = TutorSerializer(requested,many=True)
-		accepted_serializer = TutorSerializer(accepted,many=True)
-		return Response({
-			"requested": requested_serializer.data,
-			"accepted": accepted_serializer.data
-		})
+		print(transactions)
+		tutor_serializer = TutorSerializer(transactions, many=True)
+		# requested = transactions.filter(is_accepted=False)
+		# accepted = transactions.filter(is_accepted=True)
+		# requested_serializer = TutorSerializer(requested,many=True)
+		# accepted_serializer = TutorSerializer(accepted,many=True)
+		return Response(
+			tutor_serializer.data
+		# 	{
+		# 	"requested": requested_serializer.data,
+		# 	"accepted": accepted_serializer.data
+		# }
+		)
 
 	@action(detail=True)
 	def status(self, request, pk=None):
@@ -116,6 +124,8 @@ class TransactionViewSet(viewsets.ModelViewSet):
 			"is_accepted": is_accepted,
 			"gave_review": gave_review
 		})
+
+
 		
 
 

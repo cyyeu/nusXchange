@@ -10,12 +10,17 @@ import {
   Typography,
   IconButton,
   Divider,
+  Dialog,
   Grid,
+  DialogTitle,
+  DialogContent,
 } from '@material-ui/core/'
 import TelegramIcon from '@material-ui/icons/Telegram'
 import Calendar, { DateObject } from 'react-multi-date-picker'
 import StarIcon from '@material-ui/icons/Star'
-import { useHistory } from 'react-router-dom'
+import { useHistory, Link } from 'react-router-dom'
+import { useUserContext } from '../../../contexts/UserContext'
+import Tx from '../../Listing/components/Tx'
 
 const useStyles = makeStyles({
   root: {
@@ -39,8 +44,12 @@ const useStyles = makeStyles({
 const ListingCard = ({ listing }) => {
   const classes = useStyles()
   const history = useHistory()
+  const { state } = useUserContext()
   const dates = listing.avail_dates
   const [DateObjects, setDateObjects] = useState([])
+  const [openDialog, setOpenDialog] = useState(false)
+  const [isLoadingStudents, setIsLoadingStudents] = useState(true)
+  const [txs, setTxs] = useState([])
 
   function createDateObjects(dates) {
     var i = 0
@@ -69,6 +78,77 @@ const ListingCard = ({ listing }) => {
   const diffTime = Math.abs(now - date)
   const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24))
 
+  const renderSocials = () => {
+    return (
+      <>
+        {' '}
+        <Grid item container xs={12} sm={6}>
+          <Box ml={-0.5} mt={-0.5}>
+            <IconButton
+              color='primary'
+              component='span'
+              onClick={() => window.open(listing.owner.tg_url, '_blank')}
+              disabled={listing.owner.tg_url === ''}
+            >
+              <TelegramIcon />
+            </IconButton>
+          </Box>
+        </Grid>
+        <Grid
+          item
+          container
+          xs={12}
+          sm={6}
+          alignItems='center'
+          justify='flex-end'
+        >
+          <Calendar type='icon' value={DateObjects} />
+        </Grid>
+      </>
+    )
+  }
+  const renderStudents = () => {
+    return (
+      <Grid item container xs={12} justify='center' alignItems='flex-end'>
+        <Button
+          variant='outlined'
+          style={{ textTransform: 'none', fontSize: 16 }}
+          color='primary'
+          fullWidth
+          onClick={handleOwner}
+        >
+          Students
+        </Button>
+      </Grid>
+    )
+  }
+  const handleOwner = () => {
+    fetchStudents()
+    setOpenDialog(!openDialog)
+  }
+  const fetchStudents = async () => {
+    setIsLoadingStudents(true)
+    const res = await fetch(`/api/tx/${listing.id}/students/`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${state.token}`,
+      },
+    })
+    const data = await res.json()
+    if (!res.ok) {
+      console.log(data)
+      return
+    }
+    setTxs(data)
+    setIsLoadingStudents(false)
+  }
+
+  const renderStudentList = (txs) => {
+    return txs.map((tx, index) => {
+      return <Tx key={tx.id} tx={tx} />
+    })
+  }
   return (
     <Grid item xs={3}>
       <Card className={classes.root}>
@@ -140,24 +220,24 @@ const ListingCard = ({ listing }) => {
         </CardActionArea>
         <CardActions>
           <Grid container item xs={12}>
-            <Grid item container xs={12} sm={6}>
-              <Box ml={-0.5} mt={-0.5}>
-                <IconButton color='primary' component='span'>
-                  <TelegramIcon />
-                </IconButton>
-              </Box>
-            </Grid>
-            <Grid
-              item
-              container
-              xs={12}
-              sm={6}
-              alignItems='center'
-              justify='flex-end'
-            >
-              <Calendar type='icon' value={DateObjects} />
-            </Grid>
+            {listing.owner.user === state.user_id
+              ? renderStudents()
+              : renderSocials()}
           </Grid>
+          <Dialog
+            open={openDialog}
+            onClose={handleOwner}
+            scroll='paper'
+            maxWidth='xs'
+            fullWidth
+          >
+            <DialogTitle>Students</DialogTitle>
+            <DialogContent dividers>
+              <Grid container direction='column' spacing={4}>
+                {isLoadingStudents ? 'loading...' : renderStudentList(txs)}
+              </Grid>
+            </DialogContent>
+          </Dialog>
         </CardActions>
       </Card>
     </Grid>
