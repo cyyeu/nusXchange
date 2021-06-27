@@ -170,7 +170,12 @@ const ListingCard = ({ listing }) => {
                 <IconButton
                   color='primary'
                   component='span'
-                  onClick={() => window.open(listing.owner.tg_url, '_blank')}
+                  onClick={() =>
+                    window.open(
+                      `https://t.me/${listing.owner.tg_url}`,
+                      '_blank'
+                    )
+                  }
                   disabled={listing.owner.tg_url === ''}
                 >
                   <TelegramIcon />

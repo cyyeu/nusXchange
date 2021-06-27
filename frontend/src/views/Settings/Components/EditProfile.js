@@ -268,7 +268,8 @@ const EditProfile = () => {
                   variant='standard'
                   fullWidth
                   name='tg_url'
-                  label='Telegram Link'
+                  label='Telegram handle'
+									placeholder='Example: @User1'
                   id='tg_url'
                   autoComplete='tele'
                   value={form.tg_url}

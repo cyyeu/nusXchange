@@ -71,7 +71,7 @@ const CreateReview = ({ mod_code, tuto }) => {
     const payload = {
       listing: id,
       rating: form.rating,
-      description: form.description,
+      description: form.desc,
     }
     var token = 'Token ' + state.token
     var url = '/api/reviews/'
