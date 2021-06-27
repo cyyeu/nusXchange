@@ -83,7 +83,7 @@ const CreateListing = () => {
   };
 
   function validateMod(mod) {
-    var modRe = new RegExp("[a-zA-Z]{2,3}[1-4]{1}[0-9]{3}");
+    let modRe = /^[a-zA-Z]{2,3}[1-4]{1}[0-9]{3}[a-zA-Z]?$/;
     if (modRe.test(mod)) {
       setErrors((prevErrors) => {
         return { ...prevErrors, mod_code: "" };
