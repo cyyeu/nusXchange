@@ -11,45 +11,35 @@ import {
   CreateListing,
   Signup,
   Login,
+  CreateReview,
+	Tutors
 } from './views'
 import Temp from './views/Temp'
 import { NavBar } from './components'
+import {
+  AuthenticatedRoute,
+  UnauthenticatedRoute,
+} from './components/AuthRoutes'
 
 const Landing = () => {
   return (
     <Router>
       <NavBar />
       <Switch>
-        <Route path='/' exact>
-          <Home />
-        </Route>
-        <Route path='/search/:search'>
-          <Search />
-        </Route>
-        <Route path='/listing/:id'>
-          <Listing />
-        </Route>
-        <Route path='/profile/:id'>
-          <Profile />
-        </Route>
-        <Route path='/settings'>
-          <Settings />
-        </Route>
-        <Route path='/summarizer'>
-          <Summarizer />
-        </Route>
-        <Route path='/create'>
-          <CreateListing />
-        </Route>
-        <Route path='/signup'>
-          <Signup />
-        </Route>
-        <Route path='/login'>
-          <Login />
-        </Route>
-        <Route path='/createreview'>
-          <Temp />
-        </Route>
+        <Route path='/' exact component={Home} />
+        <Route path='/search/:search' component={Search} />
+        <Route path='/listing/:id' exact component={Listing} />
+        <AuthenticatedRoute
+          path='/listing/:id/review'
+          component={CreateReview}
+        />
+        <Route path='/profile/:id' component={Profile} />
+        <AuthenticatedRoute path='/settings' component={Settings} />
+        <Route path='/summarizer' component={Summarizer} />
+        <AuthenticatedRoute path='/create' component={CreateListing} />
+        <UnauthenticatedRoute path='/signup' component={Signup} />
+        <UnauthenticatedRoute path='/login' component={Login} />
+        <AuthenticatedRoute path='/tutors' component={Tutors} />
         {/* 404 */}
         {/* <Route component={NotFound} /> */}
       </Switch>

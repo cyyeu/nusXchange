@@ -75,7 +75,7 @@ export default function Login() {
               user_id: data.user_id,
             },
           })
-          history.push('/profile')
+          history.push(`/profile/${data.user_id}`)
         })
       } else {
         setIsInvalidLogin(true)

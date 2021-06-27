@@ -2,9 +2,10 @@ import React from 'react'
 import { Grid, Tab, Tabs, Button, Box, Paper } from '@material-ui/core'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import Listing from './components/Listing'
 import Review from './components/Review'
+import { useUserContext } from '../../contexts/UserContext'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props
@@ -29,26 +30,29 @@ TabPanel.propTypes = {
 
 const ProfilePanel = () => {
   const [value, setValue] = React.useState(0)
-
+  const { id } = useParams()
+  const { state } = useUserContext()
   const handleChange = (event, newValue) => {
     setValue(newValue)
   }
 
   return (
-    <Grid item container xs = {8}>
+    <Grid item container xs={8}>
       <Grid item container xs={12} spacing={1} alignItems='center'>
         <Grid item xs={9}>
-            <Tabs value={value} onChange={handleChange} selectionFollowsFocus>
-              <Tab label='Listings' />
-              <Tab label='Reviews' />
-            </Tabs>
+          <Tabs value={value} onChange={handleChange} selectionFollowsFocus>
+            <Tab label='Listings' />
+            <Tab label='Reviews' />
+          </Tabs>
         </Grid>
-        <Grid item >
-          <Button variant='outlined' component={Link} to='/settings'>
-            {' '}
-            Edit Profile{' '}
-          </Button>
-        </Grid>
+        {state.user_id == id && (
+          <Grid item>
+            <Button variant='outlined' component={Link} to='/settings'>
+              {' '}
+              Edit Profile{' '}
+            </Button>
+          </Grid>
+        )}
         <TabPanel value={value} index={0}>
           <Listing />
         </TabPanel>

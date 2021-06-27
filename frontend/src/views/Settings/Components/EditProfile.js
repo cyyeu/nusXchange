@@ -61,6 +61,8 @@ const EditProfile = () => {
     last_name: '',
     bio: '',
     avatar_id: '',
+    tg_url: '',
+    linkedin_url: '',
   }
 
   const [form, setForm] = useState(initForm)
@@ -84,6 +86,8 @@ const EditProfile = () => {
           last_name: data.last_name,
           bio: data.bio,
           avatar_id: data.avatar_id,
+          tg_url: data.tg_url,
+          linkedin_url: data.linkedin_url,
         })
       })
   }
@@ -101,6 +105,8 @@ const EditProfile = () => {
       last_name: form.last_name,
       bio: form.bio,
       avatar_id: form.avatar_id,
+      linkedin_url: form.linkedin_url,
+      tg_url: form.tg_url,
     }
     fetch(url, {
       method: 'PATCH',
@@ -243,6 +249,30 @@ const EditProfile = () => {
                   multiline={true}
                   rows={8}
                   rowsMax={12}
+                />
+              </Grid>
+              <Grid item xs={12} sm={12}>
+                <TextField
+                  variant='standard'
+                  fullWidth
+                  name='linkedin_url'
+                  label='Linkedin Profile Link'
+                  id='linkedin_url'
+                  autoComplete='linkedin'
+                  value={form.linkedin_url}
+                  onChange={handleFormChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={12}>
+                <TextField
+                  variant='standard'
+                  fullWidth
+                  name='tg_url'
+                  label='Telegram Link'
+                  id='tg_url'
+                  autoComplete='tele'
+                  value={form.tg_url}
+                  onChange={handleFormChange}
                 />
               </Grid>
             </Grid>

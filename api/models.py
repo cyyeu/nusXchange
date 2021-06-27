@@ -23,6 +23,8 @@ class UserProfile(models.Model):
 	bio = models.CharField(max_length = 255, blank=True, default='')
 	xp = models.IntegerField(default = 0, blank=True)
 	avatar_id = models.CharField(max_length = 255, default='', blank=True )
+	linkedin_url = models.CharField(max_length = 255, default='', blank=True )
+	tg_url = models.CharField(max_length = 255, default='', blank=True )
 	def __str__(self):
 		return self.user.email
 # auto create user profile upon registering with dj-rest-auth

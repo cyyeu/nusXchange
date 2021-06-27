@@ -38,7 +38,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
 		extra_kwargs = {
 			'bio': {"required": False , "allow_blank": True},
 			'first_name': {"required": False , "allow_blank": True},
-			'last_name': {"required": False , "allow_blank": True}
+			'last_name': {"required": False , "allow_blank": True},
+			'tg_url': {"required": False , "allow_blank": True},
+			'linkedin_url': {"required": False , "allow_blank": True}
 		}
 	
 	def update(self, instance, validated_data):
@@ -109,10 +111,10 @@ class TransactionSerializer(serializers.ModelSerializer):
 	
 
 class TutorSerializer(serializers.ModelSerializer):
-	tutor = UserProfileSerializer(source='listing.owner', read_only=True)
+	listing = ListingSerializer()
 	class Meta:
 		model = Transaction
-		fields = ('tutor', 'listing', 'gave_review', 'is_accepted')
+		fields = ( 'listing', 'gave_review', 'is_accepted')
 
 
 class ReviewSerializer(serializers.ModelSerializer):
