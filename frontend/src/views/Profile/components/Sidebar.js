@@ -96,8 +96,10 @@ const Sidebar = () => {
       </Grid>
       <Grid item container direction='row' spacing={1}>
         <IconButton
-          onClick={() => openWindow(userInfo.tg_url)}
-          disabled={userInfo.tg_url === ''}
+          onClick={() =>
+            window.open(`https://t.me/${listing.owner.tg_url}`, '_blank')
+          }
+          disabled={listing.owner.tg_url === ''}
         >
           <Telegram />
         </IconButton>
