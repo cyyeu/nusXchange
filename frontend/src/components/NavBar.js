@@ -55,6 +55,10 @@ const NavBar = () => {
           open={Boolean(anchorEl)}
           onClose={handleMenuClose}
         >
+          <MenuItem onClick={handleMenuClose} component={Link} to='/tutors'>
+            {' '}
+            Tutors{' '}
+          </MenuItem>
           <MenuItem
             onClick={handleMenuClose}
             component={Link}
@@ -67,10 +71,7 @@ const NavBar = () => {
             {' '}
             Settings{' '}
           </MenuItem>
-          <MenuItem onClick={handleMenuClose} component={Link} to='/tutors'>
-            {' '}
-            Tutors{' '}
-          </MenuItem>
+
           <MenuItem onClick={handleLogout} component={Link} to='/'>
             {' '}
             Logout{' '}

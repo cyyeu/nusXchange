@@ -19,6 +19,7 @@ import styled from 'styled-components'
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney'
 import DatePicker, { DateObject } from 'react-multi-date-picker'
 import { useUserContext } from '../../contexts/UserContext'
+import { useHistory } from 'react-router-dom'
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant='filled' {...props} />
@@ -69,6 +70,7 @@ const CreateListing = () => {
   const [dates, setDates] = useState([new DateObject()])
   const [openSuccess, setOpenSuccess] = useState(false)
   const { state } = useUserContext()
+  const history = useHistory()
 
   var avail_dates = []
 
@@ -126,7 +128,7 @@ const CreateListing = () => {
     setOpenSuccess(false)
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     convertDates()
     e.preventDefault()
     const payload = {
@@ -138,16 +140,24 @@ const CreateListing = () => {
     var token = 'Token ' + state.token
     var url = '/api/listings/'
     console.log(dates)
-    fetch(url, {
+    const res = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: token,
       },
       body: JSON.stringify(payload),
-    }).then((res) => {
-      setOpenSuccess(true)
     })
+    const data = await res.json()
+    if (!res.ok) {
+      console.log(data)
+      return
+    }
+
+    setOpenSuccess(true)
+    setTimeout(() => {
+      history.push(`/listing/${data.id}`)
+    }, 1000)
   }
   return (
     <CustomGrid container justify='center' alignItems='flex-start' spacing={1}>
