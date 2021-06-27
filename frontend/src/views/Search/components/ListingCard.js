@@ -167,7 +167,12 @@ const ListingCard = ({ listing }) => {
           <Grid container item xs={12}>
             <Grid item container xs={12} sm={6}>
               <Box mt={-0.5} ml={-0.5}>
-                <IconButton color='primary' component='span'>
+                <IconButton
+                  color='primary'
+                  component='span'
+                  onClick={() => window.open(listing.owner.tg_url, '_blank')}
+                  disabled={listing.owner.tg_url === ''}
+                >
                   <TelegramIcon />
                 </IconButton>
               </Box>
