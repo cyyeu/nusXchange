@@ -57,7 +57,7 @@ const ReviewCard = ({ review }) => {
   const date = new Date(review.date_created.slice(0, -1))
   const now = new Date()
   const diffTime = Math.abs(now - date)
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+  const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24))
 
   return (
     <Card className={classes.root} elevation={0}>
@@ -82,7 +82,7 @@ const ReviewCard = ({ review }) => {
             <Grid item>
               <Box mt={2.2}>
                 <Typography className={classes.date} color='textSecondary'>
-                  {diffDays} days ago
+                  {diffDays === 0 ? 'recently' : diffDays + 'd ago'}
                 </Typography>
               </Box>
             </Grid>
