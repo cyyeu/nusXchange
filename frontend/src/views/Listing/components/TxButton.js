@@ -203,11 +203,11 @@ const TxButton = () => {
   }
   return (
     <>
-      {isLoading
+      {!state.isAuthenticated
+        ? renderLoginButton()
+        : isLoading
         ? renderLoading()
-        : state.isAuthenticated
-        ? renderButton()
-        : renderLoginButton()}
+        : renderButton()}
       <Dialog
         open={openDialog}
         onClose={handleOwner}

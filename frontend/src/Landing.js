@@ -12,7 +12,8 @@ import {
   Signup,
   Login,
   CreateReview,
-	Tutors
+	Tutors,
+	EditListing
 } from './views'
 import Temp from './views/Temp'
 import { NavBar } from './components'
@@ -32,6 +33,10 @@ const Landing = () => {
         <AuthenticatedRoute
           path='/listing/:id/review'
           component={CreateReview}
+        />
+        <AuthenticatedRoute
+          path='/listing/:id/edit'
+          component={EditListing}
         />
         <Route path='/profile/:id' component={Profile} />
         <AuthenticatedRoute path='/settings' component={Settings} />

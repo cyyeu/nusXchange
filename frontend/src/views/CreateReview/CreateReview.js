@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import {
   Button,
@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const CreateReview = ({ mod_code, tuto }) => {
+const CreateReview = () => {
   const classes = useStyles()
   const initForm = {
     desc: '',
@@ -53,6 +53,24 @@ const CreateReview = ({ mod_code, tuto }) => {
   const { id } = useParams()
   const history = useHistory()
   const { state } = useUserContext()
+  useEffect(async () => {
+    const res = await fetch(`/api/tx/${id}/status/`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Token ' + state.token,
+      },
+    })
+    const data = await res.json()
+    if (
+      !res.ok ||
+      data.user_type != 'student' ||
+      !data.is_accepted ||
+      data.gave_review
+    ) {
+      history.goBack()
+    }
+  }, [id])
   const handleFormChange = (event) => {
     const { name, value } = event.target
     setForm({ ...form, [name]: value })
