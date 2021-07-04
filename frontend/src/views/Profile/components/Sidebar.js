@@ -86,7 +86,7 @@ const Sidebar = () => {
           color='secondary'
         />
         <Typography variant='body2'>
-          {percent * 200} experience points to next level
+          {200 - percent * 200} experience points to next level
         </Typography>
       </Grid>
       <Grid item xs={10}>
@@ -96,7 +96,9 @@ const Sidebar = () => {
       </Grid>
       <Grid item container direction='row' spacing={1}>
         <IconButton
-          onClick={() => openWindow(userInfo.tg_url)}
+          onClick={() =>
+            window.open(`https://t.me/${userInfo.tg_url}`, '_blank')
+          }
           disabled={userInfo.tg_url === ''}
         >
           <Telegram />

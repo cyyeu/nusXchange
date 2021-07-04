@@ -22,11 +22,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+*pyc*
+*main.js*
+*__pycache__*
 *.log
 *.pot
 local_settings.py
 db.sqlite3
-*migrations*
-*.pyc
-*main.js*
-package-lock.json

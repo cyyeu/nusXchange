@@ -95,7 +95,7 @@ export default function Signup() {
               user_id: data.user_id,
             },
           })
-          history.push('/profile')
+          history.push(`/profile/${data.user_id}`)
         })
       } else if (!res.ok) {
         res.json().then((data) => {

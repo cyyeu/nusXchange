@@ -9,11 +9,25 @@ import {
   Container,
   Paper,
   Divider,
+  ButtonGroup,
+  Dialog,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  DialogTitle,
+  Snackbar,
 } from '@material-ui/core/'
 import Calendar, { DateObject } from 'react-multi-date-picker'
 import Rating from '@material-ui/lab/Rating'
+import MuiAlert from '@material-ui/lab/Alert'
+import { AlertTitle } from '@material-ui/lab'
 import TxButton from './TxButton'
+import { useLocation, Link, useParams, useHistory } from 'react-router-dom'
+import { useUserContext } from '../../../contexts/UserContext'
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant='filled' {...props} />
+}
 const useStyles = makeStyles((theme) => ({
   page: {
     display: 'flex',
@@ -41,6 +55,12 @@ const Content = ({ listing }) => {
   const classes = useStyles()
   const dates = listing.avail_dates
   const [DateObjects, setDateObjects] = useState([])
+  const [openDialog, setOpenDialog] = useState(false)
+  const [deleteSuccess, setDeleteSuccess] = useState(false)
+  const location = useLocation()
+  const { id } = useParams()
+  const { state } = useUserContext()
+  const history = useHistory()
 
   function createDateObjects(dates) {
     var i = 0
@@ -58,15 +78,71 @@ const Content = ({ listing }) => {
     createDateObjects(dates)
   }, [])
 
+  const handleDialog = () => {
+    setOpenDialog(!openDialog)
+  }
+
+  const handleDelete = async () => {
+    setOpenDialog(false)
+    var token = 'Token ' + state.token
+    var url = `/api/listings/${id}/`
+    const res = await fetch(url, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: token,
+      },
+    })
+
+    if (!res.ok) {
+      const data = await res.json()
+      console.log(data)
+      return
+    }
+    setDeleteSuccess(true)
+    setTimeout(() => {
+      history.goBack()
+    }, 1000)
+  }
   return (
     <div className={classes.page}>
       <Paper elevation={2}>
         <Box m={3}>
           <Grid container direction='column' spacing={3}>
-            <Grid item>
-              <Typography variant='h4' color='secondary'>
-                {listing.mod_code}
-              </Typography>
+            <Grid item container justify='space-between' xs={12}>
+              <Grid item>
+                <Typography variant='h4' color='secondary'>
+                  {listing.mod_code}
+                </Typography>
+              </Grid>
+              <Grid item>
+                {listing.owner.user == state.user_id && (
+                  <ButtonGroup>
+                    <Button
+                      variant='outlined'
+                      style={{ textTransform: 'none', fontSize: 16 }}
+                      color='primary'
+                      component={Link}
+                      to={`${location.pathname}/edit`}
+                      fullWidth
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant='outlined'
+                      style={{
+                        textTransform: 'none',
+                        fontSize: 16,
+                      }}
+                      color='primary'
+                      onClick={handleDialog}
+                      fullWidth
+                    >
+                      Delete
+                    </Button>
+                  </ButtonGroup>
+                )}
+              </Grid>
             </Grid>
             <Grid item container direction='row'>
               <Box mt={0.1}>
@@ -118,6 +194,32 @@ const Content = ({ listing }) => {
           </Grid>
         </Box>
       </Paper>
+      <Dialog open={openDialog} onClose={handleDialog}>
+        <DialogTitle>Confirm delete</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete this listing?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDelete} color='primary'>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Snackbar
+        open={deleteSuccess}
+        autoHideDuration={3000}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+      >
+        <Alert severity='info'>
+          <AlertTitle>Success</AlertTitle>
+          Successfully deleted listing!
+        </Alert>
+      </Snackbar>
     </div>
   )
 }

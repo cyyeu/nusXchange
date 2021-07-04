@@ -40,9 +40,6 @@ const NavBar = () => {
   const renderIcons = () => {
     return (
       <>
-        <IconButton color='inherit'>
-          <Chat />
-        </IconButton>
         <IconButton color='inherit' onClick={handleMenuOpen}>
           <AccountCircle />
         </IconButton>
