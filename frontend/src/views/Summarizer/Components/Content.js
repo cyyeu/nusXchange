@@ -152,8 +152,8 @@ const Content = () => {
     <div className={classes.paper}>
       <Paper elevation={5}>
         <Grid container direction="column">
-          <Grid item container alignItems="flex-start" xs={12} direction="row">
-            <Grid item container xs={6}>
+          <Grid item container alignItems="flex-start" xs={12} lg = {12}direction="row">
+            <Grid item container xs={6} lg = {6}>
               <Box ml={1} pt={3}>
                 <Typography variant="h4" color="secondary">
                   Summarizer
