@@ -23,6 +23,7 @@ yarn-debug.log*
 yarn-error.log*
 
 *pyc*
+*main.js*
 *__pycache__*
 *.log
 *.pot
