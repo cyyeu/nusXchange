@@ -85,7 +85,7 @@ const CreateListing = () => {
   }
 
   function validateMod(mod) {
-    let modRe = /^[a-zA-Z]{2,3}[1-4]{1}[0-9]{3}[a-zA-Z]?$/
+    let modRe = /^[a-zA-Z]{2,4}[1-4]{1}[0-9]{3}[a-zA-Z]?$/
     if (modRe.test(mod)) {
       setErrors((prevErrors) => {
         return { ...prevErrors, mod_code: '' }
@@ -197,6 +197,9 @@ const CreateListing = () => {
                   variant='outlined'
                   onClick={() => {
                     setdisablePrice(false)
+                    setForm((form) => {
+                      return { ...form, price: "" }
+                    })
                   }}
                 >
                   Paid
@@ -231,7 +234,7 @@ const CreateListing = () => {
                       id='price'
                       label='Price'
                       value={form.price}
-                      placeholder='10'
+                      placeholder='per hour.'
                       onChange={handleFormChange}
                       color='secondary'
                       helperText={errors.price}
@@ -272,6 +275,7 @@ const CreateListing = () => {
                 </Box>
               </Grid>
               <Grid item>
+                <Box mt={1} ml ={-0.5}>
                 <DatePicker
                   value={dates}
                   onChange={setDates}
@@ -280,6 +284,7 @@ const CreateListing = () => {
                   format='YYYY-MM-DD'
                   type='icon'
                 />
+                </Box>
               </Grid>
             </form>
             <Grid item container justify='flex-start'>
