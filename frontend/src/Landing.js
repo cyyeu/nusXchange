@@ -12,8 +12,10 @@ import {
   Signup,
   Login,
   CreateReview,
-	Tutors,
-	EditListing
+  Tutors,
+  EditListing,
+  PasswordReset,
+  ForgotPassword,
 } from './views'
 import Temp from './views/Temp'
 import { NavBar } from './components'
@@ -34,16 +36,21 @@ const Landing = () => {
           path='/listing/:id/review'
           component={CreateReview}
         />
-        <AuthenticatedRoute
-          path='/listing/:id/edit'
-          component={EditListing}
-        />
+        <AuthenticatedRoute path='/listing/:id/edit' component={EditListing} />
         <Route path='/profile/:id' component={Profile} />
         <AuthenticatedRoute path='/settings' component={Settings} />
         <Route path='/summarizer' component={Summarizer} />
         <AuthenticatedRoute path='/create' component={CreateListing} />
         <UnauthenticatedRoute path='/signup' component={Signup} />
         <UnauthenticatedRoute path='/login' component={Login} />
+        <UnauthenticatedRoute
+          path='/password-reset/:uid/:token'
+          component={PasswordReset}
+        />
+        <UnauthenticatedRoute
+          path='/forgot-password'
+          component={ForgotPassword}
+        />
         <AuthenticatedRoute path='/tutors' component={Tutors} />
         {/* 404 */}
         {/* <Route component={NotFound} /> */}

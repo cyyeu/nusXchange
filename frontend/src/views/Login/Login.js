@@ -15,7 +15,7 @@ import {
 import { Alert } from '@material-ui/lab'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import { makeStyles } from '@material-ui/core/styles'
-import { useHistory } from 'react-router-dom'
+import { useHistory, Link as RouterLink } from 'react-router-dom'
 import { useUserContext } from '../../contexts/UserContext'
 
 const useStyles = makeStyles((theme) => ({
@@ -80,7 +80,10 @@ export default function Login() {
       } else {
         setIsInvalidLogin(true)
         setForm(initForm)
-        res.json().catch((e) => console.log(e))
+        res
+          .json()
+          .catch((e) => console.log(e))
+          .then((data) => console.log(data))
       }
     })
   }
@@ -139,12 +142,16 @@ export default function Login() {
           </Button>
           <Grid container>
             <Grid item xs>
-              <Link href='#' variant='body2'>
+              <Link
+                variant='body2'
+                component={RouterLink}
+                to='/forgot-password'
+              >
                 Forgot password?
               </Link>
             </Grid>
             <Grid item>
-              <Link href='/signup' variant='body2'>
+              <Link variant='body2' component={RouterLink} to='/signup'>
                 {"Don't have an account? Sign Up"}
               </Link>
             </Grid>

@@ -14,4 +14,6 @@ urlpatterns = [
 	path('listing/<id>/review', index),
 	path('listing/<id>/edit', index),
 	path('tutors', index),
+	path('password-reset/<uid>/<token>', index),
+	path('forgot-password', index)
 ]
