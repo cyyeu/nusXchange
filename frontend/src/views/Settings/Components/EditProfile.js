@@ -11,18 +11,20 @@ import {
   Paper,
   Snackbar,
   IconButton,
+  InputAdornment
 } from '@material-ui/core/'
 import { useUserContext } from '../../../contexts/UserContext'
 import Divider from '../../Home/components/Divider'
 import MuiAlert from '@material-ui/lab/Alert'
 import { AlertTitle } from '@material-ui/lab'
 import PhotoCamera from '@material-ui/icons/PhotoCamera'
-
+import validator from 'validator'
 import { AdvancedImage, placeholder } from '@cloudinary/react'
 import { Cloudinary } from '@cloudinary/base'
 import { fill } from '@cloudinary/base/actions/resize'
 import { max } from '@cloudinary/base/actions/roundCorners'
 import { defaultImage } from '@cloudinary/base/actions/delivery'
+import AlternateEmailIcon from '@material-ui/icons/AlternateEmail';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -64,7 +66,11 @@ const EditProfile = () => {
     tg_url: '',
     linkedin_url: '',
   }
-
+  const initErrors = {
+    tg_url: '',
+    linkedin_url: '',
+  }
+  const [errors, setErrors] = useState(initErrors)
   const [form, setForm] = useState(initForm)
   const [open, setOpen] = useState(false)
   const [errorSnackbar, setErrorSnackbar] = useState(false)
@@ -73,7 +79,6 @@ const EditProfile = () => {
 
   useEffect(() => {
     loadData()
-    //console.log(userInfo.first_name);
   }, [])
 
   const loadData = () => {
@@ -95,6 +100,36 @@ const EditProfile = () => {
   const handleFormChange = (e) => {
     const { name, value } = e.target
     setForm({ ...form, [name]: value })
+    if (name === 'tg_url') {
+      validateTg(value)
+    } else if (name === 'linkedin_url') {
+      validateLinkedin(value)
+    } 
+  }
+
+  function validateTg(tg_url) {
+    if (validator.isAlphanumeric(tg_url)) {
+      setErrors((prevErrors) => {
+        return { ...prevErrors, tg_url: '' }
+      })
+    } else {
+      setErrors((prevErrors) => {
+        return { ...prevErrors, tg_url: 'Not a valid handle. Did you remove @?' }
+      })
+    }
+  }
+
+  function validateLinkedin(linkedin_url) {
+    let linkedinRe = /(https?:\/\/(www.)|(www.))?linkedin.com\/(mwlite\/|m\/)?in\/[a-zA-Z0-9_.-]+\/?/
+    if (linkedinRe.test(linkedin_url)) {
+      setErrors((prevErrors) => {
+        return { ...prevErrors, linkedin_url: '' }
+      })
+    } else {
+      setErrors((prevErrors) => {
+        return { ...prevErrors, linkedin_url: 'Not a valid Linkedin.' }
+      })
+    }
   }
 
   const handleSubmit = (e) => {
@@ -261,6 +296,8 @@ const EditProfile = () => {
                   autoComplete='linkedin'
                   value={form.linkedin_url}
                   onChange={handleFormChange}
+                  helperText={errors.linkedin_url}
+                  error={errors.linkedin_url !== ''}
                 />
               </Grid>
               <Grid item xs={12} sm={12}>
@@ -268,12 +305,20 @@ const EditProfile = () => {
                   variant='standard'
                   fullWidth
                   name='tg_url'
-                  label='Telegram handle'
-                  placeholder='Please do not add the @ infront of your username!'
+                  label='Telegram Handle'
                   id='tg_url'
                   autoComplete='tele'
                   value={form.tg_url}
                   onChange={handleFormChange}
+                  helperText={errors.tg_url}
+                  error={errors.tg_url !== ''}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position='start'>
+                        <AlternateEmailIcon />
+                      </InputAdornment>
+                    ),
+                  }}
                 />
               </Grid>
             </Grid>
