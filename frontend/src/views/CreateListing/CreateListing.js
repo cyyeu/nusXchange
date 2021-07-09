@@ -267,7 +267,7 @@ const CreateListing = () => {
               <Grid item>
                 <Box mt={2}>
                   <Typography variant='body1' color='primary'>
-                    Available dates
+                    Select dates:
                   </Typography>
                 </Box>
               </Grid>
@@ -278,7 +278,7 @@ const CreateListing = () => {
                   multiple
                   minDate={new Date()}
                   format='YYYY-MM-DD'
-                  type='input-icon'
+                  type='icon'
                 />
               </Grid>
             </form>
