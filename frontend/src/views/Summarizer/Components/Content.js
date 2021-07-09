@@ -17,6 +17,7 @@ import CloudUploadOutlinedIcon from "@material-ui/icons/CloudUploadOutlined";
 import MuiAlert from "@material-ui/lab/Alert";
 import { AlertTitle } from "@material-ui/lab";
 import InfoModal from "./InfoModal";
+import validator from "validator";
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -74,6 +75,13 @@ const Content = () => {
     input_text: "",
     url: "",
   };
+  const initErrors = {
+    num_sentences: "",
+    min_length: "",
+    max_length: "",
+    url: "",
+  }
+  const [errors, setErrors] = useState(initErrors)
   const [form, setForm] = useState(initForm);
   const [summary, setSummary] = useState("Summarized content goes here.");
   const [openSuccess, setOpenSuccess] = useState(false);
@@ -93,10 +101,77 @@ const Content = () => {
   const handleFormChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
+    if (name === 'num_sentences') {
+      validateSentences(value)
+    } else if (name === 'min_length') {
+      validateMin(value,form.max_length)
+    } else if (name === 'max_length') {
+      validateMax(form.min_length,value)
+    } else if (name === 'url') {
+      validateUrl(value);
+    }
   };
+
+  function validateSentences(value) {
+    if (value > 0) {
+      setErrors((prevErrors) => {
+        return { ...prevErrors, num_sentences: '' }
+      })
+    } else {
+      setErrors((prevErrors) => {
+        return { ...prevErrors, num_sentences: 'Invalid input.' }
+      })
+    }
+  }
+
+  function validateUrl(value) {
+    if (validator.isURL(value)) {
+      setErrors((prevErrors) => {
+        return { ...prevErrors, url: '' }
+      })
+    } else {
+      setErrors((prevErrors) => {
+        return { ...prevErrors, url: 'Invalid url.' }
+      })
+    }
+  }
+
+  const validateMin = (min, max) => {
+    if (min > 0 && (min <= max)) {
+      setErrors((prevErrors) => {
+        return { ...prevErrors, min_length: '' }
+      })
+    } else {
+      setErrors((prevErrors) => {
+        return {
+          ...prevErrors,
+          min_length: 'Invalid input.',
+        }
+      })
+    }
+  }
+
+  const validateMax = (min, max) => {
+    if (max > 0 && (max >= min)) {
+      setErrors((prevErrors) => {
+        return { ...prevErrors, max_length: '' }
+      })
+    } else {
+      setErrors((prevErrors) => {
+        return {
+          ...prevErrors,
+          max_length: 'Invalid input.',
+        }
+      })
+    }
+  }
 
   const isDisabled = () => {
     return (
+      errors.url !== "" ||
+      errors.min_length !== "" ||
+      errors.max_length !== "" ||
+      errors.num_sentences !== "" ||
       form.num_sentences === "" ||
       form.min_length === "" ||
       (form.max_length === "" && (form.input_text === "" || form.url === ""))
@@ -188,7 +263,8 @@ const Content = () => {
                       onChange={handleFormChange}
                       size="small"
                       color="secondary"
-                      helperText="Recommended: 500"
+                      helperText={errors.max_length === "" ? "Recommended: 500" : errors.max_length}
+                      error = {errors.max_length !== ""}
                       required
                     />
                   </Grid>
@@ -202,7 +278,8 @@ const Content = () => {
                       onChange={handleFormChange}
                       size="small"
                       color="secondary"
-                      helperText="Recommended: 40"
+                      helperText={errors.min_length === "" ? "Recommended: 40" : errors.min_length}
+                      error = {errors.min_length !== ""}
                       required
                     />
                   </Grid>
@@ -216,7 +293,8 @@ const Content = () => {
                       onChange={handleFormChange}
                       size="small"
                       color="secondary"
-                      helperText="Recommended: 10"
+                      helperText={errors.num_sentences === "" ? "Recommended: 10" : errors.num_sentences}
+                      error = {errors.num_sentences !== ""}
                       required
                     />
                   </Grid>
@@ -308,6 +386,8 @@ const Content = () => {
                     size="small"
                     color="secondary"
                     disabled={form.input_text !== ""}
+                    error = {errors.url !== ""}
+                    helperText = {errors.url}
                   />
                 </form>
               </Grid>
