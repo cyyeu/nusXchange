@@ -5,7 +5,7 @@ from rest_auth.models import TokenModel
 from .models import UserProfile, Listing, Transaction, Review
 from django.contrib.auth.models import User
 from dj_rest_auth.registration.serializers import RegisterSerializer
-from rest_auth.serializers import UserDetailsSerializer
+from rest_auth.serializers import UserDetailsSerializer, PasswordResetSerializer
 from django.db.models import F
 
 
@@ -13,6 +13,12 @@ class TokenSerializer(serializers.ModelSerializer):
     class Meta:
         model = TokenModel
         fields = ('key', 'user_id')  
+
+class CustomPasswordResetSerializer(PasswordResetSerializer):
+	def get_email_options(self):
+		return {
+				'email_template_name': 'password_reset_message.html',
+		}
 	
 ## add first name last name custom sign up
 class CustomRegisterSerializer(RegisterSerializer):

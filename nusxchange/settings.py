@@ -79,7 +79,7 @@ ROOT_URLCONF = 'nusxchange.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, '../', 'api/templates'), ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -165,6 +165,7 @@ AUTHENTICATION_BACKENDS = (
 
 REST_AUTH_SERIALIZERS = {
     'TOKEN_SERIALIZER': 'api.serializers.TokenSerializer',
+		'PASSWORD_RESET_SERIALIZER': 'api.serializers.CustomPasswordResetSerializer'
 }
 REST_AUTH_REGISTER_SERIALIZERS = {
     'REGISTER_SERIALIZER': 'api.serializers.CustomRegisterSerializer',
@@ -177,7 +178,17 @@ ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_SESSION_REMEMBER = True
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'nusxchange1@gmail.com'
+EMAIL_HOST_PASSWORD = "nusxchange123"
+EMAIL_PORT = 587
+LOGIN_REDIRECT_URL='/login'
+LOGIN_URL = 'http://localhost:8000/login'
 # Rest Framework config
 REST_FRAMEWORK = {
     'DATETIME_FORMAT': "%m/%d/%Y '%H:%M:%S",
