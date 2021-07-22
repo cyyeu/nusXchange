@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from dj_rest_auth.registration.serializers import RegisterSerializer
 from rest_auth.serializers import UserDetailsSerializer, PasswordResetSerializer
 from django.db.models import F
+from allauth.account.admin import EmailAddress
 
 
 class TokenSerializer(serializers.ModelSerializer):
@@ -35,8 +36,7 @@ class CustomRegisterSerializer(RegisterSerializer):
 # only to GET or PATCH owner's profile. 
 # returns id, first_name, last_name, bio, email, avatar_id.
 class UserProfileSerializer(serializers.ModelSerializer):
-	first_name = serializers.CharField(source='user.first_name',allow_blank=True)
-	last_name = serializers.CharField(source='user.last_name',allow_blank=True)
+	verified = serializers.SerializerMethodField()
 	class Meta:
 		model = UserProfile
 		fields = "__all__"
@@ -49,6 +49,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
 			'linkedin_url': {"required": False , "allow_blank": True}
 		}
 	
+	def to_representation(self, instance):
+		ret = super().to_representation(instance)
+		ret['user'] = UserDetailsSerializer(instance.user).data
+		return ret
+
 	def update(self, instance, validated_data):
 		user_data = validated_data.pop('user', None)
 		if user_data:
@@ -58,7 +63,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
 		instance = super().update(instance, validated_data)
 		return instance
 
-
+	def get_verified(self, obj):
+		return EmailAddress.objects.filter(user=obj.user, verified=True).exists()
 
 # search, create, edit, get, delete
 class ListingSerializer(serializers.ModelSerializer):

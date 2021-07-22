@@ -4,12 +4,18 @@ from rest_framework.decorators import action
 from .models import Listing, Transaction, UserProfile, Review
 from .serializers import ListingSerializer, TransactionSerializer, TutorSerializer, UserProfileSerializer, ReviewSerializer
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
-from rest_framework import serializers, viewsets, mixins, generics, status
+from rest_framework import serializers, viewsets, mixins, generics, status, views
 from rest_framework.response import Response
 from api.permissions import ProfilePermission, ListingPermission, TransactionPermission
-from django.shortcuts import get_object_or_404
+from rest_framework.permissions import AllowAny
+from django.contrib.auth import get_user_model
+from rest_framework.generics import get_object_or_404
+from allauth.account.admin import EmailAddress
+from allauth.account.utils import send_email_confirmation
+from rest_framework.exceptions import APIException
 # Create your views here.
 
+User = get_user_model()
 
 
 class UserProfileAPIView(generics.RetrieveUpdateAPIView):
@@ -18,6 +24,23 @@ class UserProfileAPIView(generics.RetrieveUpdateAPIView):
 
 	def get_queryset(self):
 			return UserProfile.objects.all()
+
+class NewEmailConfirmation(views.APIView):
+	permission_classes = [AllowAny] 
+
+	def post(self, request):
+		user = get_object_or_404(User, email=request.data['email'])
+		emailAddress = EmailAddress.objects.filter(user=user, verified=True).exists()
+
+		if emailAddress:
+			return Response({'message': 'This email is already verified'}, status=status.HTTP_400_BAD_REQUEST)
+		else:
+			try:
+				send_email_confirmation(request, user=user)
+				return Response({'message': 'Email confirmation sent'}, status=status.HTTP_201_CREATED)
+			except APIException:
+				return Response({'message': 'This email does not exist, please create a new account'}, status=status.HTTP_403_FORBIDDEN)
+
 
 class ListingViewSet(viewsets.ModelViewSet):
 	serializer_class = ListingSerializer

@@ -16,8 +16,10 @@ import {
   EditListing,
   PasswordReset,
   ForgotPassword,
+	Verified
 } from './views'
 import Temp from './views/Temp'
+
 import { NavBar } from './components'
 import {
   AuthenticatedRoute,
@@ -43,6 +45,7 @@ const Landing = () => {
         <AuthenticatedRoute path='/create' component={CreateListing} />
         <UnauthenticatedRoute path='/signup' component={Signup} />
         <UnauthenticatedRoute path='/login' component={Login} />
+        <Route path='/verified' component={Verified} />
         <UnauthenticatedRoute
           path='/password-reset/:uid/:token'
           component={PasswordReset}

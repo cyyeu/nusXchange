@@ -11,7 +11,7 @@ import {
   Paper,
   Snackbar,
   IconButton,
-  InputAdornment
+  InputAdornment,
 } from '@material-ui/core/'
 import { useUserContext } from '../../../contexts/UserContext'
 import Divider from '../../Home/components/Divider'
@@ -24,7 +24,7 @@ import { Cloudinary } from '@cloudinary/base'
 import { fill } from '@cloudinary/base/actions/resize'
 import { max } from '@cloudinary/base/actions/roundCorners'
 import { defaultImage } from '@cloudinary/base/actions/delivery'
-import AlternateEmailIcon from '@material-ui/icons/AlternateEmail';
+import AlternateEmailIcon from '@material-ui/icons/AlternateEmail'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -104,7 +104,7 @@ const EditProfile = () => {
       validateTg(value)
     } else if (name === 'linkedin_url') {
       validateLinkedin(value)
-    } 
+    }
   }
 
   function validateTg(tg_url) {
@@ -114,13 +114,17 @@ const EditProfile = () => {
       })
     } else {
       setErrors((prevErrors) => {
-        return { ...prevErrors, tg_url: 'Not a valid handle. Did you remove @?' }
+        return {
+          ...prevErrors,
+          tg_url: 'Not a valid handle. Did you remove @?',
+        }
       })
     }
   }
 
   function validateLinkedin(linkedin_url) {
-    let linkedinRe = /(https?:\/\/(www.)|(www.))?linkedin.com\/(mwlite\/|m\/)?in\/[a-zA-Z0-9_.-]+\/?/
+    let linkedinRe =
+      /(https?:\/\/(www.)|(www.))?linkedin.com\/(mwlite\/|m\/)?in\/[a-zA-Z0-9_.-]+\/?/
     if (linkedinRe.test(linkedin_url)) {
       setErrors((prevErrors) => {
         return { ...prevErrors, linkedin_url: '' }

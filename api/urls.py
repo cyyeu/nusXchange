@@ -18,11 +18,11 @@ urlpatterns = [
 		path('password-reset', PasswordResetView.as_view()),
 		path('user/<int:pk>', views.UserProfileAPIView.as_view(), name='UserProfileView'),
 		path('', include(router.urls)),
-		path('verify-email/',
+		path('verify-email',
          VerifyEmailView.as_view(), name='rest_verify_email'),
 		path('account-confirm-email/<str:key>/', ConfirmEmailView.as_view()),
 		re_path(r'^account-confirm-email/(?P<key>[-:\w]+)/$', VerifyEmailView.as_view(), name='account_confirm_email'),
     path('account-confirm-email/', VerifyEmailView.as_view(), name='account_email_verification_sent'),
-
+		path('resend-verification-email', views.NewEmailConfirmation.as_view(), name='resend-email-confirmation'),
 ]
 

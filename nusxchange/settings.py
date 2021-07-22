@@ -188,7 +188,7 @@ EMAIL_HOST_USER = 'nusxchange1@gmail.com'
 EMAIL_HOST_PASSWORD = "nusxchange123"
 EMAIL_PORT = 587
 LOGIN_REDIRECT_URL='/login'
-LOGIN_URL = 'http://localhost:8000/login'
+LOGIN_URL = 'http://localhost:8000/verified'
 # Rest Framework config
 REST_FRAMEWORK = {
     'DATETIME_FORMAT': "%m/%d/%Y '%H:%M:%S",
