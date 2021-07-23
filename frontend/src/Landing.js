@@ -16,7 +16,7 @@ import {
   EditListing,
   PasswordReset,
   ForgotPassword,
-	Verified
+  Verified,
 } from './views'
 import Temp from './views/Temp'
 
@@ -25,6 +25,7 @@ import {
   AuthenticatedRoute,
   UnauthenticatedRoute,
 } from './components/AuthRoutes'
+import Snackbar from './components/Snackbar'
 
 const Landing = () => {
   return (
@@ -58,6 +59,7 @@ const Landing = () => {
         {/* 404 */}
         {/* <Route component={NotFound} /> */}
       </Switch>
+      <Snackbar />
     </Router>
   )
 }

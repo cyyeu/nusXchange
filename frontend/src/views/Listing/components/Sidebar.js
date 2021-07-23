@@ -18,7 +18,6 @@ const Sidebar = ({ owner }) => {
       cloudName: 'nusxchange',
     },
   })
-  console.log(owner)
   const profile_img =
     owner.avatar_id === '' ? cld.image('default') : cld.image(owner.avatar_id)
   profile_img.delivery(defaultImage('default'))

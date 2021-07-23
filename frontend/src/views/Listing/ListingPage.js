@@ -1,50 +1,24 @@
-import React, {useState, useEffect} from 'react'
+import React from 'react'
 import { Grid } from '@material-ui/core'
 import styled from 'styled-components'
 import Sidebar from './components/Sidebar'
-import Content from  "./components/Content"
+import Content from './components/Content'
 import { useParams } from 'react-router-dom'
+import useListing from '../../hooks/useListing'
 
 const ListingPage = () => {
   const { id } = useParams()
-  const [listings, setListings] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
-
-
-  useEffect(async () => {
-    setIsLoading(true)
-    const res = await fetch(`/api/listings/${id}/`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-    const data = await res.json()
-    if (!res.ok) {
-      console.log(data)
-      return
-    }
-    setListings(data)
-    console.log(data)
-    setIsLoading(false)
-  }, [id])
-
-  const renderContent = (listings) => {
-    return (
-      <Content listing = {listings}/>
-    )
-  }
-  const renderSidebar = (listings) => {
-    return (
-      <Sidebar owner = {listings.owner}/>
-    )
-  }
-
+  const [loading, listing] = useListing(id)
   return (
-    <div style ={{overflow:'scroll',height:'100%',display:'block'}}>
-      <CustomGrid container justify='center' alignItems='flex-start' spacing={4}>
-          {isLoading || renderSidebar(listings)}
-          {isLoading || renderContent(listings)}
+    <div style={{ overflow: 'scroll', height: '100%', display: 'block' }}>
+      <CustomGrid
+        container
+        justify='center'
+        alignItems='flex-start'
+        spacing={4}
+      >
+        <Sidebar owner={listing.owner} />
+        <Content listing={listing} />
       </CustomGrid>
     </div>
   )

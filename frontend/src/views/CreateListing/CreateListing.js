@@ -6,24 +6,17 @@ import {
   Grid,
   Box,
   Typography,
-  Container,
   Paper,
-  Snackbar,
-  Divider,
   InputAdornment,
 } from '@material-ui/core/'
-import validator from 'validator'
-import MuiAlert from '@material-ui/lab/Alert'
-import { AlertTitle } from '@material-ui/lab'
 import styled from 'styled-components'
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney'
 import DatePicker, { DateObject } from 'react-multi-date-picker'
-import { useUserContext } from '../../contexts/UserContext'
+import { useUserContext, useSnackbarContext } from '../../contexts'
 import { useHistory } from 'react-router-dom'
+import CircularProgress from '@material-ui/core/CircularProgress'
+import { validateMod, validatePrice } from '../../utils'
 
-function Alert(props) {
-  return <MuiAlert elevation={6} variant='filled' {...props} />
-}
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -59,6 +52,7 @@ const CreateListing = () => {
     mod_code: '',
     desc: '',
     price: 0,
+    avail_dates: [],
   }
   const initErrors = {
     mod_code: '',
@@ -67,79 +61,37 @@ const CreateListing = () => {
   const [form, setForm] = useState(initForm)
   const [errors, setErrors] = useState(initErrors)
   const [disablePrice, setdisablePrice] = useState(true)
-  const [dates, setDates] = useState([new DateObject()])
-  const [openSuccess, setOpenSuccess] = useState(false)
+  const [awaitingResponse, setAwaitingResponse] = useState(false)
   const { state } = useUserContext()
-  const history = useHistory()
+  const { dispatch: dispatchSnackbar } = useSnackbarContext()
 
-  var avail_dates = []
+  const history = useHistory()
 
   const handleFormChange = (e) => {
     const { name, value } = e.target
     setForm({ ...form, [name]: value })
     if (name === 'mod_code') {
-      validateMod(value)
+      validateMod(value, setErrors)
     } else if (name === 'price') {
-      validatePrice(value)
+      validatePrice(value, setErrors)
     }
-  }
-
-  function validateMod(mod) {
-    let modRe = /^[a-zA-Z]{2,4}[1-4]{1}[0-9]{3}[a-zA-Z]?$/
-    if (modRe.test(mod)) {
-      setErrors((prevErrors) => {
-        return { ...prevErrors, mod_code: '' }
-      })
-    } else {
-      setErrors((prevErrors) => {
-        return { ...prevErrors, mod_code: 'Invalid module code.' }
-      })
-    }
-  }
-
-  function validatePrice(price) {
-    if (validator.isNumeric(price)) {
-      setErrors((prevErrors) => {
-        return { ...prevErrors, price: '' }
-      })
-    } else {
-      setErrors((prevErrors) => {
-        return { ...prevErrors, price: 'Not a valid price.' }
-      })
-    }
-  }
-
-  function convertDates() {
-    dates.forEach((date) => {
-      var date_string = date.format('YYYY-MM-DD')
-      avail_dates.push(date_string)
-    })
   }
 
   const isDisabled = () => {
     return errors.mod_code !== '' || errors.price !== '' || form.mod_code === ''
   }
 
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return
-    }
-
-    setOpenSuccess(false)
-  }
-
   const handleSubmit = async (e) => {
-    convertDates()
     e.preventDefault()
+    setAwaitingResponse(true)
     const payload = {
       mod_code: form.mod_code.toUpperCase(),
       description: form.desc,
       price: form.price,
-      avail_dates: avail_dates,
+      avail_dates: form.avail_dates.map((date) => date.format('YYYY-MM-DD')),
     }
     var token = 'Token ' + state.token
     var url = '/api/listings/'
-    console.log(dates)
     const res = await fetch(url, {
       method: 'POST',
       headers: {
@@ -151,14 +103,26 @@ const CreateListing = () => {
     const data = await res.json()
     if (!res.ok) {
       console.log(data)
+      dispatchSnackbar({
+        type: 'ERROR',
+        payload: {
+          msg: data,
+        },
+      })
+      setAwaitingResponse(false)
       return
     }
 
-    setOpenSuccess(true)
-    setTimeout(() => {
-      history.push(`/listing/${data.id}`)
-    }, 1000)
+    //snackbar
+    dispatchSnackbar({
+      type: 'SUCCESS',
+      payload: {
+        msg: 'Listing created!',
+      },
+    })
+    history.push(`/listing/${data.id}`)
   }
+
   return (
     <CustomGrid container justify='center' alignItems='flex-start' spacing={1}>
       <div className={classes.paper}>
@@ -198,7 +162,7 @@ const CreateListing = () => {
                   onClick={() => {
                     setdisablePrice(false)
                     setForm((form) => {
-                      return { ...form, price: "" }
+                      return { ...form, price: '' }
                     })
                   }}
                 >
@@ -275,42 +239,42 @@ const CreateListing = () => {
                 </Box>
               </Grid>
               <Grid item>
-                <Box mt={1} ml ={-0.5}>
-                <DatePicker
-                  value={dates}
-                  onChange={setDates}
-                  multiple
-                  minDate={new Date()}
-                  format='YYYY-MM-DD'
-                  type='icon'
-                />
+                <Box mt={1} ml={-0.5}>
+                  <DatePicker
+                    value={form.avail_dates}
+                    onChange={(dates) =>
+                      setForm({ ...form, avail_dates: dates })
+                    }
+                    multiple
+                    minDate={new Date()}
+                    format='YYYY-MM-DD'
+                    type='icon'
+                    name='avail_dates'
+                  />
                 </Box>
               </Grid>
             </form>
-            <Grid item container justify='flex-start'>
-              <Button
-                variant='outlined'
-                type='submit'
-                form='listing'
-                className={classes.submit}
-                disabled={isDisabled()}
-              >
-                Create
-              </Button>
-              <Snackbar
-                open={openSuccess}
-                autoHideDuration={3000}
-                onClose={handleClose}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'left',
-                }}
-              >
-                <Alert onClose={handleClose} severity='info'>
-                  <AlertTitle>Success</AlertTitle>
-                  Listing created.
-                </Alert>
-              </Snackbar>
+            <Grid
+              item
+              container
+              justify='flex-start'
+              alignItems='flex-end'
+              spacing={2}
+            >
+              <Grid item>
+                <Button
+                  variant='outlined'
+                  type='submit'
+                  form='listing'
+                  className={classes.submit}
+                  disabled={isDisabled() || awaitingResponse}
+                >
+                  Create
+                </Button>
+              </Grid>
+              <Grid item>
+                {awaitingResponse && <CircularProgress color='secondary' />}
+              </Grid>
             </Grid>
           </Grid>
         </Paper>

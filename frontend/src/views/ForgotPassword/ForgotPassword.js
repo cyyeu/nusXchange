@@ -8,13 +8,11 @@ import {
   Grid,
   Typography,
   Container,
-  Snackbar,
 } from '@material-ui/core/'
-import { Alert, AlertTitle } from '@material-ui/lab'
 import VpnKeyIcon from '@material-ui/icons/VpnKey'
 import { makeStyles } from '@material-ui/core/styles'
-import { useHistory, useParams } from 'react-router-dom'
 import validator from 'validator'
+import { useSnackbarContext } from '../../contexts/SnackbarContext'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -40,19 +38,8 @@ export default function ForgotPassword() {
   const classes = useStyles()
   const [email, setEmail] = useState('')
   const [error, setError] = useState('')
-  const [errorResponse, setErrorResponse] = useState('')
-  const [open, setOpen] = useState(false)
-  const [errorSnackbar, setErrorSnackbar] = useState(false)
+  const { dispatch } = useSnackbarContext()
   const [isLoading, setIsLoading] = useState(false)
-
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return
-    }
-
-    setOpen(false)
-    setErrorSnackbar(false)
-  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -70,11 +57,20 @@ export default function ForgotPassword() {
     })
     const data = await res.json()
     if (res.ok) {
-      setOpen(true)
+      dispatch({
+        type: 'SUCCESS',
+        payload: {
+          msg: 'Email sent! Please check your inbox and/or junk mail.',
+        },
+      })
     } else {
       console.log(data)
-      setErrorResponse(data.detail)
-      setErrorSnackbar(true)
+      dispatch({
+        type: 'ERROR',
+        payload: {
+          msg: data.detail,
+        },
+      })
     }
     setIsLoading(false)
   }
@@ -124,34 +120,6 @@ export default function ForgotPassword() {
           </Button>
         </form>
       </div>
-      <Snackbar
-        open={open}
-        autoHideDuration={3000}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-      >
-        <Alert onClose={handleClose} severity='success'>
-          <AlertTitle>Success</AlertTitle>
-          Email sent! Please check your inbox or junk folder.
-        </Alert>
-      </Snackbar>
-      <Snackbar
-        open={errorSnackbar}
-        autoHideDuration={3000}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-      >
-        <Alert onClose={handleClose} severity='error'>
-          <AlertTitle>Error</AlertTitle>
-          {errorResponse}
-        </Alert>
-      </Snackbar>
     </Container>
   )
 }

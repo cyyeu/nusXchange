@@ -52,7 +52,7 @@ class ListingViewSet(viewsets.ModelViewSet):
 		if user:
 			return Listing.objects.filter(owner=user)
 		elif mod_code:
-			return Listing.objects.filter(mod_code__icontains=mod_code)
+			return Listing.objects.filter(mod_code__icontains=mod_code).order_by("-owner__xp")
 		else:
 			return Listing.objects.all()
 

@@ -51,8 +51,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
 	
 	def to_representation(self, instance):
 		ret = super().to_representation(instance)
-		ret['user'] = UserDetailsSerializer(instance.user).data
-		return ret
+		newRet = UserDetailsSerializer(instance.user).data
+		newRet.update(ret)
+		return newRet
 
 	def update(self, instance, validated_data):
 		user_data = validated_data.pop('user', None)

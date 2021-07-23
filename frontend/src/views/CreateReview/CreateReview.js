@@ -8,19 +8,12 @@ import {
   Typography,
   Container,
   Paper,
-  Snackbar,
-  Divider,
-  InputAdornment,
 } from '@material-ui/core/'
 import { Rating } from '@material-ui/lab'
-import MuiAlert from '@material-ui/lab/Alert'
-import { AlertTitle } from '@material-ui/lab'
 import styled from 'styled-components'
 import { useParams, useHistory } from 'react-router-dom'
-import { useUserContext } from '../../contexts/UserContext'
-function Alert(props) {
-  return <MuiAlert elevation={6} variant='filled' {...props} />
-}
+import { useUserContext, useSnackbarContext } from '../../contexts'
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -48,11 +41,13 @@ const CreateReview = () => {
     rating: null,
   }
   const [form, setForm] = useState(initForm)
-  const [openSuccess, setOpenSuccess] = useState(false)
   const [maxLimit, setMaxLimit] = useState('')
+  const [awaitingResponse, setAwaitingResponse] = useState(false)
   const { id } = useParams()
   const history = useHistory()
   const { state } = useUserContext()
+  const { dispatch: dispatchSnackbar } = useSnackbarContext()
+
   useEffect(async () => {
     const res = await fetch(`/api/tx/${id}/status/`, {
       method: 'GET',
@@ -86,6 +81,7 @@ const CreateReview = () => {
     return !form.rating
   }
   const handleSubmit = async () => {
+    setAwaitingResponse(true)
     const payload = {
       listing: id,
       rating: form.rating,
@@ -102,17 +98,22 @@ const CreateReview = () => {
       body: JSON.stringify(payload),
     })
     const data = await res.json()
+    setAwaitingResponse(false)
     if (!res.ok) {
-      alert(data)
+      dispatchSnackbar({
+        type: 'ERROR',
+        payload: {
+          msg: data,
+        },
+      })
     }
-    setOpenSuccess(true)
+    dispatchSnackbar({
+      type: 'SUCCESS',
+      payload: {
+        msg: 'Review created!',
+      },
+    })
     history.goBack()
-  }
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return
-    }
-    setOpenSuccess(false)
   }
   return (
     <CustomGrid container justify='center' alignItems='flex-start' spacing={1}>
@@ -126,7 +127,7 @@ const CreateReview = () => {
                 </Typography>
               </Box>
             </Grid>
-            <div className={classes.form} i>
+            <div className={classes.form}>
               <Grid item container>
                 <TextField
                   fullWidth
@@ -161,35 +162,31 @@ const CreateReview = () => {
                   />
                 </Box>
               </Grid>
-
-              <Grid item container>
-                <Box mt={5}>
+              <Box mb={5} />
+              <Grid
+                item
+                container
+                justify='flex-start'
+                alignItems='flex-end'
+                spacing={2}
+              >
+                <Grid item>
                   <Button
                     variant='outlined'
                     type='submit'
-                    form='review'
-                    disabled={isDisabled()}
+                    form='listing'
+                    className={classes.submit}
+                    disabled={isDisabled() || awaitingResponse}
                     onClick={handleSubmit}
                   >
-                    Submit review
+                    Create
                   </Button>
-                </Box>
+                </Grid>
+                <Grid item>
+                  {awaitingResponse && <CircularProgress color='secondary' />}
+                </Grid>
               </Grid>
             </div>
-            <Snackbar
-              open={openSuccess}
-              autoHideDuration={3000}
-              onClose={handleClose}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-            >
-              <Alert onClose={handleClose} severity='info'>
-                <AlertTitle>Success</AlertTitle>
-                Review created.
-              </Alert>
-            </Snackbar>
           </Grid>
         </Paper>
       </div>

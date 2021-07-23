@@ -4,15 +4,15 @@ import ReactDOM from 'react-dom'
 import Landing from './Landing'
 import { ThemeProvider } from '@material-ui/core/styles'
 import { Theme } from './Theme'
-import { UserContextProvider } from './contexts/UserContext'
+import Provider from './contexts'
 const App = () => {
   return (
     <React.StrictMode>
-      <UserContextProvider>
+      <Provider>
         <ThemeProvider theme={Theme}>
           <Landing />
         </ThemeProvider>
-      </UserContextProvider>
+      </Provider>
     </React.StrictMode>
   )
 }

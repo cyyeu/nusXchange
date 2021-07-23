@@ -12,18 +12,14 @@ import {
   Divider,
   InputAdornment,
 } from '@material-ui/core/'
-import validator from 'validator'
-import MuiAlert from '@material-ui/lab/Alert'
-import { AlertTitle } from '@material-ui/lab'
+import CircularProgress from '@material-ui/core/CircularProgress'
 import styled from 'styled-components'
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney'
 import DatePicker, { DateObject } from 'react-multi-date-picker'
-import { useUserContext } from '../../contexts/UserContext'
 import { useHistory, useParams } from 'react-router-dom'
-
-function Alert(props) {
-  return <MuiAlert elevation={6} variant='filled' {...props} />
-}
+import useListing from '../../hooks/useListing'
+import { useUserContext, useSnackbarContext } from '../../contexts'
+import { validateMod, validatePrice } from '../../utils'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -53,12 +49,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const EditListing = ({ listing }) => {
+const EditListing = () => {
   const classes = useStyles()
+  const { id } = useParams()
+  const [loading, listing] = useListing(id)
   const initForm = {
     mod_code: '',
     desc: '',
-    price: 0,
+    price: '',
+    avail_dates: [],
   }
   const initErrors = {
     mod_code: '',
@@ -67,107 +66,54 @@ const EditListing = ({ listing }) => {
   const [form, setForm] = useState(initForm)
   const [errors, setErrors] = useState(initErrors)
   const [disablePrice, setdisablePrice] = useState(true)
-  const [dates, setDates] = useState([new DateObject()])
-  const [openSuccess, setOpenSuccess] = useState(false)
+  const [awaitingResponse, setAwaitingResponse] = useState(false)
   const { state } = useUserContext()
+  const { dispatch: dispatchSnackbar } = useSnackbarContext()
   const history = useHistory()
-  const { id } = useParams()
 
-  useEffect(async () => {
-    const res = await fetch(`/api/listings/${id}/`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-    const data = await res.json()
-    if (!res.ok) {
-      console.log(data)
-      return
-    }
-    if (state.user_id != Number(data.owner.user)) {
+  useEffect(() => {
+    console.log(listing)
+    if (!loading && state.user_id != Number(listing.owner.user)) {
       history.goBack()
     }
-    setForm({
-      mod_code: data.mod_code,
-      desc: data.description,
-      price: data.price,
+    setForm((form) => {
+      return {
+        mod_code: listing.mod_code,
+        desc: listing.desc,
+        price: listing.price,
+        avail_dates: listing.avail_dates.map(
+          (date) =>
+            new DateObject({
+              date,
+              format: 'YYYY-MM-DD',
+            })
+        ),
+      }
     })
-    const dateObjs = data.avail_dates.map(
-      (date) =>
-        new DateObject({
-          date: date,
-          format: 'YYYY-MM-DD',
-        })
-    )
-    setDates(dateObjs)
-    console.log(data)
-  }, [id])
-
-  var avail_dates = []
+  }, [id, loading])
 
   const handleFormChange = (e) => {
     const { name, value } = e.target
     setForm({ ...form, [name]: value })
     if (name === 'mod_code') {
-      validateMod(value)
+      validateMod(value, setErrors)
     } else if (name === 'price') {
-      validatePrice(value)
+      validatePrice(value, setErrors)
     }
-  }
-
-  function validateMod(mod) {
-    let modRe = /^[a-zA-Z]{2,3}[1-4]{1}[0-9]{3}[a-zA-Z]?$/
-    if (modRe.test(mod)) {
-      setErrors((prevErrors) => {
-        return { ...prevErrors, mod_code: '' }
-      })
-    } else {
-      setErrors((prevErrors) => {
-        return { ...prevErrors, mod_code: 'Invalid module code.' }
-      })
-    }
-  }
-
-  function validatePrice(price) {
-    if (validator.isNumeric(price)) {
-      setErrors((prevErrors) => {
-        return { ...prevErrors, price: '' }
-      })
-    } else {
-      setErrors((prevErrors) => {
-        return { ...prevErrors, price: 'Not a valid price.' }
-      })
-    }
-  }
-
-  function convertDates() {
-    dates.forEach((date) => {
-      var date_string = date.format('YYYY-MM-DD')
-      avail_dates.push(date_string)
-    })
   }
 
   const isDisabled = () => {
     return errors.mod_code !== '' || errors.price !== '' || form.mod_code === ''
   }
 
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return
-    }
-
-    setOpenSuccess(false)
-  }
-
   const handleSubmit = async (e) => {
-    convertDates()
+    setAwaitingResponse(true)
     e.preventDefault()
     const payload = {
       mod_code: form.mod_code.toUpperCase(),
       description: form.desc,
       price: form.price,
-      avail_dates: avail_dates,
+      avail_dates: form.avail_dates.map((date) => date.format('YYYY-MM-DD')),
     }
     var token = 'Token ' + state.token
     var url = `/api/listings/${id}/`
@@ -180,13 +126,25 @@ const EditListing = ({ listing }) => {
       body: JSON.stringify(payload),
     })
     const data = await res.json()
+    setAwaitingResponse(false)
     if (!res.ok) {
-      console.log(data)
+      dispatchSnackbar({
+        type: 'ERROR',
+        payload: {
+          msg: data,
+        },
+      })
       return
     }
 
-    setOpenSuccess(true)
+    dispatchSnackbar({
+      type: 'SUCCESS',
+      payload: {
+        msg: 'Listing saved!',
+      },
+    })
   }
+
   return (
     <>
       <CustomGrid
@@ -311,41 +269,43 @@ const EditListing = ({ listing }) => {
                 </Grid>
                 <Grid item>
                   <DatePicker
-                    value={dates}
-                    onChange={setDates}
+                    value={form.avail_dates}
+                    onChange={(dates) =>
+                      setForm({ ...form, avail_dates: dates })
+                    }
                     multiple
                     minDate={new Date()}
                     format='YYYY-MM-DD'
-                    type='input-icon'
+                    type='icon'
+                    name='avail_dates'
                   />
                 </Grid>
                 <Box mt={3}>
-                  <Grid item>
-                    <Button
-                      variant='outlined'
-                      type='submit'
-                      form='listing'
-                      disabled={isDisabled()}
-                    >
-                      Save
-                    </Button>
+                  <Grid
+                    item
+                    container
+                    justify='flex-start'
+                    alignItems='flex-end'
+                    spacing={2}
+                  >
+                    <Grid item>
+                      <Button
+                        variant='outlined'
+                        type='submit'
+                        form='listing'
+                        disabled={isDisabled() || awaitingResponse}
+                      >
+                        Save
+                      </Button>
+                    </Grid>
+                    <Grid item>
+                      {awaitingResponse && (
+                        <CircularProgress color='secondary' />
+                      )}
+                    </Grid>
                   </Grid>
                 </Box>
               </form>
-              <Snackbar
-                open={openSuccess}
-                autoHideDuration={3000}
-                onClose={handleClose}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'left',
-                }}
-              >
-                <Alert onClose={handleClose} severity='info'>
-                  <AlertTitle>Success</AlertTitle>
-                  Successfully edited listing!
-                </Alert>
-              </Snackbar>
             </Grid>
           </Paper>
         </div>
