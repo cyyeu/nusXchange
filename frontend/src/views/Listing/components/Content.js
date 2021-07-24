@@ -23,11 +23,8 @@ import MuiAlert from '@material-ui/lab/Alert'
 import { AlertTitle } from '@material-ui/lab'
 import TxButton from './TxButton'
 import { useLocation, Link, useParams, useHistory } from 'react-router-dom'
-import { useUserContext } from '../../../contexts/UserContext'
+import { useUserContext, useSnackbarContext } from '../../../contexts'
 
-function Alert(props) {
-  return <MuiAlert elevation={6} variant='filled' {...props} />
-}
 const useStyles = makeStyles((theme) => ({
   page: {
     display: 'flex',
@@ -53,35 +50,24 @@ const useStyles = makeStyles((theme) => ({
 
 const Content = ({ listing }) => {
   const classes = useStyles()
-  const dates = listing.avail_dates
-  const [DateObjects, setDateObjects] = useState([])
-  const [openDialog, setOpenDialog] = useState(false)
-  const [deleteSuccess, setDeleteSuccess] = useState(false)
   const location = useLocation()
   const { id } = useParams()
   const { state } = useUserContext()
+  const { dispatch: dispatchSnackbar } = useSnackbarContext()
   const history = useHistory()
-
-  function createDateObjects(dates) {
-    var i = 0
-    while (i < dates.length) {
-      const date = new DateObject({
-        date: dates[i],
+  listing.avail_dates = listing.avail_dates.map(
+    (date) =>
+      new DateObject({
+        date,
         format: 'YYYY-MM-DD',
       })
-      setDateObjects((DateObjects) => [...DateObjects, date])
-      i++
-    }
-  }
+  )
 
-  useEffect(() => {
-    createDateObjects(dates)
-  }, [])
-
+  // for delete bnutton
+  const [openDialog, setOpenDialog] = useState(false)
   const handleDialog = () => {
     setOpenDialog(!openDialog)
   }
-
   const handleDelete = async () => {
     setOpenDialog(false)
     var token = 'Token ' + state.token
@@ -96,14 +82,23 @@ const Content = ({ listing }) => {
 
     if (!res.ok) {
       const data = await res.json()
-      console.log(data)
+      dispatchSnackbar({
+        type: 'ERROR',
+        payload: {
+          msg: data,
+        },
+      })
       return
     }
-    setDeleteSuccess(true)
-    setTimeout(() => {
-      history.goBack()
-    }, 1000)
+    dispatchSnackbar({
+      type: 'SUCCESS',
+      payload: {
+        msg: 'Listing deleted',
+      },
+    })
+    history.goBack()
   }
+
   return (
     <div className={classes.page}>
       <Paper elevation={2}>
@@ -186,7 +181,7 @@ const Content = ({ listing }) => {
               </Typography>
             </Grid>
             <Grid item>
-              <Calendar type='icon' value={DateObjects} />
+              <Calendar type='icon' value={listing.avail_dates} />
             </Grid>
             <Grid item container>
               <TxButton />
@@ -207,19 +202,6 @@ const Content = ({ listing }) => {
           </Button>
         </DialogActions>
       </Dialog>
-      <Snackbar
-        open={deleteSuccess}
-        autoHideDuration={3000}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-      >
-        <Alert severity='info'>
-          <AlertTitle>Success</AlertTitle>
-          Successfully deleted listing!
-        </Alert>
-      </Snackbar>
     </div>
   )
 }

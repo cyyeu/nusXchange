@@ -12,8 +12,9 @@ import {
   Snackbar,
   IconButton,
   InputAdornment,
+  CircularProgress,
 } from '@material-ui/core/'
-import { useUserContext } from '../../../contexts/UserContext'
+import { useUserContext, useSnackbarContext } from '../../../contexts'
 import Divider from '../../Home/components/Divider'
 import MuiAlert from '@material-ui/lab/Alert'
 import { AlertTitle } from '@material-ui/lab'
@@ -25,11 +26,10 @@ import { fill } from '@cloudinary/base/actions/resize'
 import { max } from '@cloudinary/base/actions/roundCorners'
 import { defaultImage } from '@cloudinary/base/actions/delivery'
 import AlternateEmailIcon from '@material-ui/icons/AlternateEmail'
+import useUser from '/src/hooks/useUser'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    display: 'flex',
-    flexWrap: 'wrap',
     '& > *': {
       margin: theme.spacing(-2.4),
       width: theme.spacing(120),
@@ -51,10 +51,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-function Alert(props) {
-  return <MuiAlert elevation={6} variant='filled' {...props} />
-}
-
 const EditProfile = () => {
   const classes = useStyles()
   const { state } = useUserContext()
@@ -72,31 +68,19 @@ const EditProfile = () => {
   }
   const [errors, setErrors] = useState(initErrors)
   const [form, setForm] = useState(initForm)
-  const [open, setOpen] = useState(false)
-  const [errorSnackbar, setErrorSnackbar] = useState(false)
-  const token = 'Token ' + state.token
-  const url = `/api/user/${state.user_id}`
+  const [loading, user] = useUser(state.user_id)
+  const { dispatch } = useSnackbarContext()
+  const [awaitingResponse, setAwaitingResponse] = useState(false)
 
   useEffect(() => {
-    loadData()
-  }, [])
+    setForm({ ...form, ...user })
+  }, [loading])
 
-  const loadData = () => {
-    fetch(url)
-      .then((response) => response.json())
-      .then((data) => {
-        setForm({
-          ...form,
-          first_name: data.first_name,
-          last_name: data.last_name,
-          bio: data.bio,
-          avatar_id: data.avatar_id,
-          tg_url: data.tg_url,
-          linkedin_url: data.linkedin_url,
-        })
-      })
-  }
-
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName: 'nusxchange',
+    },
+  })
   const handleFormChange = (e) => {
     const { name, value } = e.target
     setForm({ ...form, [name]: value })
@@ -136,9 +120,9 @@ const EditProfile = () => {
     }
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-
+    setAwaitingResponse(true)
     const payload = {
       first_name: form.first_name,
       last_name: form.last_name,
@@ -147,77 +131,97 @@ const EditProfile = () => {
       linkedin_url: form.linkedin_url,
       tg_url: form.tg_url,
     }
-    fetch(url, {
+    const res = await fetch(`/api/user/${state.user_id}`, {
       method: 'PATCH',
       headers: {
-        Authorization: token,
+        Authorization: `Token ${state.token}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(payload),
-    }).then((res) => {
-      if (res.ok) {
-        setOpen(true)
-      } else {
-        setErrorSnackbar(true)
-        res.text().then((text) => alert(text))
-      }
     })
-  }
 
-  //handle snackbar closing
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return
+    if (res.ok) {
+      dispatch({
+        type: 'SUCCESS',
+        payload: {
+          msg: 'Profile saved',
+        },
+      })
+    } else {
+      const data = await res.json()
+      dispatch({
+        type: 'ERROR',
+        payload: {
+          msg: data,
+        },
+      })
     }
-    setOpen(false)
-    setErrorSnackbar(false)
+    setAwaitingResponse(false)
   }
 
   //handle upload to cloudinary API and update backend with Id
-  const handleUpload = (e) => {
+  const handleUpload = async (e) => {
     e.preventDefault()
+    setAwaitingResponse(true)
+    // upload file to cloudinary
     const cldUrl = 'https://api.cloudinary.com/v1_1/nusxchange/upload'
     const formData = new FormData()
     var file = e.target.files[0]
     formData.append('file', file)
     formData.append('upload_preset', 'xtgswhai')
-    fetch(cldUrl, {
+    const res = await fetch(cldUrl, {
       method: 'POST',
       body: formData,
-    }).then((res) => {
+    })
+    const data = await res.json()
+
+    if (res.ok) {
+      // upload was successfuly, update avatar id in db
+      console.log(data)
+      const profile_img = cld.image(data.public_id)
+      profile_img.delivery(defaultImage('default'))
+      profile_img.resize(fill().width(150).height(150)).roundCorners(max())
+      setForm({ ...form, avatar_id: data.public_id, profile_img })
+
+      const payload = {
+        avatar_id: data.public_id,
+      }
+      const res = await fetch(`/api/user/${state.user_id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Token ${state.token}`,
+        },
+        body: JSON.stringify(payload),
+      })
       if (res.ok) {
-        setOpen(true)
-        //res.text().then(text => alert(text))
-        res.json().then((data) => {
-          setForm({ ...form, avatar_id: data.public_id })
-          var data = { avatar_id: data.public_id }
-          fetch(url, {
-            method: 'PATCH',
-            headers: {
-              Authorization: token,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-          })
+        dispatch({
+          type: 'SUCCESS',
+          payload: {
+            msg: 'Avatar saved',
+          },
         })
       } else {
-        //console.log(token)
-        res.text().then((text) => alert(text))
+        const data = await res.text()
+        dispatch({
+          type: 'ERROR',
+          payload: {
+            msg: data,
+          },
+        })
       }
-    })
+    } else {
+      //console.log(token)
+      const data = await res.text()
+      dispatch({
+        type: 'ERROR',
+        payload: {
+          msg: data,
+        },
+      })
+    }
+    setAwaitingResponse(false)
   }
-
-  //cloudinary instance
-  const cld = new Cloudinary({
-    cloud: {
-      cloudName: 'nusxchange',
-    },
-  })
-
-  const profile_img =
-    form.avatar_id === '' ? cld.image('default') : cld.image(form.avatar_id)
-  profile_img.delivery(defaultImage('default'))
-  profile_img.resize(fill().width(128).height(128)).roundCorners(max())
 
   return (
     <div className={classes.paper}>
@@ -230,7 +234,7 @@ const EditProfile = () => {
           </Box>
           <Divider />
           <Box p={2}>
-            <AdvancedImage cldImg={profile_img} />
+            <AdvancedImage cldImg={form.profile_img} />
             <input
               type='file'
               accept='image/*'
@@ -238,16 +242,28 @@ const EditProfile = () => {
               style={{ display: 'none' }}
               id='icon-button-file'
             />
-            <label htmlFor='icon-button-file'>
-              <IconButton
-                color='primary'
-                aria-label='upload picture'
-                component='span'
-                onChange={handleUpload}
-              >
-                <PhotoCamera />
-              </IconButton>
-            </label>
+            <Grid item container xs={6} spacing={1}>
+              <Grid item xs={1}>
+                <label htmlFor='icon-button-file'>
+                  <IconButton
+                    color='primary'
+                    aria-label='upload picture'
+                    component='span'
+                    onChange={handleUpload}
+                    disabled={awaitingResponse}
+                  >
+                    <PhotoCamera />
+                  </IconButton>
+                </label>
+              </Grid>
+              <Grid item>
+                {awaitingResponse && (
+                  <Box ml={2} mt={2}>
+                    <CircularProgress color='secondary' size='1rem' />
+                  </Box>
+                )}
+              </Grid>
+            </Grid>
           </Box>
           <form className={classes.form} onSubmit={handleSubmit} id='change'>
             <Grid container spacing={2}>
@@ -325,45 +341,33 @@ const EditProfile = () => {
                   }}
                 />
               </Grid>
+              <Box mt={10} />
+              <Grid
+                item
+                container
+                justify='flex-start'
+                alignItems='flex-end'
+                spacing={2}
+              >
+                <Grid item>
+                  <Button
+                    type='submit'
+                    Width='66%'
+                    variant='contained'
+                    color='primary'
+                    form='change'
+                    disabled={awaitingResponse}
+                  >
+                    Save Changes
+                  </Button>
+                </Grid>
+                <Grid item>
+                  {awaitingResponse && (
+                    <CircularProgress color='secondary' size='2rem' />
+                  )}
+                </Grid>
+              </Grid>
             </Grid>
-            <Button
-              type='submit'
-              Width='66%'
-              variant='contained'
-              color='primary'
-              className={classes.submit}
-              form='change'
-            >
-              Save Changes
-            </Button>
-            <Snackbar
-              open={open}
-              autoHideDuration={3000}
-              onClose={handleClose}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-            >
-              <Alert onClose={handleClose} severity='success'>
-                <AlertTitle>Success</AlertTitle>
-                Profile successfully saved!
-              </Alert>
-            </Snackbar>
-            <Snackbar
-              open={errorSnackbar}
-              autoHideDuration={3000}
-              onClose={handleClose}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-            >
-              <Alert onClose={handleClose} severity='error'>
-                <AlertTitle>Error</AlertTitle>
-                Error changing profile!
-              </Alert>
-            </Snackbar>
           </form>
         </Paper>
       </Container>

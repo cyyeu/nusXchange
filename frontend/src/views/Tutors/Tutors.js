@@ -13,6 +13,7 @@ import {
   TableCell,
   TableBody,
   Button,
+  CircularProgress,
 } from '@material-ui/core'
 import styled from 'styled-components'
 import Tutor from './Tutor'
@@ -157,7 +158,11 @@ const Tutors = () => {
           </Grid>
           <div className={classes.div}>
             <Grid container item spacing={4} direction='column'>
-              {isLoading ? 'loading' : renderTxs(txs)}
+              {isLoading ? (
+                <CircularProgress color='secondary' />
+              ) : (
+                renderTxs(txs)
+              )}
             </Grid>
           </div>
         </Grid>

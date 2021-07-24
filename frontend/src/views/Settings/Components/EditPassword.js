@@ -8,14 +8,11 @@ import {
   Typography,
   Container,
   Paper,
-  Snackbar,
+  CircularProgress,
 } from '@material-ui/core/'
-import { useUserContext } from '../../../contexts/UserContext'
+import { useUserContext, useSnackbarContext } from '../../../contexts'
 import validator from 'validator'
 import Divider from '../../Home/components/Divider'
-import MuiAlert from '@material-ui/lab/Alert'
-import { AlertTitle } from '@material-ui/lab'
-
 const useStyles = makeStyles((theme) => ({
   paper: {
     display: 'flex',
@@ -36,10 +33,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-function Alert(props) {
-  return <MuiAlert elevation={6} variant='filled' {...props} />
-}
-
 export default function EditPassword() {
   const classes = useStyles()
   const { state } = useUserContext()
@@ -53,18 +46,7 @@ export default function EditPassword() {
   }
   const [form, setForm] = useState(initForm)
   const [errors, setErrors] = useState(initErrors)
-  const [open, setOpen] = useState(false)
-  const [errorSnackbar, setErrorSnackbar] = useState(false)
-
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return
-    }
-
-    setOpen(false)
-    setErrorSnackbar(false)
-  }
-
+  const [awaitingResponse, setAwaitingResponse] = useState(false)
   const handleFormChange = (e) => {
     const { name, value } = e.target
     setForm({ ...form, [name]: value })
@@ -120,31 +102,42 @@ export default function EditPassword() {
     )
   }
 
-  const handleSubmit = (e) => {
+  const { dispatch } = useSnackbarContext()
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
-
+    setAwaitingResponse(true)
     var token = 'Token ' + state.token
-
     const payload = {
       new_password1: form.password,
       new_password2: form.password,
     }
 
-    fetch('/api/auth/password/change/', {
+    const res = await fetch('/api/auth/password/change/', {
       method: 'POST',
       headers: {
         Authorization: token,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(payload),
-    }).then((res) => {
-      if (res.ok) {
-        setOpen(true)
-      } else {
-        //console.log(token)
-        setErrorSnackbar(true)
-      }
     })
+    setAwaitingResponse(false)
+    if (res.ok) {
+      dispatch({
+        type: 'SUCCESS',
+        payload: {
+          msg: 'Password changed.',
+        },
+      })
+    } else {
+      const data = await res.json()
+      dispatch({
+        type: 'ERROR',
+        payload: {
+          msg: data,
+        },
+      })
+    }
   }
 
   return (
@@ -197,45 +190,32 @@ export default function EditPassword() {
                 />
               </Grid>
             </Grid>
-            <Button
-              type='submit'
-              Width='66%'
-              variant='contained'
-              color='primary'
-              className={classes.submit}
-              form='change'
-              disabled={isDisabled()}
+            <Box mt={3} />
+            <Grid
+              item
+              container
+              justify='flex-start'
+              alignItems='flex-end'
+              spacing={2}
             >
-              Change Password
-            </Button>
-            <Snackbar
-              open={open}
-              autoHideDuration={3000}
-              onClose={handleClose}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-            >
-              <Alert onClose={handleClose} severity='success'>
-                <AlertTitle>Success</AlertTitle>
-                Password successfully saved!
-              </Alert>
-            </Snackbar>
-            <Snackbar
-              open={errorSnackbar}
-              autoHideDuration={3000}
-              onClose={handleClose}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-            >
-              <Alert onClose={handleClose} severity='error'>
-                <AlertTitle>Error</AlertTitle>
-                Error changing password!
-              </Alert>
-            </Snackbar>
+              <Grid item>
+                <Button
+                  type='submit'
+                  Width='66%'
+                  variant='contained'
+                  color='primary'
+                  form='change'
+                  disabled={isDisabled()}
+                >
+                  Change Password
+                </Button>
+              </Grid>
+              <Grid item>
+                {awaitingResponse && (
+                  <CircularProgress color='secondary' size='2rem' />
+                )}
+              </Grid>
+            </Grid>
           </form>
         </Paper>
       </Container>

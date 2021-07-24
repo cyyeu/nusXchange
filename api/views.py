@@ -50,7 +50,7 @@ class ListingViewSet(viewsets.ModelViewSet):
 		user = self.request.GET.get('user')
 		mod_code = self.request.GET.get('mod_code')
 		if user:
-			return Listing.objects.filter(owner=user)
+			return Listing.objects.filter(owner=user).order_by("date_created")
 		elif mod_code:
 			return Listing.objects.filter(mod_code__icontains=mod_code).order_by("-owner__xp")
 		else:

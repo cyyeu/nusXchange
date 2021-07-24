@@ -17,7 +17,6 @@ import { useHistory } from 'react-router-dom'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { validateMod, validatePrice } from '../../utils'
 
-
 const useStyles = makeStyles((theme) => ({
   paper: {
     display: 'flex',
@@ -253,29 +252,31 @@ const CreateListing = () => {
                   />
                 </Box>
               </Grid>
+              <Box mt={3} />
+              <Grid
+                item
+                container
+                justify='flex-start'
+                alignItems='flex-end'
+                spacing={2}
+              >
+                <Grid item>
+                  <Button
+                    variant='outlined'
+                    type='submit'
+                    form='listing'
+                    disabled={isDisabled() || awaitingResponse}
+                  >
+                    Create
+                  </Button>
+                </Grid>
+                <Grid item>
+                  {awaitingResponse && (
+                    <CircularProgress color='secondary' size='2rem' />
+                  )}
+                </Grid>
+              </Grid>
             </form>
-            <Grid
-              item
-              container
-              justify='flex-start'
-              alignItems='flex-end'
-              spacing={2}
-            >
-              <Grid item>
-                <Button
-                  variant='outlined'
-                  type='submit'
-                  form='listing'
-                  className={classes.submit}
-                  disabled={isDisabled() || awaitingResponse}
-                >
-                  Create
-                </Button>
-              </Grid>
-              <Grid item>
-                {awaitingResponse && <CircularProgress color='secondary' />}
-              </Grid>
-            </Grid>
           </Grid>
         </Paper>
       </div>

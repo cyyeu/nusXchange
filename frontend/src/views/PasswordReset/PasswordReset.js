@@ -15,6 +15,7 @@ import VpnKeyIcon from '@material-ui/icons/VpnKey'
 import { makeStyles } from '@material-ui/core/styles'
 import { useHistory, useParams } from 'react-router-dom'
 import validator from 'validator'
+import { useSnackbarContext } from '../../contexts'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -40,6 +41,7 @@ export default function PasswordReset() {
   const classes = useStyles()
   const history = useHistory()
   const { uid, token } = useParams()
+  const { dispatch } = useSnackbarContext()
   const initForm = {
     password: '',
     confirmPassword: '',
@@ -50,17 +52,6 @@ export default function PasswordReset() {
   }
   const [form, setForm] = useState(initForm)
   const [errors, setErrors] = useState(initErrors)
-  const [errorResponse, setErrorResponse] = useState('')
-  const [open, setOpen] = useState(false)
-  const [errorSnackbar, setErrorSnackbar] = useState(false)
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return
-    }
-
-    setOpen(false)
-    setErrorSnackbar(false)
-  }
 
   const handleFormChange = (e) => {
     const { name, value } = e.target
@@ -137,14 +128,21 @@ export default function PasswordReset() {
     })
     const data = await res.json()
     if (res.ok) {
-      setOpen(true)
-      setTimeout(() => {
-        history.push('/login')
-      }, 2000)
+      dispatch({
+        type: 'SUCCESS',
+        payload: {
+          msg: 'Please login with your new password.',
+        },
+      })
+
+      history.push('/login')
     } else {
-      console.log(data)
-      setErrorResponse(data.new_password2)
-      setErrorSnackbar(true)
+      dispatch({
+        type: 'SUCCESS',
+        payload: {
+          msg: data,
+        },
+      })
     }
   }
   return (
@@ -205,34 +203,6 @@ export default function PasswordReset() {
           </Button>
         </form>
       </div>
-      <Snackbar
-        open={open}
-        autoHideDuration={3000}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-      >
-        <Alert onClose={handleClose} severity='success'>
-          <AlertTitle>Success</AlertTitle>
-          Successfully reset password! Redirecting you to login...
-        </Alert>
-      </Snackbar>
-      <Snackbar
-        open={errorSnackbar}
-        autoHideDuration={3000}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-      >
-        <Alert onClose={handleClose} severity='error'>
-          <AlertTitle>Error</AlertTitle>
-          {errorResponse}
-        </Alert>
-      </Snackbar>
     </Container>
   )
 }

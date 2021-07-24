@@ -183,7 +183,9 @@ const CreateReview = () => {
                   </Button>
                 </Grid>
                 <Grid item>
-                  {awaitingResponse && <CircularProgress color='secondary' />}
+                  {awaitingResponse && (
+                    <CircularProgress color='secondary' size='2rem' />
+                  )}
                 </Grid>
               </Grid>
             </div>

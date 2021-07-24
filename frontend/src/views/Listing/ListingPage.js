@@ -1,5 +1,5 @@
 import React from 'react'
-import { Grid } from '@material-ui/core'
+import { CircularProgress, Grid } from '@material-ui/core'
 import styled from 'styled-components'
 import Sidebar from './components/Sidebar'
 import Content from './components/Content'
@@ -17,8 +17,9 @@ const ListingPage = () => {
         alignItems='flex-start'
         spacing={4}
       >
-        <Sidebar owner={listing.owner} />
-        <Content listing={listing} />
+        {loading && <CircularProgress color='secondary' />}
+        {loading || <Sidebar owner={listing.owner} />}
+        {loading || <Content listing={listing} />}
       </CustomGrid>
     </div>
   )

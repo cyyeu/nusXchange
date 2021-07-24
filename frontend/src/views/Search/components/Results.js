@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { Paper, Grid, Typography, Box } from '@material-ui/core'
+import {
+  Paper,
+  Grid,
+  Typography,
+  Box,
+  CircularProgress,
+} from '@material-ui/core'
 import ListingCard from './ListingCard'
 import { useHistory, useParams } from 'react-router-dom'
 import styled from 'styled-components'
@@ -86,9 +92,13 @@ const Results = ({ sortMethodHook, filterDatesHook }) => {
       <Paper elevation={2} className={classes.paper}>
         <Box m={4}>
           <Grid container spacing={2} alignItems='center'>
-            {listings.map((listing, index) => (
-              <ListingCard key={listing.id} listing={listing} />
-            ))}
+            {isLoading ? (
+              <CircularProgress color='secondary' />
+            ) : (
+              listings.map((listing, index) => (
+                <ListingCard key={listing.id} listing={listing} />
+              ))
+            )}
           </Grid>
         </Box>
       </Paper>

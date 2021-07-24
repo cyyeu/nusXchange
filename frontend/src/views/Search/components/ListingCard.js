@@ -43,24 +43,6 @@ const useStyles = makeStyles({
 const ListingCard = ({ listing }) => {
   const classes = useStyles()
   const history = useHistory()
-  const dates = listing.avail_dates
-  const [DateObjects, setDateObjects] = useState([])
-
-  function createDateObjects(dates) {
-    var i = 0
-    while (i < dates.length) {
-      const date = new DateObject({
-        date: dates[i],
-        format: 'YYYY-MM-DD',
-      })
-      setDateObjects((DateObjects) => [...DateObjects, date])
-      i++
-    }
-  }
-
-  useEffect(() => {
-    createDateObjects(dates)
-  }, [])
 
   const handleCardClick = () => {
     history.push(`/listing/${listing.id}`)
@@ -75,7 +57,6 @@ const ListingCard = ({ listing }) => {
     listing.owner.avatar_id === ''
       ? cld.image('default')
       : cld.image(listing.owner.avatar_id)
-
   profile_img.delivery(defaultImage('default'))
   profile_img.resize(fill().width(40).height(40)).roundCorners(max())
 
@@ -190,7 +171,16 @@ const ListingCard = ({ listing }) => {
               alignItems='center'
               justify='flex-end'
             >
-              <Calendar type='icon' value={DateObjects} />
+              <Calendar
+                type='icon'
+                value={listing.avail_dates.map(
+                  (date) =>
+                    new DateObject({
+                      date,
+                      format: 'YYYY-MM-DD',
+                    })
+                )}
+              />
             </Grid>
           </Grid>
         </CardActions>

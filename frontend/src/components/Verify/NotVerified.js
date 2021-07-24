@@ -1,13 +1,25 @@
-import React from 'react'
+import React, { useState } from 'react'
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined'
 
-import { Grid, Box, Typography, Link } from '@material-ui/core'
+import {
+  Grid,
+  Box,
+  Typography,
+  Link,
+  Button,
+  CircularProgress,
+} from '@material-ui/core'
+import { useSnackbarContext, useUserContext } from '../../contexts/'
 
-const NotVerified = ({ email }) => {
+const NotVerified = ({ user }) => {
+  const { dispatch } = useSnackbarContext()
+  const { state } = useUserContext()
+  const [loading, setLoading] = useState(false)
   const handleVerify = async (e) => {
     e.preventDefault()
+    setLoading(true)
     const payload = {
-      email,
+      email: user.email,
     }
     const res = await fetch(`/api/resend-verification-email`, {
       method: 'POST',
@@ -18,9 +30,22 @@ const NotVerified = ({ email }) => {
     })
 
     const data = await res.json()
-    console.log(data)
-
-    //TODO: OPEN SNACKBAR
+    if (res.ok) {
+      dispatch({
+        type: 'SUCCESS',
+        payload: {
+          msg: 'Verification email sent!',
+        },
+      })
+    } else {
+      dispatch({
+        type: 'ERROR',
+        payload: {
+          msg: data,
+        },
+      })
+    }
+    setLoading(false)
   }
 
   return (
@@ -33,9 +58,14 @@ const NotVerified = ({ email }) => {
       <Grid item container direction='row' alignItems='center' xs={10}>
         <Typography variant='body2'>
           Email Not Verified.{' '}
-          <Link onClick={handleVerify} href=''>
-            Verify Now
-          </Link>
+          {state.user_id === user.pk &&
+            (loading ? (
+              <CircularProgress size='0.7rem' color='secondary' />
+            ) : (
+              <Link onClick={handleVerify} href=''>
+                Verify Now
+              </Link>
+            ))}
         </Typography>
       </Grid>
     </Grid>

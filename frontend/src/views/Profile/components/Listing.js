@@ -9,6 +9,7 @@ import {
   Container,
   Paper,
   IconButton,
+  CircularProgress,
 } from '@material-ui/core/'
 import ListingCard from './ListingCard'
 import { useParams } from 'react-router-dom'
@@ -53,9 +54,13 @@ const Listing = () => {
       <Paper elevation={2} className={classes.paper}>
         <Box m={4}>
           <Grid container spacing={2} alignItems='center'>
-            {listings.map((listing, index) => (
-              <ListingCard key={listing.id} listing={listing} />
-            ))}
+            {isLoading ? (
+              <CircularProgress color='secondary' />
+            ) : (
+              listings.map((listing, index) => (
+                <ListingCard key={listing.id} listing={listing} />
+              ))
+            )}
           </Grid>
         </Box>
       </Paper>
@@ -72,7 +77,7 @@ const Listing = () => {
 
   return (
     <>
-      {isLoading || listings.length ? renderCards(listings) : renderNoResults()}{' '}
+      {isLoading || listings.length ? renderCards(listings) : renderNoResults()}
     </>
   )
 }

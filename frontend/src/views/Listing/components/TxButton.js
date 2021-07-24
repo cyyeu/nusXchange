@@ -7,6 +7,8 @@ import {
   Grid,
   DialogTitle,
   DialogContent,
+  Box,
+  Typography,
 } from '@material-ui/core'
 import Tx from './Tx'
 const TxButton = () => {
@@ -197,9 +199,15 @@ const TxButton = () => {
   }
 
   const renderStudentList = (txs) => {
-    return txs.map((tx, index) => {
-      return <Tx key={tx.id} tx={tx} />
-    })
+    return txs.length === 0 ? (
+      <Box m={3}>
+        <Typography>No Students Found </Typography>
+      </Box>
+    ) : (
+      txs.map((tx, index) => {
+        return <Tx key={tx.id} tx={tx} />
+      })
+    )
   }
   return (
     <>

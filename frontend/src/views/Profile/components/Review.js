@@ -10,6 +10,7 @@ import {
   Paper,
   IconButton,
   Divider,
+  CircularProgress,
 } from '@material-ui/core/'
 import ReviewCard from './ReviewCard'
 import { useParams } from 'react-router-dom'
@@ -53,12 +54,16 @@ const Review = () => {
       <Paper elevation={2} className={classes.paper}>
         <Box m={4}>
           <Grid container spacing={2} alignItems='center'>
-            {reviews.map((review, index) => (
-              <>
-                <ReviewCard key={review.id} review={review} />
-                <Divider style={{ width: '100%' }} />
-              </>
-            ))}
+            {isLoading ? (
+              <CircularProgress color='secondary' />
+            ) : (
+              reviews.map((review, index) => (
+                <>
+                  <ReviewCard key={review.id} review={review} />
+                  <Divider style={{ width: '100%' }} />
+                </>
+              ))
+            )}
           </Grid>
         </Box>
       </Paper>

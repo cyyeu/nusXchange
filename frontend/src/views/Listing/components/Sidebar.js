@@ -2,26 +2,11 @@ import React, { useState, useContext, useEffect } from 'react'
 import { Grid, Paper, Typography, Box, IconButton } from '@material-ui/core'
 import { useUserContext } from '../../../contexts/UserContext'
 import { AdvancedImage } from '@cloudinary/react'
-import { Cloudinary } from '@cloudinary/base'
-import { fill } from '@cloudinary/base/actions/resize'
-import { max } from '@cloudinary/base/actions/roundCorners'
-import { defaultImage } from '@cloudinary/base/actions/delivery'
 import { getLevel } from '../../../utils'
 import { useParams, Link } from 'react-router-dom'
 import { Telegram, LinkedIn } from '@material-ui/icons'
 
 const Sidebar = ({ owner }) => {
-  const { state } = useUserContext()
-  const { id } = useParams()
-  const cld = new Cloudinary({
-    cloud: {
-      cloudName: 'nusxchange',
-    },
-  })
-  const profile_img =
-    owner.avatar_id === '' ? cld.image('default') : cld.image(owner.avatar_id)
-  profile_img.delivery(defaultImage('default'))
-  profile_img.resize(fill().width(150).height(150)).roundCorners(max())
   const level = getLevel(owner.xp)
   const openWindow = (url) => {
     url = url.match(/^http[s]?:\/\//) ? url : 'http://' + url
@@ -54,7 +39,7 @@ const Sidebar = ({ owner }) => {
       </Grid>
       <Grid item>
         <Box ml={1}>
-          <AdvancedImage cldImg={profile_img} />
+          <AdvancedImage cldImg={owner.profile_img} />
         </Box>
       </Grid>
       <Grid item>

@@ -300,7 +300,7 @@ const EditListing = () => {
                     </Grid>
                     <Grid item>
                       {awaitingResponse && (
-                        <CircularProgress color='secondary' />
+                        <CircularProgress color='secondary' size='2rem' />
                       )}
                     </Grid>
                   </Grid>
