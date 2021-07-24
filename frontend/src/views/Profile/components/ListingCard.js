@@ -87,7 +87,9 @@ const ListingCard = ({ listing }) => {
             <IconButton
               color='primary'
               component='span'
-              onClick={() => window.open(`https://t.me/${listing.owner.tg_url}`, '_blank')}
+              onClick={() =>
+                window.open(`https://t.me/${listing.owner.tg_url}`, '_blank')
+              }
               disabled={listing.owner.tg_url === ''}
             >
               <TelegramIcon />
@@ -102,7 +104,30 @@ const ListingCard = ({ listing }) => {
           alignItems='center'
           justify='flex-end'
         >
-          <Calendar type='icon' value={DateObjects} />
+          <Calendar
+            type='icon'
+            value={DateObjects}
+            mapDays={({ date, selectedDate, isSameDate }) => {
+              let props = { disabled: true }
+              if (typeof selectedDate === 'DateObject') {
+                if (isSameDate(date, selectedDate)) {
+                  props.style = {
+                    color: 'white',
+                    backgroundColor: '#eb8d28',
+                  }
+                }
+              } else {
+                // is array
+                if (selectedDate.some((d) => isSameDate(d, date))) {
+                  props.style = {
+                    color: 'white',
+                    backgroundColor: '#eb8d28',
+                  }
+                }
+              }
+              return props
+            }}
+          />
         </Grid>
       </>
     )

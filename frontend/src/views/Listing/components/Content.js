@@ -181,7 +181,30 @@ const Content = ({ listing }) => {
               </Typography>
             </Grid>
             <Grid item>
-              <Calendar type='icon' value={listing.avail_dates} />
+              <Calendar
+                type='icon'
+                value={listing.avail_dates}
+                mapDays={({ date, selectedDate, isSameDate }) => {
+                  let props = { disabled: true }
+                  if (typeof selectedDate === 'DateObject') {
+                    if (isSameDate(date, selectedDate)) {
+                      props.style = {
+                        color: 'white',
+                        backgroundColor: '#eb8d28',
+                      }
+                    }
+                  } else {
+                    // is array
+                    if (selectedDate.some((d) => isSameDate(d, date))) {
+                      props.style = {
+                        color: 'white',
+                        backgroundColor: '#eb8d28',
+                      }
+                    }
+                  }
+                  return props
+                }}
+              />
             </Grid>
             <Grid item container>
               <TxButton />
