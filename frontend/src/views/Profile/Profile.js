@@ -9,7 +9,7 @@ import { makeStyles } from "@material-ui/core/styles";
 
 const Profile = () => {
   return (
-    <div style ={{overflow:'scroll',height:'100%',display:'block'}}>
+    <div style ={{height:'100%',display:'block'}}>
       <CustomGrid container justify='center' alignItems='flex-start' spacing={3}>
         <Sidebar />
         <ProfilePanel />

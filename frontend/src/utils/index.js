@@ -1,1 +1,1 @@
-export { getLevel, getXpBarPercentage, validateMod, validatePrice } from './utils'
+export { getLevelAndTier, getXpBarPercentage, validateMod, validatePrice } from './utils'

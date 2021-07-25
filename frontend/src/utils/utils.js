@@ -1,11 +1,38 @@
 import validator from 'validator'
+import { Basic, Silver, Gold, Diamond } from '../components/Tiers'
+import React from 'react'
 
-export const getLevel = (xp) => {
-  return Math.floor(xp / 200) + 1
+// gamification constants
+const xpPerLevel = 200 // level up every 200xp
+const getTier = (level) => {
+  // Basic tier (Level 1-10)
+  // Silver tier (Level 11-30)
+  // Gold Tier (Level 31 - 70)
+  // Diamond tier (> Level 71)
+  if (level > 70) {
+    return Diamond
+  }
+  if (level > 30) {
+    return Gold
+  }
+  if (level > 10) {
+    return Silver
+  }
+
+  return Basic
+}
+const getLevel = (xp) => {
+  return Math.floor(xp / xpPerLevel) + 1
+}
+
+export const getLevelAndTier = (xp) => {
+  const level = getLevel(xp)
+  const Tier = getTier(level)
+  return [level, Tier]
 }
 
 export const getXpBarPercentage = (xp) => {
-  return (xp % 200) / 200
+  return (xp % xpPerLevel) / xpPerLevel
 }
 
 export function validateMod(mod, setter) {
@@ -32,4 +59,3 @@ export function validatePrice(price, setter) {
     })
   }
 }
-

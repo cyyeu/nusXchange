@@ -16,10 +16,8 @@ import { useParams } from 'react-router-dom'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    display: 'flex',
-    flexWrap: 'wrap',
     '& > *': {
-      width: theme.spacing(130),
+      width: theme.spacing(100),
     },
     marginTop: theme.spacing(-2),
     marginLeft: theme.spacing(-2),

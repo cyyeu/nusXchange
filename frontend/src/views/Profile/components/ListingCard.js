@@ -175,7 +175,7 @@ const ListingCard = ({ listing }) => {
     })
   }
   return (
-    <Grid item xs={3}>
+    <Grid item xs={4}>
       <Card className={classes.root}>
         <CardActionArea component='a' onClick={handleCardClick}>
           <CardContent>

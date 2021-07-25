@@ -2,12 +2,12 @@ import React, { useState, useContext, useEffect } from 'react'
 import { Grid, Paper, Typography, Box, IconButton } from '@material-ui/core'
 import { useUserContext } from '../../../contexts/UserContext'
 import { AdvancedImage } from '@cloudinary/react'
-import { getLevel } from '../../../utils'
+import { getLevelAndTier } from '../../../utils'
 import { useParams, Link } from 'react-router-dom'
 import { Telegram, LinkedIn } from '@material-ui/icons'
 
 const Sidebar = ({ owner }) => {
-  const level = getLevel(owner.xp)
+  const [level, Tier] = getLevelAndTier(owner.xp)
   const openWindow = (url) => {
     url = url.match(/^http[s]?:\/\//) ? url : 'http://' + url
     window.open(url, '_blank')
@@ -43,7 +43,9 @@ const Sidebar = ({ owner }) => {
         </Box>
       </Grid>
       <Grid item>
-        <Typography variant='subtitle1'>Level {level}</Typography>
+        <Typography variant='subtitle1'>
+          Level {level} <Tier />
+        </Typography>
       </Grid>
       <Grid item xs={10}>
         <Typography variant='body2' align='left'>

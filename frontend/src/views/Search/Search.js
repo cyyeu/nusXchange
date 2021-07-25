@@ -10,9 +10,6 @@ const Search = () => {
   return (
     <div
       style={{
-        overflow: 'scroll',
-        height: '100%',
-        display: 'block',
         paddingBottom: '10rem',
       }}
     >

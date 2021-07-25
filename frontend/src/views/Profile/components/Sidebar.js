@@ -8,7 +8,7 @@ import {
 } from '@material-ui/core'
 import { useUserContext } from '../../../contexts/UserContext'
 import { AdvancedImage } from '@cloudinary/react'
-import { getLevel, getXpBarPercentage } from '../../../utils'
+import { getLevelAndTier, getXpBarPercentage } from '../../../utils'
 import { Telegram, LinkedIn } from '@material-ui/icons'
 import { useParams } from 'react-router-dom'
 import useUser from '/src/hooks/useUser'
@@ -20,7 +20,7 @@ const Sidebar = () => {
   const { id } = useParams()
   const [loading, user] = useUser(id)
 
-  const level = getLevel(user.xp)
+  const [level, Tier] = getLevelAndTier(user.xp)
   const percent = getXpBarPercentage(user.xp)
 
   // add http to linkedin url if missing
@@ -48,9 +48,11 @@ const Sidebar = () => {
           <AdvancedImage cldImg={user.profile_img} />
         </Box>
       </Grid>
+      
       <Verify user={user} />
+
       <Grid item>
-        <Typography variant='body2'>Level {level}</Typography>
+        <Typography variant='body2'>Level {level} <Tier /> </Typography>
         <LinearProgress
           style={{ width: '200px' }}
           variant='determinate'

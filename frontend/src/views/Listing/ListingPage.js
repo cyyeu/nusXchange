@@ -10,7 +10,7 @@ const ListingPage = () => {
   const { id } = useParams()
   const [loading, listing] = useListing(id)
   return (
-    <div style={{ overflow: 'scroll', height: '100%', display: 'block' }}>
+    <div style={{  height: '100%', display: 'block' }}>
       <CustomGrid
         container
         justify='center'

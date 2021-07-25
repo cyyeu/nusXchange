@@ -190,7 +190,7 @@ const Content = ({ listing }) => {
                     if (isSameDate(date, selectedDate)) {
                       props.style = {
                         color: 'white',
-                        backgroundColor: '#eb8d28',
+                        backgroundColor: '#c97418',
                       }
                     }
                   } else {
