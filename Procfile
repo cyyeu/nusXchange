@@ -1,2 +1,2 @@
-release: python manage.py makemigrations api && python manage.py migrate --run-syncdb 
-web: gunicorn nusxchange.wsgi
+release: python manage.py makemigrations && python manage.py migrate --run-syncdb 
+web: gunicorn nusxchange.wsgi --log-file -
