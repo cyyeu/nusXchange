@@ -21,31 +21,42 @@ const NotVerified = ({ user }) => {
     const payload = {
       email: user.email,
     }
-    const res = await fetch(`/api/resend-verification-email`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    })
-
-    const data = await res.json()
-    if (res.ok) {
-      dispatch({
-        type: 'SUCCESS',
-        payload: {
-          msg: 'Verification email sent!',
+    try {
+      const res = await fetch(`/api/resend-verification-email`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify(payload),
       })
-    } else {
+
+      const data = await res.json()
+      if (res.ok) {
+        dispatch({
+          type: 'SUCCESS',
+          payload: {
+            msg: 'Verification email sent!',
+          },
+        })
+      } else {
+        dispatch({
+          type: 'ERROR',
+          payload: {
+            msg: data,
+          },
+        })
+      }
+    } catch (e) {
+      console.log(e)
       dispatch({
         type: 'ERROR',
         payload: {
-          msg: data,
+          msg: JSON.stringify(e),
         },
       })
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   return (

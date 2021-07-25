@@ -47,32 +47,42 @@ export default function ForgotPassword() {
     const payload = {
       email,
     }
-
-    const res = await fetch('/api/password-reset', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    })
-    const data = await res.json()
-    if (res.ok) {
-      dispatch({
-        type: 'SUCCESS',
-        payload: {
-          msg: 'Email sent! Please check your inbox and/or junk mail.',
+    try {
+      const res = await fetch('/api/password-reset', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify(payload),
       })
-    } else {
-      console.log(data)
+      const data = await res.json()
+      if (res.ok) {
+        dispatch({
+          type: 'SUCCESS',
+          payload: {
+            msg: 'Email sent! Please check your inbox and/or junk mail.',
+          },
+        })
+      } else {
+        console.log(data)
+        dispatch({
+          type: 'ERROR',
+          payload: {
+            msg: data.detail,
+          },
+        })
+      }
+    } catch (e) {
+      console.log(e)
       dispatch({
         type: 'ERROR',
         payload: {
-          msg: data.detail,
+          msg: JSON.stringify(e),
         },
       })
+    } finally {
+      setIsLoading(false)
     }
-    setIsLoading(false)
   }
 
   const handleInput = (e) => {
