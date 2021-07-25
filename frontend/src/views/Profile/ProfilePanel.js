@@ -37,28 +37,30 @@ const ProfilePanel = () => {
   }
 
   return (
-    <Grid item container xs={8}>
-      <Grid item container xs={12} spacing={1} alignItems='center'>
-        <Grid item xs={9}>
+    <Grid item container xs={8} direction='column'>
+      <Grid item container xs={12} spacing={1}>
+        <Grid item xs={7}>
           <Tabs value={value} onChange={handleChange} selectionFollowsFocus>
             <Tab label='Listings' />
             <Tab label='Reviews' />
           </Tabs>
         </Grid>
         {state.user_id == id && (
-          <Grid item>
+          <Grid item xs={3}>
             <Button variant='outlined' component={Link} to='/settings'>
               {' '}
               Edit Profile{' '}
             </Button>
           </Grid>
         )}
-        <TabPanel value={value} index={0}>
-          <Listing />
-        </TabPanel>
-        <TabPanel value={value} index={1}>
-          <Review />
-        </TabPanel>
+        <Grid item container>
+          <TabPanel value={value} index={0}>
+            <Listing />
+          </TabPanel>
+          <TabPanel value={value} index={1}>
+            <Review />
+          </TabPanel>
+        </Grid>
       </Grid>
     </Grid>
   )
