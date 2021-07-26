@@ -79,34 +79,38 @@ export default function Signup() {
       first_name: form.firstName,
       last_name: form.lastName,
     }
-
-    const res = await fetch('/api/auth/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    })
-    const data = await res.json()
-    if (res.ok) {
-      dispatch({
-        type: 'LOGIN',
-        payload: {
-          token: data.key,
-          user_id: data.user_id,
+    try {
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify(payload),
       })
-      history.push(`/profile/${data.user_id}`)
-    } else {
-      if (data.email) {
-        setErrors({ ...errors, email: data.email })
+      const data = await res.json()
+      if (res.ok) {
+        dispatch({
+          type: 'LOGIN',
+          payload: {
+            token: data.key,
+            user_id: data.user_id,
+          },
+        })
+        history.push(`/profile/${data.user_id}`)
+      } else {
+        if (data.email) {
+          setErrors({ ...errors, email: data.email })
+        }
+        if (data.password1) {
+          setErrors({ ...errors, password: data.password1 })
+        }
+        console.log(data)
       }
-      if (data.password1) {
-        setErrors({ ...errors, password: data.password1 })
-      }
+    } catch (e) {
+      console.log(e)
+    } finally {
+      setAwaitingResponse(false)
     }
-
-    setAwaitingResponse(false)
   }
 
   function validateEmail(email) {

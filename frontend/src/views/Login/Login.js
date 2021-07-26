@@ -60,31 +60,34 @@ export default function Login() {
       email: form.email,
       password: form.password,
     }
-
-    const res = await fetch('/api/auth/login/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    })
-    const data = await res.json()
-    if (res.ok) {
-      dispatch({
-        type: 'LOGIN',
-        payload: {
-          token: data.key,
-          user_id: data.user_id,
+    try {
+      const res = await fetch('/api/auth/login/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify(payload),
       })
-      history.push(`/profile/${data.user_id}`)
-    } else {
-      setIsInvalidLogin(true)
-      setForm(initForm)
-      console.log(data)
+      const data = await res.json()
+      if (res.ok) {
+        dispatch({
+          type: 'LOGIN',
+          payload: {
+            token: data.key,
+            user_id: data.user_id,
+          },
+        })
+        history.push(`/profile/${data.user_id}`)
+      } else {
+        setIsInvalidLogin(true)
+        setForm(initForm)
+        console.log(data)
+      }
+    } catch (e) {
+      console.log(e)
+    } finally {
+      setAwaitingResponse(false)
     }
-
-    setAwaitingResponse(false)
   }
   return (
     <Container component='main' maxWidth='xs'>
