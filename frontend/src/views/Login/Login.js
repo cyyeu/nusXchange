@@ -48,44 +48,43 @@ export default function Login() {
   }
   const [form, setForm] = useState(initForm)
   const [isInvalidLogin, setIsInvalidLogin] = useState(false)
+  const [awaitingResponse, setAwaitingResponse] = useState(false)
   const handleInputChange = (event) => {
     const { name, value } = event.target
     setForm({ ...form, [name]: value })
   }
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
+    setAwaitingResponse(true)
     const payload = {
       email: form.email,
       password: form.password,
     }
 
-    fetch('/api/auth/login/', {
+    const res = await fetch('/api/auth/login/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(payload),
-    }).then((res) => {
-      if (res.ok) {
-        res.json().then((data) => {
-          dispatch({
-            type: 'LOGIN',
-            payload: {
-              token: data.key,
-              user_id: data.user_id,
-            },
-          })
-          history.push(`/profile/${data.user_id}`)
-        })
-      } else {
-        setIsInvalidLogin(true)
-        setForm(initForm)
-        res
-          .json()
-          .catch((e) => console.log(e))
-          .then((data) => console.log(data))
-      }
     })
+    const data = await res.json()
+    if (res.ok) {
+      dispatch({
+        type: 'LOGIN',
+        payload: {
+          token: data.key,
+          user_id: data.user_id,
+        },
+      })
+      history.push(`/profile/${data.user_id}`)
+    } else {
+      setIsInvalidLogin(true)
+      setForm(initForm)
+      console.log(data)
+    }
+
+    setAwaitingResponse(false)
   }
   return (
     <Container component='main' maxWidth='xs'>
@@ -137,6 +136,7 @@ export default function Login() {
             color='primary'
             className={classes.submit}
             onClick={handleSubmit}
+            disabled={awaitingResponse}
           >
             Sign In
           </Button>

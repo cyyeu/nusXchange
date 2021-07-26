@@ -55,6 +55,7 @@ export default function Signup() {
   }
   const [form, setForm] = useState(initForm)
   const [errors, setErrors] = useState(initErrors)
+  const [awaitingResponse, setAwaitingResponse] = useState(false)
   const handleFormChange = (e) => {
     const { name, value } = e.target
     setForm({ ...form, [name]: value })
@@ -68,9 +69,9 @@ export default function Signup() {
     }
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-
+    setAwaitingResponse(true)
     const payload = {
       email: form.email,
       password1: form.password,
@@ -79,35 +80,33 @@ export default function Signup() {
       last_name: form.lastName,
     }
 
-    fetch('/api/auth/register', {
+    const res = await fetch('/api/auth/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(payload),
-    }).then((res) => {
-      if (res.ok) {
-        res.json().then((data) => {
-          dispatch({
-            type: 'LOGIN',
-            payload: {
-              token: data.key,
-              user_id: data.user_id,
-            },
-          })
-          history.push(`/profile/${data.user_id}`)
-        })
-      } else if (!res.ok) {
-        res.json().then((data) => {
-          if (data.email) {
-            setErrors({ ...errors, email: data.email })
-          }
-          if (data.password1) {
-            setErrors({ ...errors, password: data.password1 })
-          }
-        })
-      }
     })
+    const data = await res.json()
+    if (res.ok) {
+      dispatch({
+        type: 'LOGIN',
+        payload: {
+          token: data.key,
+          user_id: data.user_id,
+        },
+      })
+      history.push(`/profile/${data.user_id}`)
+    } else {
+      if (data.email) {
+        setErrors({ ...errors, email: data.email })
+      }
+      if (data.password1) {
+        setErrors({ ...errors, password: data.password1 })
+      }
+    }
+
+    setAwaitingResponse(false)
   }
 
   function validateEmail(email) {
@@ -137,7 +136,10 @@ export default function Signup() {
       })
     } else {
       setErrors((prevErrors) => {
-        return { ...prevErrors, password: 'Please use a 8 character Alphanumeric password!' }
+        return {
+          ...prevErrors,
+          password: 'Please use a 8 character Alphanumeric password!',
+        }
       })
     }
   }
@@ -268,7 +270,7 @@ export default function Signup() {
             color='primary'
             className={classes.submit}
             form='signup'
-            disabled={isSignUpDisabled()}
+            disabled={isSignUpDisabled() || awaitingResponse}
           >
             Sign Up
           </Button>
