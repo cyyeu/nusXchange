@@ -68,7 +68,7 @@ export default function PasswordReset() {
     if (
       validator.isStrongPassword(pw, {
         minLength: 8,
-        minLowercase: 1,
+        minLowercase: 0,
         minUppercase: 0,
         minNumbers: 1,
         minSymbols: 0,
