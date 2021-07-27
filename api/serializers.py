@@ -37,6 +37,8 @@ class CustomRegisterSerializer(RegisterSerializer):
 # returns id, first_name, last_name, bio, email, avatar_id.
 class UserProfileSerializer(serializers.ModelSerializer):
 	verified = serializers.SerializerMethodField()
+	first_name = serializers.CharField(write_only=True)
+	last_name  = serializers.CharField(write_only=True)
 	class Meta:
 		model = UserProfile
 		fields = "__all__"
@@ -48,7 +50,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 			'tg_url': {"required": False , "allow_blank": True},
 			'linkedin_url': {"required": False , "allow_blank": True}
 		}
-	
+
 	def to_representation(self, instance):
 		ret = super().to_representation(instance)
 		newRet = UserDetailsSerializer(instance.user).data
@@ -56,11 +58,14 @@ class UserProfileSerializer(serializers.ModelSerializer):
 		return newRet
 
 	def update(self, instance, validated_data):
-		user_data = validated_data.pop('user', None)
-		if user_data:
-			instance.user.first_name = user_data.get('first_name', instance.user.first_name)
-			instance.user.last_name = user_data.get('last_name', instance.user.last_name)	
-			instance.user.save(update_fields=['first_name', 'last_name'])
+		first_name = validated_data.pop("first_name", None)
+		last_name = validated_data.pop("last_name", None)
+		if first_name:
+			instance.user.first_name = first_name
+			instance.user.save(update_fields=['first_name'])
+		if last_name:
+			instance.user.last_name = last_name
+			instance.user.save(update_fields=['last_name'])
 		instance = super().update(instance, validated_data)
 		return instance
 
