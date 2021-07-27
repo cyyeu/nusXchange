@@ -143,6 +143,7 @@ const EditListing = () => {
         msg: 'Listing saved!',
       },
     })
+    history.push(`/listing/${id}`)
   }
 
   return (
