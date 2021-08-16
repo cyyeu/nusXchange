@@ -4,5 +4,6 @@
 Achievement level: Apollo 11
 
 ### [Documentation](https://docs.google.com/document/d/1_1pcZ-qzJy9WIqOOg9BV13FsOCaQwi-qcGnXNkKrmX0/edit?usp=sharing)
-### [Poster](https://drive.google.com/file/d/1t3G6WA7Kbino3Sczh7iJtforQ7m77lgj/view?usp=sharing)
-### [Video](https://drive.google.com/file/d/1W5uLwcsUHyWQLIRE8jdG6jnPcm2Djgdt/view?usp=sharing)
+### [Video](https://drive.google.com/file/d/17AfaluPkimCOnnxV2Y-ahAcO3xHAJq7I/view?usp=sharing)
+### ![Poster](https://drive.google.com/uc?export=view&id=1On8EfufeFJLC5OUPkXJHUeG93l0veBX6)
+
